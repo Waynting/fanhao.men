@@ -29,17 +29,18 @@ export function parseVideoInput(input: string): ParseResult {
       normalizedCode: null,
       source: 'unknown',
       originalInput: input,
-      error: 'Input is empty'
+      error: '輸入是空的'
     }
   }
 
   // Try to detect if it's a URL
-  const isUrl = trimmedInput.startsWith('http://') ||
-                trimmedInput.startsWith('https://') ||
-                trimmedInput.includes('.')
+  // Scheme-less input only counts as a URL when it looks like "domain.tld/path",
+  // so codes containing a dot (e.g. "ABC.123") are still treated as codes.
+  const hasScheme = /^https?:\/\//i.test(trimmedInput)
+  const looksLikeDomain = /^[\w-]+(\.[\w-]+)+\//.test(trimmedInput)
 
-  if (isUrl) {
-    return parseFromUrl(trimmedInput)
+  if (hasScheme || looksLikeDomain) {
+    return parseFromUrl(hasScheme ? trimmedInput : `https://${trimmedInput}`)
   } else {
     return parseDirectCode(trimmedInput)
   }
@@ -58,7 +59,7 @@ function parseDirectCode(input: string): ParseResult {
       normalizedCode: null,
       source: 'direct',
       originalInput: input,
-      error: 'Invalid video code format'
+      error: '番號格式不正確'
     }
   }
 
@@ -153,7 +154,7 @@ function parseFromUrl(urlString: string): ParseResult {
         normalizedCode: null,
         source: 'url',
         originalInput: urlString,
-        error: 'Could not extract video code from URL'
+        error: '無法從網址中找到番號'
       }
     }
 
@@ -165,7 +166,7 @@ function parseFromUrl(urlString: string): ParseResult {
         normalizedCode: null,
         source: 'url',
         originalInput: urlString,
-        error: `Extracted "${extractedCode}" but it doesn't look like a valid video code`
+        error: `從網址取得「${extractedCode}」，但它不像有效的番號`
       }
     }
 
@@ -186,7 +187,7 @@ function parseFromUrl(urlString: string): ParseResult {
       normalizedCode: null,
       source: 'url',
       originalInput: urlString,
-      error: 'Invalid URL format'
+      error: '網址格式不正確'
     }
   }
 }

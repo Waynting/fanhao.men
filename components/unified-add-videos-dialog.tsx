@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import {
@@ -11,7 +10,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { addItemToPlaylist, bulkAddItemsToPlaylist } from "@/app/actions/playlists"
+import { addItems } from "@/lib/local-store"
+import { trackAddItems } from "@/lib/analytics"
 import { toast } from "sonner"
 import { Plus, ListPlus, CheckCircle2, XCircle } from "lucide-react"
 import {
@@ -38,10 +38,8 @@ export function UnifiedAddVideosDialog({
 }: UnifiedAddVideosDialogProps) {
   const [mode, setMode] = useState<Mode>("single")
   const [input, setInput] = useState("")
-  const [loading, setLoading] = useState(false)
   const [singleResult, setSingleResult] = useState<ParseResult | null>(null)
   const [bulkResults, setBulkResults] = useState<ParseResult[]>([])
-  const router = useRouter()
 
   // Smart mode detection based on input
   useEffect(() => {
@@ -75,9 +73,10 @@ export function UnifiedAddVideosDialog({
       const results = parseMultipleInputs(input)
       // Mark duplicates in bulk results
       results.forEach(result => {
-        if (result.success && result.normalizedCode && existingCodes.has(result.normalizedCode)) {
-          result.isDuplicate = true
-        }
+        if (!result.success || !result.normalizedCode) return
+        // Duplicate if already in the playlist or repeated earlier in this paste
+        if (existingCodes.has(result.normalizedCode)) result.isDuplicate = true
+        existingCodes.add(result.normalizedCode)
       })
       setBulkResults(results)
     }
@@ -95,67 +94,46 @@ export function UnifiedAddVideosDialog({
 
   const stats = getParseStats(bulkResults)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const toNewItem = (r: ParseResult) => ({
+    // Keep what the user typed (code part of a URL, or the raw code) alongside the normalized form
+    videoCode: r.code ?? r.originalInput.trim(),
+    normalizedCode: r.normalizedCode!,
+  })
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (mode === "single") {
-      if (!singleResult?.success) {
-        toast.error(singleResult?.error || "Invalid input")
-        return
-      }
-
-      if (singleResult.isDuplicate) {
-        toast.error("This code is already in the playlist")
-        return
-      }
-
-      setLoading(true)
-      try {
-        await addItemToPlaylist(playlistId, singleResult.normalizedCode!)
-        toast.success("Video added!")
-        setInput("")
-        setSingleResult(null)
-        router.refresh()
-        onOpenChange(false) // Close dialog on success
-      } catch (error: any) {
-        toast.error(error.message || "Failed to add video")
-      } finally {
-        setLoading(false)
-      }
-    } else {
-      if (stats.successful === 0) {
-        toast.error("No valid codes to add")
-        return
-      }
-
-      setLoading(true)
-      try {
-        const validCodes = bulkResults
-          .filter(r => r.success && !r.isDuplicate)
-          .map(r => r.normalizedCode!)
-
-        const count = await bulkAddItemsToPlaylist(playlistId, validCodes)
-
-        const skippedDuplicates = stats.duplicates
-        if (stats.failed > 0 || skippedDuplicates > 0) {
-          const parts = []
-          if (count > 0) parts.push(`Added ${count} codes`)
-          if (skippedDuplicates > 0) parts.push(`${skippedDuplicates} duplicates skipped`)
-          if (stats.failed > 0) parts.push(`${stats.failed} failed`)
-          toast.success(parts.join(', '))
-        } else {
-          toast.success(`Added ${count} video codes!`)
+    try {
+      if (mode === "single") {
+        if (!singleResult?.success) {
+          toast.error(singleResult?.error || "格式不正確")
+          return
         }
-
-        setInput("")
-        setBulkResults([])
-        router.refresh()
-        onOpenChange(false) // Close dialog on success
-      } catch (error: any) {
-        toast.error(error.message || "Failed to add codes")
-      } finally {
-        setLoading(false)
+        if (singleResult.isDuplicate) {
+          toast.error("這個番號已經在清單中")
+          return
+        }
+        addItems(playlistId, [toNewItem(singleResult)])
+        trackAddItems({ playlist_id: playlistId, item_count: 1, method: singleResult.source === "url" ? "url_parse" : "single" })
+        toast.success(`已加入 ${singleResult.normalizedCode}`)
+      } else {
+        if (stats.successful === 0) {
+          toast.error("沒有可加入的有效番號")
+          return
+        }
+        const count = addItems(
+          playlistId,
+          bulkResults.filter((r) => r.success && !r.isDuplicate).map(toNewItem)
+        )
+        trackAddItems({ playlist_id: playlistId, item_count: count, method: "bulk" })
+        const parts = [`已加入 ${count} 個番號`]
+        if (stats.duplicates > 0) parts.push(`略過 ${stats.duplicates} 個重複`)
+        if (stats.failed > 0) parts.push(`${stats.failed} 個無法辨識`)
+        toast.success(parts.join("，"))
       }
+      onOpenChange(false)
+    } catch (error: any) {
+      toast.error(error.message || "加入失敗")
     }
   }
 
@@ -168,7 +146,7 @@ export function UnifiedAddVideosDialog({
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-xl">Add Videos</DialogTitle>
+            <DialogTitle className="text-xl">新增番號</DialogTitle>
             {/* Mode Toggle */}
             <div className="flex bg-gray-100 rounded-lg p-0.5">
               <button
@@ -181,7 +159,7 @@ export function UnifiedAddVideosDialog({
                 }`}
               >
                 <Plus className="h-3 w-3 inline mr-1" />
-                Single
+                單筆
               </button>
               <button
                 type="button"
@@ -193,14 +171,14 @@ export function UnifiedAddVideosDialog({
                 }`}
               >
                 <ListPlus className="h-3 w-3 inline mr-1" />
-                Bulk
+                批次
               </button>
             </div>
           </div>
           <DialogDescription>
             {mode === "single"
-              ? "Paste a URL or enter a video code"
-              : "Paste multiple codes or URLs, one per line"}
+              ? "輸入番號或貼上影片網址"
+              : "一行一個番號或網址，可直接整批貼上"}
           </DialogDescription>
         </DialogHeader>
 
@@ -210,7 +188,7 @@ export function UnifiedAddVideosDialog({
               id="video-input"
               placeholder={
                 mode === "single"
-                  ? "SSIS-123, fc2-ppv-1234567, or URL..."
+                  ? "SSIS-123、fc2ppv1234567 或網址..."
                   : "SSIS-123\nIPX-920\nFC2-PPV-1234567\n..."
               }
               value={input}
@@ -218,8 +196,7 @@ export function UnifiedAddVideosDialog({
               rows={mode === "single" ? 3 : 10}
               autoFocus
               required
-              disabled={loading}
-              className={`border-gray-300 focus:border-black focus:ring-black transition-all ${
+                            className={`border-gray-300 focus:border-black focus:ring-black transition-all ${
                 mode === "bulk" ? "font-mono text-sm" : ""
               }`}
             />
@@ -232,7 +209,7 @@ export function UnifiedAddVideosDialog({
                     <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-300 rounded-lg">
                       <XCircle className="h-4 w-4 text-amber-600 flex-shrink-0" />
                       <div>
-                        <p className="text-xs font-medium text-amber-900 mb-1">⚠️ Already in playlist</p>
+                        <p className="text-xs font-medium text-amber-900 mb-1">⚠️ 已在清單中</p>
                         <code className="font-mono font-semibold text-amber-900">
                           {singleResult.normalizedCode}
                         </code>
@@ -243,7 +220,7 @@ export function UnifiedAddVideosDialog({
                       <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
                       <div>
                         <p className="text-xs text-green-700 mb-1">
-                          {singleResult.source === 'url' ? '✓ Extracted from URL' : '✓ Valid code'}
+                          {singleResult.source === 'url' ? '✓ 已從網址擷取' : '✓ 格式正確'}
                         </p>
                         <code className="font-mono font-semibold text-green-900">
                           {singleResult.normalizedCode}
@@ -255,7 +232,7 @@ export function UnifiedAddVideosDialog({
                   <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
                     <XCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
                     <div>
-                      <p className="text-xs font-medium text-red-900 mb-1">Invalid input</p>
+                      <p className="text-xs font-medium text-red-900 mb-1">無法辨識</p>
                       <p className="text-xs text-red-700">{singleResult.error}</p>
                     </div>
                   </div>
@@ -270,19 +247,19 @@ export function UnifiedAddVideosDialog({
                   {stats.successful > 0 && (
                     <div className="flex items-center gap-1.5 px-2.5 py-1 bg-green-100 border border-green-300 rounded-md">
                       <CheckCircle2 className="h-3.5 w-3.5 text-green-700" />
-                      <span className="font-semibold text-green-900">{stats.successful} valid</span>
+                      <span className="font-semibold text-green-900">{stats.successful} 個有效</span>
                     </div>
                   )}
                   {stats.duplicates > 0 && (
                     <div className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 border border-amber-300 rounded-md">
                       <XCircle className="h-3.5 w-3.5 text-amber-700" />
-                      <span className="text-amber-900">{stats.duplicates} duplicates</span>
+                      <span className="text-amber-900">{stats.duplicates} 個重複</span>
                     </div>
                   )}
                   {stats.failed > 0 && (
                     <div className="flex items-center gap-1.5 px-2.5 py-1 bg-red-100 border border-red-300 rounded-md">
                       <XCircle className="h-3.5 w-3.5 text-red-700" />
-                      <span className="text-red-900">{stats.failed} failed</span>
+                      <span className="text-red-900">{stats.failed} 個無法辨識</span>
                     </div>
                   )}
                 </div>
@@ -291,7 +268,7 @@ export function UnifiedAddVideosDialog({
                 {stats.duplicates > 0 && (
                   <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
                     <p className="text-xs font-medium text-amber-900 mb-2">
-                      ⚠️ {stats.duplicates} {stats.duplicates === 1 ? 'code' : 'codes'} already in playlist
+                      ⚠️ {stats.duplicates} 個番號重複，將略過
                     </p>
                     <div className="space-y-1 max-h-32 overflow-y-auto">
                       {bulkResults
@@ -304,7 +281,7 @@ export function UnifiedAddVideosDialog({
                         ))}
                       {stats.duplicates > 5 && (
                         <p className="text-xs text-amber-700 pt-1">
-                          and {stats.duplicates - 5} more...
+                          還有 {stats.duplicates - 5} 個...
                         </p>
                       )}
                     </div>
@@ -315,7 +292,7 @@ export function UnifiedAddVideosDialog({
                 {stats.failed > 0 && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
                     <p className="text-xs font-medium text-red-900 mb-2">
-                      {stats.failed} {stats.failed === 1 ? 'item' : 'items'} failed to parse
+                      {stats.failed} 行無法辨識
                     </p>
                     <div className="space-y-1 max-h-32 overflow-y-auto">
                       {bulkResults
@@ -328,7 +305,7 @@ export function UnifiedAddVideosDialog({
                         ))}
                       {stats.failed > 5 && (
                         <p className="text-xs text-red-700 pt-1">
-                          and {stats.failed - 5} more...
+                          還有 {stats.failed - 5} 個...
                         </p>
                       )}
                     </div>
@@ -343,24 +320,23 @@ export function UnifiedAddVideosDialog({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              disabled={loading}
-            >
-              Cancel
+                          >
+              取消
             </Button>
             <Button
               type="submit"
               className=""
-              disabled={loading || !isValid}
+              disabled={!isValid}
             >
               {mode === "single" ? (
                 <>
                   <Plus className="h-4 w-4 mr-1.5" />
-                  {loading ? "Adding..." : "Add Video"}
+                  加入
                 </>
               ) : (
                 <>
                   <ListPlus className="h-4 w-4 mr-1.5" />
-                  {loading ? "Adding..." : `Add ${stats.successful} ${stats.successful === 1 ? 'Video' : 'Videos'}`}
+                  {`加入 ${stats.successful} 個`}
                 </>
               )}
             </Button>

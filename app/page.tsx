@@ -18,7 +18,7 @@ export default function Home() {
         </p>
         <div className="flex gap-4 justify-center">
           <Button asChild size="lg">
-            <Link href="/login">Get Started</Link>
+            <Link href="/dashboard">開始使用</Link>
           </Button>
         </div>
 
@@ -44,10 +44,10 @@ export default function Home() {
           <div className="p-6 rounded-xl border border-zinc-200/80">
             <h3 className="font-semibold text-lg mb-2">🚀 輕鬆分享</h3>
             <p className="text-zinc-600 text-sm mb-2">
-              匯出文字清單或生成公開分享連結，與朋友分享你的收藏。
+              匯出文字清單或產生分享連結，對方打開即可瀏覽並存到自己的裝置。
             </p>
             <p className="text-zinc-400 text-xs">
-              Easy sharing. Export as text or generate public share links to share with friends.
+              Easy sharing. Export as text or create a share link that others can open and save to their own device.
             </p>
           </div>
         </div>

@@ -89,26 +89,6 @@ export const trackSharePlaylist = (params: {
 };
 
 /**
- * Track when user searches public playlists (Surf page)
- */
-export const trackSearchPublicPlaylists = (params: {
-  query: string;
-  results_count: number;
-}) => {
-  trackEvent("search_public_playlists", params);
-};
-
-/**
- * Track when user copies/imports a public playlist
- */
-export const trackCopyPublicPlaylist = (params: {
-  source_playlist_id: string;
-  item_count: number;
-}) => {
-  trackEvent("copy_public_playlist", params);
-};
-
-/**
  * Track when user adds items from a shared playlist
  */
 export const trackAddFromSharedPlaylist = (params: {
@@ -130,16 +110,6 @@ export const trackUpdateNote = (params: {
 };
 
 /**
- * Track when user toggles favorite
- */
-export const trackToggleFavorite = (params: {
-  playlist_id: string;
-  is_favorited: boolean;
-}) => {
-  trackEvent("toggle_favorite", params);
-};
-
-/**
  * Track when user creates a source template
  */
 export const trackCreateTemplate = (params: {
@@ -149,12 +119,3 @@ export const trackCreateTemplate = (params: {
   trackEvent("create_template", params);
 };
 
-/**
- * Track authentication events
- */
-export const trackAuth = (params: {
-  method: "magic_link" | "google_oauth";
-  action: "login" | "signup";
-}) => {
-  trackEvent("auth", params);
-};

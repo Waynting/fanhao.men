@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
@@ -14,86 +13,74 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { updatePlaylistItemNote } from "@/app/actions/playlists"
+import { updateItemNote } from "@/lib/local-store"
+import { trackUpdateNote } from "@/lib/analytics"
 import { toast } from "sonner"
 import { Pencil } from "lucide-react"
 
 interface EditNoteDialogProps {
+  playlistId: string
   itemId: string
   videoCode: string
   currentNote: string | null
 }
 
-export function EditNoteDialog({ itemId, videoCode, currentNote }: EditNoteDialogProps) {
+export function EditNoteDialog({ playlistId, itemId, videoCode, currentNote }: EditNoteDialogProps) {
   const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [note, setNote] = useState(currentNote || "")
-  const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Reset the draft every time the dialog opens so cancelled edits don't linger
+  const handleOpenChange = (next: boolean) => {
+    if (next) setNote(currentNote || "")
+    setOpen(next)
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-
     try {
-      await updatePlaylistItemNote(itemId, note)
-      toast.success("Note updated")
+      updateItemNote(playlistId, itemId, note)
+      trackUpdateNote({ playlist_id: playlistId, has_note: !!note.trim() })
+      toast.success("註記已儲存")
       setOpen(false)
-      router.refresh()
     } catch (error: any) {
-      toast.error(error.message || "Failed to update note")
-    } finally {
-      setLoading(false)
+      toast.error(error.message || "儲存失敗")
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="hover:bg-gray-100 hover:text-black transition-smooth h-8 w-8 sm:h-9 sm:w-9 p-0"
-        >
-          <Pencil className="h-3 w-3 sm:h-4 sm:w-4" />
+        <Button variant="ghost" size="sm" className="h-8 w-8 sm:h-9 sm:w-9 p-0" aria-label={`編輯 ${videoCode} 的註記`}>
+          <Pencil className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Edit Note</DialogTitle>
+            <DialogTitle>編輯註記</DialogTitle>
             <DialogDescription>
-              Add or edit a note for <code className="px-1.5 py-0.5 bg-gray-100 text-black rounded text-sm font-semibold">{videoCode}</code>
+              為 <code className="px-1.5 py-0.5 bg-gray-100 text-black rounded text-sm font-semibold">{videoCode}</code> 加上註記
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
-            <Label htmlFor="note" className="text-sm font-semibold text-black">
-              Note
+            <Label htmlFor={`note-${itemId}`} className="text-sm font-semibold text-black">
+              註記
             </Label>
             <Textarea
-              id="note"
-              placeholder="Add a note about this video..."
+              id={`note-${itemId}`}
+              placeholder="例如：演員、劇情、評分..."
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              disabled={loading}
+              maxLength={500}
+              autoFocus
               className="mt-2 min-h-[100px] resize-none"
             />
           </div>
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setOpen(false)}
-              disabled={loading}
-            >
-              Cancel
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              取消
             </Button>
-            <Button
-              type="submit"
-              disabled={loading}
-              className=""
-            >
-              {loading ? "Saving..." : "Save Note"}
-            </Button>
+            <Button type="submit">儲存註記</Button>
           </DialogFooter>
         </form>
       </DialogContent>

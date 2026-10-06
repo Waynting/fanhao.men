@@ -3,9 +3,8 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Edit, Trash2, Share2, Download, Globe, Copy } from "lucide-react"
+import { ArrowLeft, Edit, Trash2, Share2, Download, Copy, ExternalLink } from "lucide-react"
 import Link from "next/link"
-import { deletePlaylist, updatePlaylist } from "@/app/actions/playlists"
 import { toast } from "sonner"
 import {
   Dialog,
@@ -18,71 +17,89 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-
-interface Playlist {
-  id: string
-  name: string
-  description: string | null
-  isPublic: boolean
-  shareSlug: string | null
-  _count: { items: number }
-}
+import { deletePlaylist, restorePlaylist, updatePlaylist, type Playlist } from "@/lib/local-store"
+import { encodeShareHash } from "@/lib/share-codec"
+import { trackSharePlaylist } from "@/lib/analytics"
 
 export function PlaylistHeader({ playlist }: { playlist: Playlist }) {
   const router = useRouter()
   const [editOpen, setEditOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [name, setName] = useState(playlist.name)
+  const [description, setDescription] = useState(playlist.description ?? "")
+  const [shareUrl, setShareUrl] = useState<string | null>(null)
 
-  const handleDelete = async () => {
-    setLoading(true)
-    try {
-      await deletePlaylist(playlist.id)
-      toast.success("Playlist deleted")
-      router.push("/dashboard")
-    } catch (error: any) {
-      toast.error(error.message || "Failed to delete")
-    } finally {
-      setLoading(false)
-    }
+  const openEdit = () => {
+    setName(playlist.name)
+    setDescription(playlist.description ?? "")
+    setEditOpen(true)
   }
 
-  const handleEdit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleEdit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setLoading(true)
     try {
-      const formData = new FormData(e.currentTarget)
-      await updatePlaylist(playlist.id, formData)
-      toast.success("Playlist updated")
+      updatePlaylist(playlist.id, { name, description })
+      toast.success("清單已更新")
       setEditOpen(false)
-      router.refresh()
     } catch (error: any) {
-      toast.error(error.message || "Failed to update")
-    } finally {
-      setLoading(false)
+      toast.error(error.message || "更新失敗")
     }
   }
 
-  const togglePublic = async () => {
-    const formData = new FormData()
-    formData.set("name", playlist.name)
-    formData.set("description", playlist.description || "")
-    formData.set("isPublic", (!playlist.isPublic).toString())
+  const handleDelete = () => {
+    const snapshot = playlist
+    deletePlaylist(playlist.id)
+    setDeleteOpen(false)
+    router.push("/dashboard")
+    toast.success(`已刪除「${snapshot.name}」`, {
+      action: { label: "復原", onClick: () => restorePlaylist(snapshot) },
+    })
+  }
 
+  const handleShare = async () => {
+    if (playlist.items.length === 0) {
+      toast.error("清單是空的，先加入一些番號再分享")
+      return
+    }
+    const hash = await encodeShareHash({
+      name: playlist.name,
+      description: playlist.description,
+      items: playlist.items.map((i) => ({ code: i.normalizedCode, note: i.note })),
+    })
+    setShareUrl(`${window.location.origin}/share#${hash}`)
+    trackSharePlaylist({ playlist_id: playlist.id, method: "copy_link" })
+  }
+
+  const copyShareUrl = async () => {
+    if (!shareUrl) return
     try {
-      await updatePlaylist(playlist.id, formData)
-      toast.success(playlist.isPublic ? "Playlist is now private" : "Playlist is now public")
-      router.refresh()
-    } catch (error: any) {
-      toast.error(error.message || "Failed to update")
+      await navigator.clipboard.writeText(shareUrl)
+      toast.success("分享連結已複製")
+    } catch {
+      // Clipboard API is unavailable on plain http (e.g. LAN demo); let the user copy manually
+      document.querySelector<HTMLInputElement>("#share-url")?.select()
+      toast.error("無法自動複製，請手動選取連結複製")
     }
   }
 
-  const copyShareLink = () => {
-    if (!playlist.shareSlug) return
-    const shareUrl = `${window.location.origin}/share/${playlist.shareSlug}`
-    navigator.clipboard.writeText(shareUrl)
-    toast.success("Share link copied to clipboard!")
+  const nativeShare = async () => {
+    if (!shareUrl) return
+    try {
+      await navigator.share({ title: playlist.name, url: shareUrl })
+    } catch {
+      // user cancelled
+    }
+  }
+
+  const handleExport = () => {
+    const text = playlist.items.map((i) => i.normalizedCode).join("\n")
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `${playlist.name}.txt`
+    a.click()
+    URL.revokeObjectURL(url)
   }
 
   return (
@@ -92,7 +109,7 @@ export function PlaylistHeader({ playlist }: { playlist: Playlist }) {
         <Button variant="ghost" asChild className="text-slate-600 hover:text-slate-900 -ml-2">
           <Link href="/dashboard">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Playlists
+            返回我的清單
           </Link>
         </Button>
       </div>
@@ -101,75 +118,50 @@ export function PlaylistHeader({ playlist }: { playlist: Playlist }) {
       <div className="mb-6">
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 lg:gap-6">
           <div className="flex-1 min-w-0">
-            {/* Title and badges */}
-            <div className="flex items-center gap-2 sm:gap-3 flex-wrap mb-3">
-              <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-900 tracking-tight break-words">{playlist.name}</h1>
-              {playlist.isPublic && (
-                <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-zinc-900 text-white px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg flex-shrink-0">
-                  <Globe className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                  Public
-                </span>
-              )}
-            </div>
+            <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-900 tracking-tight break-words mb-3">
+              {playlist.name}
+            </h1>
 
-            {/* Description */}
             {playlist.description && (
-              <p className="text-gray-600 text-sm sm:text-base lg:text-lg mb-4 max-w-2xl">{playlist.description}</p>
+              <p className="text-gray-600 text-sm sm:text-base lg:text-lg mb-4 max-w-2xl whitespace-pre-wrap">
+                {playlist.description}
+              </p>
             )}
 
-            {/* Metadata */}
             <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm text-zinc-500">
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-zinc-900">{playlist._count.items}</span>
-                <span>{playlist._count.items === 1 ? 'video code' : 'video codes'}</span>
-              </div>
+              <span>
+                <span className="font-semibold text-zinc-900">{playlist.items.length}</span> 個番號
+              </span>
+              <span>更新於 {new Date(playlist.updatedAt).toLocaleString()}</span>
             </div>
           </div>
 
           {/* Action buttons */}
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto lg:ml-6">
-            {playlist.isPublic && playlist.shareSlug && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={copyShareLink}
-                className="w-full sm:w-auto"
-              >
-                <Copy className="h-4 w-4 mr-2" />
-                <span>Copy Link</span>
-              </Button>
-            )}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={togglePublic}
-              className="w-full sm:w-auto"
-            >
+          <div className="grid grid-cols-3 sm:flex gap-2 w-full sm:w-auto lg:ml-6">
+            <Button size="sm" onClick={handleShare}>
               <Share2 className="h-4 w-4 mr-2" />
-              <span>{playlist.isPublic ? "Make Private" : "Make Public"}</span>
+              分享連結
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setEditOpen(true)}
-              className="w-full sm:w-auto"
-            >
+            <Button variant="outline" size="sm" onClick={handleExport} disabled={playlist.items.length === 0}>
+              <Download className="h-4 w-4 mr-2" />
+              匯出 .txt
+            </Button>
+            <Button variant="outline" size="sm" onClick={openEdit}>
               <Edit className="h-4 w-4 mr-2" />
-              <span>Edit</span>
+              編輯
             </Button>
           </div>
         </div>
 
-        {/* Delete button */}
         <div className="mt-4 pt-4 border-t border-zinc-100">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setDeleteOpen(true)}
-            className="text-red-600 hover:bg-red-50 hover:text-red-700"
+            className="text-red-600 hover:bg-red-50 hover:text-red-700 -ml-2"
           >
             <Trash2 className="h-4 w-4 mr-2" />
-            Delete Playlist
+            刪除清單
           </Button>
         </div>
       </div>
@@ -179,40 +171,75 @@ export function PlaylistHeader({ playlist }: { playlist: Playlist }) {
         <DialogContent>
           <form onSubmit={handleEdit}>
             <DialogHeader>
-              <DialogTitle>Edit Playlist</DialogTitle>
-              <DialogDescription>
-                Update your playlist details
-              </DialogDescription>
+              <DialogTitle>編輯清單</DialogTitle>
+              <DialogDescription>修改清單名稱與描述</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="edit-name">Name</Label>
+                <Label htmlFor="edit-name">名稱</Label>
                 <Input
                   id="edit-name"
-                  name="name"
-                  defaultValue={playlist.name}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  maxLength={100}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-description">Description</Label>
+                <Label htmlFor="edit-description">描述</Label>
                 <Textarea
                   id="edit-description"
-                  name="description"
-                  defaultValue={playlist.description || ""}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  maxLength={500}
                   rows={4}
                 />
               </div>
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setEditOpen(false)}>
-                Cancel
+                取消
               </Button>
-              <Button type="submit" disabled={loading}>
-                {loading ? "Saving..." : "Save Changes"}
-              </Button>
+              <Button type="submit" disabled={!name.trim()}>儲存</Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Share Dialog */}
+      <Dialog open={shareUrl !== null} onOpenChange={(open) => !open && setShareUrl(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>分享清單</DialogTitle>
+            <DialogDescription>
+              清單內容直接包含在連結中，不經過伺服器。對方打開即可瀏覽，並可存到自己的裝置。
+              之後修改清單需要重新分享。
+            </DialogDescription>
+          </DialogHeader>
+          <Input
+            id="share-url"
+            readOnly
+            value={shareUrl ?? ""}
+            onFocus={(e) => e.currentTarget.select()}
+            className="font-mono text-xs"
+          />
+          <DialogFooter className="gap-2 sm:gap-0">
+            {typeof navigator !== "undefined" && "share" in navigator && (
+              <Button variant="outline" onClick={nativeShare}>
+                傳送…
+              </Button>
+            )}
+            <Button variant="outline" asChild>
+              <a href={shareUrl ?? "#"} target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="h-4 w-4 mr-2" />
+                預覽
+              </a>
+            </Button>
+            <Button onClick={copyShareUrl}>
+              <Copy className="h-4 w-4 mr-2" />
+              複製連結
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -220,18 +247,17 @@ export function PlaylistHeader({ playlist }: { playlist: Playlist }) {
       <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Playlist?</DialogTitle>
+            <DialogTitle>刪除清單？</DialogTitle>
             <DialogDescription>
-              This will permanently delete "{playlist.name}" and all its items.
-              This action cannot be undone.
+              將刪除「{playlist.name}」與其中 {playlist.items.length} 個番號。刪除後可在提示訊息中按「復原」。
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteOpen(false)}>
-              Cancel
+              取消
             </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={loading}>
-              {loading ? "Deleting..." : "Delete Playlist"}
+            <Button variant="destructive" onClick={handleDelete}>
+              刪除清單
             </Button>
           </DialogFooter>
         </DialogContent>

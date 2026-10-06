@@ -3,14 +3,13 @@
 import { useState, useMemo } from "react"
 import { Copy, Check, ExternalLink, StickyNote, Plus, ChevronDown, ChevronUp, Search } from "lucide-react"
 import { toast } from "sonner"
-import { DEFAULT_TEMPLATES } from "@/lib/default-templates"
 import { AddItemsToPlaylistDialog } from "@/components/add-items-to-playlist-dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import Link from "next/link"
 import { trackEvent } from "@/lib/analytics"
+import type { SourceTemplate } from "@/lib/local-store"
 
-interface PlaylistItem {
+interface SharedItem {
   id: string
   normalizedCode: string
   videoCode: string
@@ -18,18 +17,12 @@ interface PlaylistItem {
 }
 
 interface SharePageContentProps {
-  items: PlaylistItem[]
-  playlistId: string
-  isAuthenticated: boolean
-  isOwner: boolean
+  items: SharedItem[]
+  playlistName: string
+  templates: SourceTemplate[]
 }
 
-export function SharePageContent({
-  items,
-  playlistId,
-  isAuthenticated,
-  isOwner,
-}: SharePageContentProps) {
+export function SharePageContent({ items, playlistName, templates }: SharePageContentProps) {
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null)
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
@@ -62,7 +55,7 @@ export function SharePageContent({
   if (items.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600">This playlist is empty.</p>
+        <p className="text-gray-600">這份清單是空的</p>
       </div>
     )
   }
@@ -70,11 +63,10 @@ export function SharePageContent({
   const handleCopyCode = (code: string) => {
     navigator.clipboard.writeText(code)
     setCopiedCode(code)
-    toast.success(`Copied ${code}!`)
+    toast.success(`已複製 ${code}`)
 
     // Track event
     trackEvent("copy_code_from_share", {
-      playlist_id: playlistId,
       code: code,
     })
 
@@ -84,11 +76,10 @@ export function SharePageContent({
   const handleCopyUrl = (url: string, sourceName: string) => {
     navigator.clipboard.writeText(url)
     setCopiedUrl(url)
-    toast.success(`Copied ${sourceName} link!`)
+    toast.success(`已複製 ${sourceName} 連結`)
 
     // Track event
     trackEvent("copy_url_from_share", {
-      playlist_id: playlistId,
       source_name: sourceName,
     })
 
@@ -102,7 +93,7 @@ export function SharePageContent({
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
         <Input
           type="text"
-          placeholder="Search by code or note..."
+          placeholder="搜尋番號或註記..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10 h-12 text-base"
@@ -114,23 +105,23 @@ export function SharePageContent({
         )}
       </div>
 
-      {/* Action Bar - Add All Items */}
-      {isAuthenticated && !isOwner && filteredItems.length > 0 && (
+      {/* Action Bar - Save to this device */}
+      {filteredItems.length > 0 && (
         <div className="bg-zinc-900 text-white rounded-xl p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h3 className="text-base font-semibold mb-1">Want to save these codes?</h3>
+              <h3 className="text-base font-semibold mb-1">想保存這些番號？</h3>
               <p className="text-sm text-zinc-400">
-                Add {searchQuery ? `${filteredItems.length} filtered` : `all ${items.length}`} {filteredItems.length === 1 ? "code" : "codes"} to your collection
+                將{searchQuery ? `篩選出的 ${filteredItems.length}` : `全部 ${items.length}`} 個番號存到這台裝置
               </p>
             </div>
             <AddItemsToPlaylistDialog
-              sourcePlaylistId={playlistId}
               items={searchQuery ? filteredItems : items}
+              defaultNewName={playlistName}
               trigger={
                 <Button className="bg-white text-black hover:bg-gray-100">
                   <Plus className="h-4 w-4 mr-2" />
-                  Add {searchQuery ? "Filtered" : "All"} to My Playlist
+                  {searchQuery ? "儲存篩選結果" : "全部存到我的清單"}
                 </Button>
               }
             />
@@ -138,30 +129,17 @@ export function SharePageContent({
         </div>
       )}
 
-      {!isAuthenticated && (
-        <div className="bg-zinc-50 border border-zinc-200/80 rounded-xl p-4 sm:p-6 text-center">
-          <p className="text-zinc-500 mb-4">
-            Want to save these codes to your own collection?
-          </p>
-          <Link href="/login">
-            <Button>
-              Sign In to Save
-            </Button>
-          </Link>
-        </div>
-      )}
-
       {/* No Results */}
       {filteredItems.length === 0 && searchQuery && (
         <div className="text-center py-12">
-          <p className="text-gray-600">No codes found matching "{searchQuery}"</p>
+          <p className="text-gray-600">找不到符合「{searchQuery}」的番號</p>
           <Button
             variant="outline"
             size="sm"
             onClick={() => setSearchQuery("")}
             className="mt-4"
           >
-            Clear Search
+            清除搜尋
           </Button>
         </div>
       )}
@@ -185,33 +163,22 @@ export function SharePageContent({
               )}
             </div>
             <div className="flex items-center gap-2">
-              {isAuthenticated && !isOwner ? (
-                <AddItemsToPlaylistDialog
-                  sourcePlaylistId={playlistId}
-                  items={[item]}
-                  trigger={
-                    <button
-                      className="px-3 py-1.5 bg-zinc-900 text-white hover:bg-zinc-700 transition-all duration-150 rounded-lg text-xs font-medium whitespace-nowrap"
-                      title="Add to my playlist"
-                    >
-                      加入清單
-                    </button>
-                  }
-                />
-              ) : !isAuthenticated ? (
-                <Link href="/login">
+              <AddItemsToPlaylistDialog
+                items={[item]}
+                defaultNewName={playlistName}
+                trigger={
                   <button
                     className="px-3 py-1.5 bg-zinc-900 text-white hover:bg-zinc-700 transition-all duration-150 rounded-lg text-xs font-medium whitespace-nowrap"
-                    title="Sign in to add to your playlist"
+                    title="加入我的清單"
                   >
                     加入清單
                   </button>
-                </Link>
-              ) : null}
+                }
+              />
               <button
                 onClick={() => handleCopyCode(item.normalizedCode)}
                 className="w-8 h-8 flex items-center justify-center hover:bg-zinc-100 transition-all duration-150 rounded-lg"
-                title="Copy code"
+                title="複製番號"
               >
                 {copiedCode === item.normalizedCode ? (
                   <Check className="h-4 w-4 text-green-600" strokeWidth={3} />
@@ -239,8 +206,8 @@ export function SharePageContent({
               className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-zinc-50 transition-colors duration-150 border-t border-zinc-100"
             >
               <div className="flex items-center gap-2">
-                <p className="text-xs font-medium text-zinc-400">Sources</p>
-                <span className="text-xs text-zinc-300">({DEFAULT_TEMPLATES.length})</span>
+                <p className="text-xs font-medium text-zinc-400">影片來源</p>
+                <span className="text-xs text-zinc-300">({templates.length})</span>
               </div>
               {isExpanded ? (
                 <ChevronUp className="h-4 w-4 text-zinc-300" />
@@ -251,7 +218,7 @@ export function SharePageContent({
 
             {isExpanded && (
               <div className="px-4 pb-4 pt-1 space-y-1.5">
-                {DEFAULT_TEMPLATES.map((template) => {
+                {templates.map((template) => {
                   const url = template.baseTemplate.replace("{code}", item.normalizedCode)
                   const isCopied = copiedUrl === url
 
@@ -280,14 +247,14 @@ export function SharePageContent({
                           target="_blank"
                           rel="noopener noreferrer"
                           className="w-8 h-8 flex items-center justify-center hover:bg-zinc-100 transition-all duration-150 rounded-lg"
-                          title="Open link"
+                          title="開啟連結"
                         >
                           <ExternalLink className="h-4 w-4 text-zinc-400" />
                         </a>
                         <button
                           onClick={() => handleCopyUrl(url, template.name)}
                           className="w-8 h-8 flex items-center justify-center hover:bg-zinc-100 transition-all duration-150 rounded-lg"
-                          title="Copy link"
+                          title="複製連結"
                         >
                           {isCopied ? (
                             <Check className="h-4 w-4 text-green-600" strokeWidth={3} />

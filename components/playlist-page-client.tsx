@@ -1,104 +1,63 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useMemo, useState } from "react"
 import { toast } from "sonner"
 import { SmartActionToolbar } from "./smart-action-toolbar"
-import { PlaylistManager } from "./playlist-manager"
+import { PlaylistItemsTable } from "./playlist-items-table"
 import { UnifiedAddVideosDialog } from "./unified-add-videos-dialog"
 import { trackDeleteItems } from "@/lib/analytics"
-
-interface PlaylistItem {
-  id: string
-  videoCode: string
-  normalizedCode: string
-  note: string | null
-  position: number
-  createdAt: Date
-}
-
-interface SourceTemplate {
-  id: string
-  name: string
-  baseTemplate: string
-  isDefault: boolean
-}
+import { deleteItems, restoreItems, type Playlist, type SourceTemplate } from "@/lib/local-store"
 
 interface PlaylistPageClientProps {
-  playlistId: string
-  playlistName: string
-  items: PlaylistItem[]
+  playlist: Playlist
   templates: SourceTemplate[]
 }
 
-export function PlaylistPageClient({
-  playlistId,
-  playlistName,
-  items,
-  templates,
-}: PlaylistPageClientProps) {
-  const [selectedItems, setSelectedItems] = useState<PlaylistItem[]>([])
+export function PlaylistPageClient({ playlist, templates }: PlaylistPageClientProps) {
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [showAddDialog, setShowAddDialog] = useState(false)
-  const router = useRouter()
 
-  const handleClearSelection = () => {
-    setSelectedItems([])
-  }
+  const items = playlist.items
+  // Drop ids of items that no longer exist (e.g. deleted in another tab)
+  const selectedItems = useMemo(() => items.filter((item) => selectedIds.has(item.id)), [items, selectedIds])
 
-  const handleOpenAddDialog = () => {
-    setShowAddDialog(true)
-  }
-
-  const handleDelete = async () => {
-    if (selectedItems.length === 0) return
-
-    if (!confirm(`Are you sure you want to delete ${selectedItems.length} ${selectedItems.length === 1 ? 'item' : 'items'}?`)) {
-      return
-    }
-
-    try {
-      // Import the delete action
-      const { bulkDeletePlaylistItems } = await import("@/app/actions/playlists")
-      await bulkDeletePlaylistItems(selectedItems.map(item => item.id))
-
-      // Track event
-      trackDeleteItems({
-        playlist_id: playlistId,
-        item_count: selectedItems.length,
-      })
-
-      toast.success(`Deleted ${selectedItems.length} ${selectedItems.length === 1 ? 'item' : 'items'}!`)
-      setSelectedItems([])
-      router.refresh()
-    } catch (error: any) {
-      toast.error(error.message || "Failed to delete items")
-    }
+  const removeItems = (ids: string[]) => {
+    const snapshot = items
+    deleteItems(playlist.id, ids)
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      ids.forEach((id) => next.delete(id))
+      return next
+    })
+    trackDeleteItems({ playlist_id: playlist.id, item_count: ids.length })
+    toast.success(`已刪除 ${ids.length} 個番號`, {
+      action: { label: "復原", onClick: () => restoreItems(playlist.id, snapshot) },
+    })
   }
 
   return (
     <>
-      {/* Smart Action Toolbar */}
       <SmartActionToolbar
         allItems={items}
         selectedItems={selectedItems}
         templates={templates}
-        playlistId={playlistId}
-        playlistName={playlistName}
-        onClearSelection={handleClearSelection}
-        onOpenAddDialog={handleOpenAddDialog}
-        onDelete={handleDelete}
+        onClearSelection={() => setSelectedIds(new Set())}
+        onOpenAddDialog={() => setShowAddDialog(true)}
+        onDelete={() => removeItems(selectedItems.map((item) => item.id))}
       />
 
-      {/* Playlist Table */}
-      <PlaylistManager
-        playlistId={playlistId}
+      <PlaylistItemsTable
+        playlistId={playlist.id}
         items={items}
-        onSelectionChange={setSelectedItems}
+        templates={templates}
+        selectedIds={selectedIds}
+        onSelectedIdsChange={setSelectedIds}
+        onDeleteItem={(id) => removeItems([id])}
+        onOpenAddDialog={() => setShowAddDialog(true)}
       />
 
-      {/* Add Videos Dialog */}
       <UnifiedAddVideosDialog
-        playlistId={playlistId}
+        playlistId={playlist.id}
         open={showAddDialog}
         onOpenChange={setShowAddDialog}
         existingItems={items}
