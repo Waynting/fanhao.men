@@ -1,225 +1,46 @@
-# AV Playlist Manager
+# AV Number Collector
 
-A web application for managing video code collections with smart URL auto-completion.
+A web app for managing video code collections. No login, no backend: all data is stored in your browser, per device.
 
 ## Features
 
-- **ID-First Management**: Organize by video codes (e.g., SSIS-123), not URLs
-- **Playlist Organization**: Create and manage multiple playlists
-- **Bulk Import**: Paste multiple codes at once with automatic normalization
-- **Smart Export**: Export as .txt, copy all codes, or share public links
-- **Source Templates**: Define your preferred source URLs and auto-generate links
-- **Public Sharing**: Share playlists with unique URLs
-- **Code Normalization**: Automatically formats codes (e.g., "ssis123" → "SSIS-123")
+- **ID-first management**: organize by video codes (e.g. `SSIS-123`), not URLs
+- **Code normalization**: `ssis123` → `SSIS-123`, `fc2ppv1234567` / `1234567` → `FC2-PPV-1234567`
+- **Bulk add**: paste codes or video URLs one per line; duplicates and invalid lines are flagged
+- **Link generation**: turn one or many codes into URLs for built-in or custom sources
+- **Share links**: the playlist is encoded into the URL hash; recipients can save it to their own device
+- **Backup**: export/import all data as JSON to move between devices
+- **Export**: download a playlist as `.txt`
 
 ## Tech Stack
 
-- **Frontend**: Next.js 15 (App Router), TypeScript, Tailwind CSS
-- **UI Components**: shadcn/ui (Radix UI primitives)
-- **Authentication**: Supabase Auth (Email Magic Link)
-- **Database**: Supabase Postgres
-- **ORM**: Prisma
-- **Deployment**: Vercel-ready
+- Next.js 15 (App Router) + TypeScript
+- shadcn/ui (Radix UI + Tailwind CSS)
+- `localStorage` for persistence
 
 ## Getting Started
 
-### Prerequisites
-
-- Node.js 18+ and npm
-- A Supabase account and project
-- Git
-
-### 1. Clone and Install
-
 ```bash
-cd av-web
 npm install
+npm run dev     # http://localhost:3000
 ```
 
-### 2. Set Up Supabase
+No environment variables are required. Optionally set `NEXT_PUBLIC_GA_MEASUREMENT_ID` in `.env.local` to enable Google Analytics 4.
 
-1. Create a new project at [supabase.com](https://supabase.com)
-2. Go to **Project Settings** → **API**
-3. Copy your project URL and anon key
-4. Go to **Project Settings** → **Database**
-5. Copy your connection string
-
-### 3. Configure Environment
-
-Create a `.env.local` file in the root directory:
+## Scripts
 
 ```bash
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
-
-# Database URL
-DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.your-project.supabase.co:5432/postgres
-
-# App Configuration
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+npm run dev     # Dev server (Turbopack)
+npm run build   # Production build
+npm run start   # Start production server
+npm run lint    # ESLint
 ```
 
-### 4. Set Up Database
+## Notes
 
-```bash
-# Generate Prisma Client
-npm run db:generate
-
-# Push schema to Supabase
-npm run db:push
-```
-
-### 5. Run Development Server
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Database Schema
-
-- **users**: User accounts (synced with Supabase Auth)
-- **playlists**: User playlists with names, descriptions, and share settings
-- **playlist_items**: Video codes within playlists
-- **source_templates**: User-defined URL templates for auto-completion
-
-## Core Features
-
-### Video Code Normalization
-
-Input examples:
-- `ssis123` → `SSIS-123`
-- ` waaa-412 ` → `WAAA-412`
-- `IPX920` → `IPX-920`
-
-### Source Templates
-
-Create URL patterns with `{code}` as a placeholder:
-
-- MissAV: `https://missav.ws/{code}`
-- Jable: `https://jable.tv/videos/{code}/`
-- Custom: `https://example.com/search?q={code}`
-
-### Export Options
-
-1. **Copy All Codes**: Copy normalized codes to clipboard
-2. **Export as TXT**: Download as plain text file
-3. **Copy Share Link**: Share public playlists via URL
-4. **Generate Links**: Apply source templates to create full URLs
-
-## Project Structure
-
-```
-av-web/
-├── app/
-│   ├── (authenticated)/     # Protected routes
-│   │   ├── dashboard/       # User's playlists
-│   │   └── settings/        # Source templates settings
-│   ├── actions/             # Server actions
-│   ├── api/                 # API routes
-│   ├── auth/                # Auth callback
-│   ├── playlist/[id]/       # Playlist detail page
-│   ├── share/[slug]/        # Public share page
-│   └── login/               # Login page
-├── components/
-│   ├── ui/                  # shadcn/ui components
-│   └── ...                  # Custom components
-├── lib/
-│   ├── supabase/            # Supabase clients
-│   ├── prisma.ts            # Prisma client
-│   ├── code-normalizer.ts   # Code normalization logic
-│   └── utils.ts             # Utilities
-├── prisma/
-│   └── schema.prisma        # Database schema
-└── middleware.ts            # Auth middleware
-```
-
-## Deployment
-
-### Deploy to Vercel
-
-1. Push your code to GitHub
-2. Import project on [Vercel](https://vercel.com)
-3. Add environment variables from `.env.local`
-4. Deploy!
-
-### Post-Deployment
-
-1. Update `NEXT_PUBLIC_APP_URL` in environment variables
-2. Configure Supabase redirect URLs in Authentication settings:
-   - Add `https://your-domain.vercel.app/auth/callback`
-
-## Development Scripts
-
-```bash
-npm run dev         # Start development server
-npm run build       # Build for production
-npm run start       # Start production server
-npm run lint        # Run ESLint
-npm run db:push     # Push Prisma schema to database
-npm run db:studio   # Open Prisma Studio
-npm run db:generate # Generate Prisma Client
-```
-
-## Future Enhancements
-
-- [ ] Video metadata (actress, studio, tags)
-- [ ] Cover images
-- [ ] Public discovery page
-- [ ] Tag-based recommendations
-- [ ] Collaborative filtering
-- [ ] Advanced search
-- [ ] Import from .txt files
-- [ ] Duplicate detection
-- [ ] Dark mode
+- Data lives only in the browser it was created in. Clearing site data deletes it; use **設定 → 匯出備份** first.
+- Share links are snapshots: editing a playlist afterwards requires sharing a new link.
 
 ## License
 
 MIT
-
-## Contributing
-
-We welcome contributions from the community! Whether you're fixing bugs, adding features, or improving documentation, your help is appreciated.
-
-### Getting Started
-
-1. Read our [Contributing Guide](./docs/CONTRIBUTING.md)
-2. Check out the [Development Guide](./docs/DEVELOPMENT.md)
-3. Review the [Architecture Documentation](./docs/ARCHITECTURE.md)
-
-### Quick Links
-
-- 📖 [Documentation](./docs/)
-- 🐛 [Report a Bug](https://github.com/ORIGINAL_OWNER/av-web/issues/new)
-- 💡 [Request a Feature](https://github.com/ORIGINAL_OWNER/av-web/issues/new)
-- 💬 [Discussions](https://github.com/ORIGINAL_OWNER/av-web/discussions)
-
-## Documentation
-
-Comprehensive documentation is available in the [docs/](./docs/) folder:
-
-- **[Contributing Guide](./docs/CONTRIBUTING.md)** - How to contribute
-- **[Development Guide](./docs/DEVELOPMENT.md)** - Setup and workflows
-- **[Architecture](./docs/ARCHITECTURE.md)** - System design and patterns
-- **[Security](./SECURITY.md)** - Security measures and best practices
-
-## Support
-
-For issues or questions:
-
-- 🐛 **Bug Reports**: [Create an issue](https://github.com/ORIGINAL_OWNER/av-web/issues/new)
-- 💬 **Questions**: [Start a discussion](https://github.com/ORIGINAL_OWNER/av-web/discussions)
-- 📧 **Security Issues**: See [SECURITY.md](./SECURITY.md)
-
-## License
-
-MIT
-
----
-
-Built with ❤️ using Next.js, Supabase, and Prisma
-
-**Open Source** • **Community Driven** • **MIT Licensed**
