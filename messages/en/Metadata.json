@@ -1,0 +1,47 @@
+{
+  "siteTitle": "JAV Code Playlist Manager – Save, Organize & Share AV Codes | fanhao.men",
+  "siteDescription": "Free tool for collecting JAV codes (product codes / IDs like SSIS-123 or FC2-PPV-1234567). Paste codes or URLs in bulk and they're auto-formatted, generate video links in one click, and share playlists by link. No sign-up needed; sign in to sync across devices.",
+  "keywords": "JAV code,AV code,JAV ID,JAV product code,DVD ID,JAV playlist,JAV list,JAV code manager,FC2 PPV,fanhao",
+  "ogAlt": "fanhao.men – JAV code playlist manager",
+  "appleTitle": "fanhao.men",
+  "pages": {
+    "about": {
+      "title": "About",
+      "description": "fanhao.men is an open-source tool for managing JAV code collections. Learn about the idea behind it and how to get in touch."
+    },
+    "dashboard": {
+      "title": "My playlists"
+    },
+    "newPlaylist": {
+      "title": "New playlist"
+    },
+    "explore": {
+      "title": "Explore",
+      "description": "The JAV codes people have saved and opened the most lately."
+    },
+    "playlist": {
+      "title": "Playlist"
+    },
+    "settings": {
+      "title": "Settings"
+    },
+    "share": {
+      "title": "Shared playlist",
+      "description": "Someone shared a list of JAV codes with you. Open it to browse, copy codes or generate video links, and save it to your own playlists."
+    },
+    "publicPlaylist": {
+      "title": "Public playlist",
+      "description": "Someone made a list of JAV codes public. Open it to browse, copy codes or generate video links, and save it to your own playlists."
+    },
+    "auth": {
+      "title": "Signing in"
+    },
+    "notFound": {
+      "title": "Page not found"
+    },
+    "changelog": {
+      "title": "Changelog",
+      "description": "What's new in fanhao.men, newest first."
+    }
+  }
+}

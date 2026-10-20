@@ -1,0 +1,29 @@
+{
+  "title": "Explore",
+  "subtitle": "The codes people have saved and clicked the most lately",
+  "periods": {
+    "7d": "This week",
+    "30d": "This month"
+  },
+  "counts": {
+    "saves": "{count, plural, one {# save} other {# saves}}",
+    "clicks": "{count, plural, one {# click} other {# clicks}}"
+  },
+  "disabledTitle": "Trending isn't enabled on this site",
+  "disabledBody": "Rankings need sign-in, so only your own playlists are available here.",
+  "errorTitle": "Couldn't load the rankings",
+  "errorBody": "Your connection may be unstable. Please try again in a moment.",
+  "reload": "Reload",
+  "emptyTitle": "Still collecting data",
+  "emptyBody": "Not enough people have saved or clicked the same code yet. Once you sign in, your saves count toward the rankings too.",
+  "signIn": "Sign in",
+  "saved": "Saved",
+  "defaultPlaylistName": "From Explore",
+  "addLabel": "Add {code} to a playlist",
+  "addToPlaylist": "Add to playlist",
+  "linksLabel": "Links for {code}",
+  "footer": "Rankings only count signed-in users, list a code only once at least 3 people have it, and never show who saved or clicked.",
+  "updatedAt": " Updated {time}.",
+  "optOut": " You can opt out in <link>Settings</link>.",
+  "new": "New"
+}

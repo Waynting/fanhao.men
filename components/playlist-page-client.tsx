@@ -2,11 +2,12 @@
 
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
+import { useTranslations } from "next-intl"
 import { SmartActionToolbar } from "./smart-action-toolbar"
 import { PlaylistItemsTable } from "./playlist-items-table"
 import { UnifiedAddVideosDialog } from "./unified-add-videos-dialog"
 import { trackDeleteItems } from "@/lib/analytics"
-import { deleteItems, restoreItems, type Playlist, type SourceTemplate } from "@/lib/local-store"
+import { deleteItems, restoreDeletedItems, useStore, type Playlist, type SourceTemplate } from "@/lib/local-store"
 
 interface PlaylistPageClientProps {
   playlist: Playlist
@@ -14,15 +15,29 @@ interface PlaylistPageClientProps {
 }
 
 export function PlaylistPageClient({ playlist, templates }: PlaylistPageClientProps) {
+  const t = useTranslations("Playlist.page")
+  const tCommon = useTranslations("Common")
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [showAddDialog, setShowAddDialog] = useState(false)
 
+  const store = useStore()
   const items = playlist.items
+
+  const otherPlaylistCounts = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const other of store?.playlists ?? []) {
+      if (other.id === playlist.id) continue
+      for (const item of other.items) counts.set(item.normalizedCode, (counts.get(item.normalizedCode) ?? 0) + 1)
+    }
+    return counts
+  }, [store, playlist.id])
   // Drop ids of items that no longer exist (e.g. deleted in another tab)
   const selectedItems = useMemo(() => items.filter((item) => selectedIds.has(item.id)), [items, selectedIds])
 
   const removeItems = (ids: string[]) => {
-    const snapshot = items
+    // Keep only what this delete removed, so undo can't revert later edits
+    const idSet = new Set(ids)
+    const removed = items.flatMap((item, index) => (idSet.has(item.id) ? [{ item, index }] : []))
     deleteItems(playlist.id, ids)
     setSelectedIds((prev) => {
       const next = new Set(prev)
@@ -30,8 +45,8 @@ export function PlaylistPageClient({ playlist, templates }: PlaylistPageClientPr
       return next
     })
     trackDeleteItems({ playlist_id: playlist.id, item_count: ids.length })
-    toast.success(`已刪除 ${ids.length} 個番號`, {
-      action: { label: "復原", onClick: () => restoreItems(playlist.id, snapshot) },
+    toast.success(t("deletedItems", { count: ids.length }), {
+      action: { label: tCommon("undo"), onClick: () => restoreDeletedItems(playlist.id, removed) },
     })
   }
 
@@ -39,6 +54,7 @@ export function PlaylistPageClient({ playlist, templates }: PlaylistPageClientPr
     <>
       <SmartActionToolbar
         allItems={items}
+        playlistId={playlist.id}
         selectedItems={selectedItems}
         templates={templates}
         onClearSelection={() => setSelectedIds(new Set())}
@@ -51,6 +67,7 @@ export function PlaylistPageClient({ playlist, templates }: PlaylistPageClientPr
         items={items}
         templates={templates}
         selectedIds={selectedIds}
+        otherPlaylistCounts={otherPlaylistCounts}
         onSelectedIdsChange={setSelectedIds}
         onDeleteItem={(id) => removeItems([id])}
         onOpenAddDialog={() => setShowAddDialog(true)}

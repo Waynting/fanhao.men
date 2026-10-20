@@ -11,6 +11,7 @@
 | `supabase/migrations/0001_user_records.sql` | `user_records`、`push_records()` | 已上線 |
 | `supabase/migrations/0002_profiles.sql` | `profiles` | 新增中（登入／onboarding 工作的一部分） |
 | `supabase/migrations/0003_trending.sql` | `stats_opt_outs`、`code_clicks`、`record_clicks()`、`trending_codes` | 開發中，尚未 commit（`/explore`、`lib/trending.ts`） |
+| `supabase/migrations/0004_public_playlists.sql` | `get_public_playlist()` | 開發中，尚未 commit（`/p/[owner]/[id]`、`lib/public-playlist.ts`） |
 
 ## 角色與權限的基本觀念
 
@@ -164,6 +165,18 @@ PK `(period, code)`。RLS：`anon`、`authenticated` 都可 select（公開資�
 統計腳本在 `jobs/stats/run.mjs`（`npm run stats`，`npm run stats -- --dry-run` 只印出），由 `.github/workflows` 每小時第 17 分執行（也可手動 `workflow_dispatch`），需要 repository secret `DATABASE_URL`，未設定時 job 會略過。腳本用 `DATABASE_URL`（Session pooler 連線字串，含資料庫密碼）直接連線，從 `user_records`（saves，權重 3，排除示範清單）與 `code_clicks`（clicks，權重 1）計算，排除 opt out 的使用者，且某番號至少要有 `STATS_MIN_USERS`（預設 3）位使用者才上榜，避免反推個人。
 
 ---
+
+## 公開清單（0004_public_playlists，尚未 commit）
+
+清單的 `data` 裡 `isPublic: true` 時，任何人（含 `anon`）都能透過 `/p/<owner>/<id>` 讀取。沒有新增資料表：公開與否就是清單本身的欄位，跟著一般同步走（較新的整份清單勝出），所以關閉公開或刪除清單後，同步完成網址就失效。
+
+### `public.get_public_playlist(owner uuid, playlist_id text)`
+
+- 回傳 `(data jsonb, updated_at timestamptz, display_name text)`，條件：`kind = 'playlist'`、未刪除、`data->>'isPublic' = 'true'`。不符合就回傳 0 列，呼叫端無法分辨「不存在」與「不公開」。
+- `security definer` 繞過 `user_records` 的「只能讀自己」RLS，但只回傳指定的那一筆；無法列舉其他人的清單。
+- `display_name` 來自 `profiles`（暱稱本來就是公開身分）；不回傳 email。
+- URL 帶 owner 是因為 `user_records` 的主鍵是 `(user_id, id)`，清單 id 只在同一使用者內唯一。
+- 授權給 `anon`、`authenticated`。
 
 ## 套用 migration
 

@@ -1,0 +1,47 @@
+{
+  "siteTitle": "番號收藏清單管理工具・一鍵生成影片連結｜fanhao.men",
+  "siteDescription": "免費的番號（車牌）收藏管理工具：建立播放清單、批次貼上番號或網址自動格式化（支援 SSIS-123、FC2-PPV-1234567 等格式），一鍵生成影片網址、以連結分享清單。不需註冊，登入後可跨裝置同步。",
+  "keywords": "番號,番號查詢,番號收藏,番號清單,番號管理,車牌,車牌號,AV番號,FC2番號,JAV,播放清單,fanhao",
+  "ogAlt": "fanhao.men 番號收藏清單管理",
+  "appleTitle": "番號收藏",
+  "pages": {
+    "about": {
+      "title": "關於",
+      "description": "fanhao.men 是一個開源的番號收藏管理工具。了解這個專案的理念與聯絡方式。"
+    },
+    "dashboard": {
+      "title": "我的清單"
+    },
+    "newPlaylist": {
+      "title": "建立清單"
+    },
+    "explore": {
+      "title": "探索",
+      "description": "大家最近收藏和點擊最多的番號排行。"
+    },
+    "playlist": {
+      "title": "播放清單"
+    },
+    "settings": {
+      "title": "設定"
+    },
+    "share": {
+      "title": "分享的清單",
+      "description": "有人分享了一份番號清單給你。打開即可查看、複製番號或一鍵生成影片連結，也能存到自己的清單。"
+    },
+    "publicPlaylist": {
+      "title": "公開清單",
+      "description": "有人公開了一份番號清單。打開即可查看、複製番號或一鍵生成影片連結，也能存到自己的清單。"
+    },
+    "auth": {
+      "title": "登入中"
+    },
+    "notFound": {
+      "title": "找不到頁面"
+    },
+    "changelog": {
+      "title": "更新紀錄",
+      "description": "fanhao.men 每次更新的內容，最新的在最上面。"
+    }
+  }
+}

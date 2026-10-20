@@ -1,0 +1,44 @@
+{
+  "tagline": "The playlist manager for JAV codes",
+  "intro": "Keep your AV code collection organized. Create playlists, share them with friends, and generate links to your favorite video sites automatically.",
+  "cta": "Get started",
+  "whatIs": {
+    "title": "What is a JAV code?",
+    "body": "A JAV code (also called an AV code, product code, DVD ID or simply ID; 番號 in Chinese, 品番 in Japanese) identifies a Japanese adult video. It's the studio's label prefix plus a number, like SSIS-123 or IPX-920. FC2 titles use the FC2-PPV-1234567 format. Codes never change, so saving codes is far more reliable than saving links."
+  },
+  "formats": {
+    "title": "Automatic detection and formatting",
+    "body": "Paste codes or video URLs, one per line. Case and hyphens are fixed for you, and duplicates are skipped:",
+    "url": "Video URL"
+  },
+  "steps": {
+    "title": "Three steps",
+    "add": {
+      "title": "Paste codes",
+      "body": "Paste a batch of codes or video URLs, one per line. They're formatted for you, and duplicates are skipped."
+    },
+    "links": {
+      "title": "Generate links",
+      "body": "Pick the video sites you use, then open or copy the link for any code in one click."
+    },
+    "share": {
+      "title": "Share and sync",
+      "body": "Send a share link and your friend can open the list right away. Sign in with Google to sync your lists across devices."
+    }
+  },
+  "free": "Free, no sign-up. Your data lives in your browser; sign in with Google to sync it across devices.",
+  "otherLanguages": "Other languages",
+  "navLabel": "Main navigation",
+  "demoCta": "See a demo playlist",
+  "heroNote": "Free, no sign-up, works right away",
+  "screens": {
+    "title": "Made for phone and desktop",
+    "body": "Add it to your home screen and use it like an app.",
+    "alt": {
+      "dashboard": "My Lists page: every playlist with a preview of its codes",
+      "playlist": "Playlist page: code list with search and bulk actions",
+      "links": "Generate links: a code's URL on each video site, ready to open or copy"
+    }
+  },
+  "closing": "Start with your first list"
+}

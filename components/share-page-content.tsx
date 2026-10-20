@@ -1,15 +1,19 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Copy, Check, ExternalLink, StickyNote, Plus, ChevronDown, ChevronUp, Search } from "lucide-react"
+import { Copy, Check, CheckCircle2, ExternalLink, StickyNote, Plus, ChevronDown, ChevronUp, Search, Download, Link as LinkIcon } from "lucide-react"
 import { toast } from "sonner"
+import { useTranslations } from "next-intl"
+import { useRouter } from "@/i18n/navigation"
+import { useErrorText } from "@/i18n/use-error-text"
 import { AddItemsToPlaylistDialog } from "@/components/add-items-to-playlist-dialog"
+import { LinkGeneratorPopover } from "@/components/link-generator-popover"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { trackEvent } from "@/lib/analytics"
+import { trackAddFromSharedPlaylist, trackEvent } from "@/lib/analytics"
 import { copyText } from "@/lib/clipboard"
 import { recordClicks } from "@/lib/trending"
-import type { SourceTemplate } from "@/lib/local-store"
+import { createPlaylist, deletePlaylist, useStore, type SourceTemplate } from "@/lib/local-store"
 
 interface SharedItem {
   id: string
@@ -21,10 +25,16 @@ interface SharedItem {
 interface SharePageContentProps {
   items: SharedItem[]
   playlistName: string
+  playlistDescription?: string | null
   templates: SourceTemplate[]
 }
 
-export function SharePageContent({ items, playlistName, templates }: SharePageContentProps) {
+export function SharePageContent({ items, playlistName, playlistDescription, templates }: SharePageContentProps) {
+  const t = useTranslations("Share.content")
+  const tc = useTranslations("Common")
+  const store = useStore()
+  const router = useRouter()
+  const errorText = useErrorText()
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null)
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
@@ -42,6 +52,28 @@ export function SharePageContent({ items, playlistName, templates }: SharePageCo
     )
   }, [items, searchQuery])
 
+  const saveItems = searchQuery ? filteredItems : items
+  // A playlist of the same name that already holds every code counts as "already saved",
+  // so pressing the one-click button twice doesn't make duplicates
+  const savedPlaylist = store?.playlists.find((p) => {
+    if (p.name !== playlistName.trim()) return false
+    const codes = new Set(p.items.map((i) => i.normalizedCode))
+    return saveItems.every((item) => codes.has(item.normalizedCode))
+  })
+
+  const handleSaveAsNew = () => {
+    try {
+      const playlist = createPlaylist({ name: playlistName, description: playlistDescription, items: saveItems })
+      trackAddFromSharedPlaylist({ source_playlist_id: "share", target_playlist_id: playlist.id, item_count: playlist.items.length })
+      toast.success(t("savedAsNew", { name: playlist.name, count: playlist.items.length }), {
+        action: { label: t("view"), onClick: () => router.push(`/playlist/${playlist.id}`) },
+        cancel: { label: tc("undo"), onClick: () => deletePlaylist(playlist.id) },
+      })
+    } catch (error) {
+      toast.error(errorText(error))
+    }
+  }
+
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev => {
       const next = new Set(prev)
@@ -57,18 +89,18 @@ export function SharePageContent({ items, playlistName, templates }: SharePageCo
   if (items.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600">這份清單是空的</p>
+        <p className="text-zinc-600">{t("empty")}</p>
       </div>
     )
   }
 
   const handleCopyCode = async (code: string) => {
     if (!(await copyText(code))) {
-      toast.error("無法自動複製，請手動選取", { description: code, duration: 10000 })
+      toast.error(tc("copyManually"), { description: code, duration: 10000 })
       return
     }
     setCopiedCode(code)
-    toast.success(`已複製 ${code}`)
+    toast.success(t("copiedCode", { code }))
 
     // Track event
     trackEvent("copy_code_from_share", {
@@ -80,12 +112,12 @@ export function SharePageContent({ items, playlistName, templates }: SharePageCo
 
   const handleCopyUrl = async (url: string, sourceName: string, code: string) => {
     if (!(await copyText(url))) {
-      toast.error("無法自動複製，請手動選取", { description: url, duration: 10000 })
+      toast.error(tc("copyManually"), { description: url, duration: 10000 })
       return
     }
     recordClicks([code])
     setCopiedUrl(url)
-    toast.success(`已複製 ${sourceName} 連結`)
+    toast.success(t("copiedUrl", { source: sourceName }))
 
     // Track event
     trackEvent("copy_url_from_share", {
@@ -99,17 +131,17 @@ export function SharePageContent({ items, playlistName, templates }: SharePageCo
     <div className="space-y-6">
       {/* Search Bar */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400" />
         <Input
           type="text"
-          placeholder="搜尋番號或註記..."
+          placeholder={t("searchPlaceholder")}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10 h-12 text-base"
         />
         {searchQuery && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">
-            {filteredItems.length} of {items.length}
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-500">
+            {t("matchCount", { shown: filteredItems.length, total: items.length })}
           </div>
         )}
       </div>
@@ -119,21 +151,39 @@ export function SharePageContent({ items, playlistName, templates }: SharePageCo
         <div className="bg-zinc-900 text-white rounded-xl p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h3 className="text-base font-semibold mb-1">想保存這些番號？</h3>
+              <h3 className="text-base font-semibold mb-1">{t("saveTitle")}</h3>
               <p className="text-sm text-zinc-400">
-                將{searchQuery ? `篩選出的 ${filteredItems.length}` : `全部 ${items.length}`} 個番號加入我的清單
+                {searchQuery
+                  ? t("saveFiltered", { count: filteredItems.length })
+                  : t("saveAll", { count: items.length })}
               </p>
             </div>
-            <AddItemsToPlaylistDialog
-              items={searchQuery ? filteredItems : items}
-              defaultNewName={playlistName}
-              trigger={
-                <Button className="bg-white text-black hover:bg-gray-100">
-                  <Plus className="h-4 w-4 mr-2" />
-                  {searchQuery ? "儲存篩選結果" : "全部存到我的清單"}
+            <div className="flex w-full sm:w-auto flex-col-reverse sm:flex-row gap-2">
+              <AddItemsToPlaylistDialog
+                items={saveItems}
+                defaultNewName={playlistName}
+                trigger={
+                  <Button variant="ghost" className="text-zinc-300 hover:text-white hover:bg-zinc-800">
+                    <Plus className="h-4 w-4 mr-2" />
+                    {t("addToExisting")}
+                  </Button>
+                }
+              />
+              {savedPlaylist ? (
+                <Button
+                  className="bg-emerald-500 text-white hover:bg-emerald-400"
+                  onClick={() => router.push(`/playlist/${savedPlaylist.id}`)}
+                >
+                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  {t("alreadySaved")}
                 </Button>
-              }
-            />
+              ) : (
+                <Button className="bg-white text-black hover:bg-zinc-100" onClick={handleSaveAsNew}>
+                  <Download className="h-4 w-4 mr-2" />
+                  {searchQuery ? t("saveFilteredButton") : t("saveAllButton")}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -141,15 +191,32 @@ export function SharePageContent({ items, playlistName, templates }: SharePageCo
       {/* No Results */}
       {filteredItems.length === 0 && searchQuery && (
         <div className="text-center py-12">
-          <p className="text-gray-600">找不到符合「{searchQuery}」的番號</p>
+          <p className="text-zinc-600">{t("noResults", { query: searchQuery })}</p>
           <Button
             variant="outline"
             size="sm"
             onClick={() => setSearchQuery("")}
             className="mt-4"
           >
-            清除搜尋
+            {t("clearSearch")}
           </Button>
+        </div>
+      )}
+
+      {/* Bulk links: one popover for every (filtered) code instead of opening each item's sources */}
+      {filteredItems.length > 0 && (
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm text-zinc-500">{tc("codeCount", { count: filteredItems.length })}</p>
+          <LinkGeneratorPopover
+            items={filteredItems}
+            templates={templates}
+            trigger={
+              <Button variant="outline">
+                <LinkIcon className="h-4 w-4" />
+                {searchQuery ? t("generateFilteredLinks") : t("generateAllLinks")}
+              </Button>
+            }
+          />
         </div>
       )}
 
@@ -177,17 +244,18 @@ export function SharePageContent({ items, playlistName, templates }: SharePageCo
                 defaultNewName={playlistName}
                 trigger={
                   <button
-                    className="px-3 py-1.5 bg-zinc-900 text-white hover:bg-zinc-700 transition-all duration-150 rounded-lg text-xs font-medium whitespace-nowrap"
-                    title="加入我的清單"
+                    className="h-10 sm:h-auto px-3 sm:py-1.5 bg-zinc-900 text-white hover:bg-zinc-700 transition-all duration-150 rounded-lg text-xs font-medium whitespace-nowrap"
+                    title={t("addToMyPlaylists")}
                   >
-                    加入清單
+                    {t("addToPlaylist")}
                   </button>
                 }
               />
               <button
                 onClick={() => handleCopyCode(item.normalizedCode)}
-                className="w-8 h-8 flex items-center justify-center hover:bg-zinc-100 transition-all duration-150 rounded-lg"
-                title="複製番號"
+                className="w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center hover:bg-zinc-100 transition-all duration-150 rounded-lg"
+                aria-label={`${t("copyCode")} ${item.normalizedCode}`}
+                title={t("copyCode")}
               >
                 {copiedCode === item.normalizedCode ? (
                   <Check className="h-4 w-4 text-green-600" strokeWidth={3} />
@@ -215,7 +283,7 @@ export function SharePageContent({ items, playlistName, templates }: SharePageCo
               className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-zinc-50 transition-colors duration-150 border-t border-zinc-100"
             >
               <div className="flex items-center gap-2">
-                <p className="text-xs font-medium text-zinc-400">影片來源</p>
+                <p className="text-xs font-medium text-zinc-400">{t("sources")}</p>
                 <span className="text-xs text-zinc-300">({templates.length})</span>
               </div>
               {isExpanded ? (
@@ -256,15 +324,17 @@ export function SharePageContent({ items, playlistName, templates }: SharePageCo
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() => recordClicks([item.normalizedCode])}
-                          className="w-8 h-8 flex items-center justify-center hover:bg-zinc-100 transition-all duration-150 rounded-lg"
-                          title="開啟連結"
+                          className="w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center hover:bg-zinc-100 transition-all duration-150 rounded-lg"
+                          aria-label={`${t("openLink")}: ${template.name}`}
+                          title={t("openLink")}
                         >
                           <ExternalLink className="h-4 w-4 text-zinc-400" />
                         </a>
                         <button
                           onClick={() => handleCopyUrl(url, template.name, item.normalizedCode)}
-                          className="w-8 h-8 flex items-center justify-center hover:bg-zinc-100 transition-all duration-150 rounded-lg"
-                          title="複製連結"
+                          className="w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center hover:bg-zinc-100 transition-all duration-150 rounded-lg"
+                          aria-label={`${t("copyLink")}: ${template.name}`}
+                          title={t("copyLink")}
                         >
                           {isCopied ? (
                             <Check className="h-4 w-4 text-green-600" strokeWidth={3} />

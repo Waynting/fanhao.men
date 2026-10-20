@@ -1,0 +1,16 @@
+{
+  "cancel": "Cancel",
+  "save": "Save",
+  "saving": "Saving…",
+  "delete": "Delete",
+  "undo": "Undo",
+  "close": "Close",
+  "confirm": "OK",
+  "copy": "Copy",
+  "copied": "Copied",
+  "loading": "Loading…",
+  "backToDashboard": "Back to my playlists",
+  "clipboardUnavailable": "Can't access the clipboard",
+  "copyManually": "Couldn't copy automatically. Please select and copy it manually",
+  "codeCount": "{count, plural, one {# code} other {# codes}}"
+}

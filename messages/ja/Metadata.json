@@ -1,0 +1,47 @@
+{
+  "siteTitle": "AV品番リスト管理ツール｜品番をまとめて保存・リンク生成・共有｜fanhao.men",
+  "siteDescription": "AVの品番（SSIS-123、FC2-PPV-1234567 など）をまとめて管理できる無料ツール。品番やURLを一括で貼り付けると自動で整形、動画サイトのリンクをワンクリックで生成し、リストをリンクで共有できます。登録不要、ログインすれば端末間で同期。",
+  "keywords": "品番,AV品番,品番 検索,品番 管理,品番 リスト,作品番号,FC2 品番,JAV,プレイリスト,fanhao",
+  "ogAlt": "fanhao.men AV品番リスト管理",
+  "appleTitle": "品番リスト",
+  "pages": {
+    "about": {
+      "title": "このサイトについて",
+      "description": "fanhao.men はAV品番を管理するためのオープンソースツールです。開発の背景と連絡先をご案内します。"
+    },
+    "dashboard": {
+      "title": "マイリスト"
+    },
+    "newPlaylist": {
+      "title": "リストを作成"
+    },
+    "explore": {
+      "title": "ランキング",
+      "description": "最近よく保存・クリックされている品番のランキング。"
+    },
+    "playlist": {
+      "title": "リスト"
+    },
+    "settings": {
+      "title": "設定"
+    },
+    "share": {
+      "title": "共有されたリスト",
+      "description": "品番リストが共有されました。開くと品番の閲覧・コピーや動画リンクの生成ができ、自分のリストにも保存できます。"
+    },
+    "publicPlaylist": {
+      "title": "公開リスト",
+      "description": "品番リストが公開されています。開くと品番の確認・コピーや動画リンクの生成ができ、自分のリストにも保存できます。"
+    },
+    "auth": {
+      "title": "ログイン中"
+    },
+    "notFound": {
+      "title": "ページが見つかりません"
+    },
+    "changelog": {
+      "title": "更新履歴",
+      "description": "fanhao.men の更新内容です。新しいものが上にあります。"
+    }
+  }
+}

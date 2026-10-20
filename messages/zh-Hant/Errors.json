@@ -1,0 +1,20 @@
+{
+  "generic": "發生錯誤，請稍後再試",
+  "storageFull": "儲存失敗：瀏覽器儲存空間已滿或被停用",
+  "playlistNotFound": "找不到這個清單",
+  "playlistNameRequired": "請輸入清單名稱",
+  "nameRequired": "請輸入名稱",
+  "templateMissingCode": "網址必須包含 '{code}'",
+  "invalidUrl": "網址格式不正確",
+  "invalidFile": "檔案格式不正確",
+  "nicknameRequired": "請輸入暱稱",
+  "nicknameTooLong": "暱稱最多 {max} 個字",
+  "signInRequired": "請先登入",
+  "saveFailed": "儲存失敗，請稍後再試",
+  "emptyInput": "輸入是空的",
+  "invalidCode": "番號格式不正確",
+  "noCodeInUrl": "無法從網址中找到番號",
+  "urlCodeInvalid": "從網址取得「{code}」，但它不像有效的番號",
+  "tagTooLong": "每個標籤最多 {max} 個字",
+  "tagLimit": "最多 {max} 個標籤"
+}

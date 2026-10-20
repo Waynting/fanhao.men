@@ -13,14 +13,22 @@ import {
 } from "@/components/ui/dialog"
 import { Cloud, Loader2, LogOut, RefreshCw } from "lucide-react"
 import { toast } from "sonner"
+import { useFormatter, useNow, useTranslations } from "next-intl"
+import { DATE_TIME } from "@/lib/date-formats"
 import { ProfileFields } from "@/components/profile-fields"
 import { UserAvatar } from "@/components/user-avatar"
 import { getSupabase, signInWithGoogle, useSession } from "@/lib/supabase"
 import { googleIdentity, reloadProfile, saveProfile, useProfile, validateDisplayName } from "@/lib/profile"
 import { hasPendingChanges, syncNow, useSyncStatus } from "@/lib/sync"
 import { resetLocalData, setSyncUser } from "@/lib/local-store"
+import { useErrorText } from "@/i18n/use-error-text"
 
 export function AccountSection() {
+  const t = useTranslations("Settings.account")
+  const format = useFormatter()
+  // Re-render periodically so "2 minutes ago" stays current
+  const now = useNow({ updateInterval: 30_000 })
+  const errorText = useErrorText()
   const { ready, session } = useSession()
   const profile = useProfile()
   const sync = useSyncStatus()
@@ -31,6 +39,7 @@ export function AccountSection() {
   // Profile form, seeded from the saved profile
   const [displayName, setDisplayName] = useState("")
   const [showEmail, setShowEmail] = useState(false)
+  const [tags, setTags] = useState<string[]>([])
   const [nameError, setNameError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const saved = profile.status === "ready" ? profile.profile : null
@@ -39,6 +48,7 @@ export function AccountSection() {
     if (saved) {
       setDisplayName(saved.displayName)
       setShowEmail(saved.showEmail)
+      setTags(saved.tags)
     }
   }, [saved])
 
@@ -47,7 +57,7 @@ export function AccountSection() {
     try {
       await signInWithGoogle()
     } catch {
-      toast.error("無法連線到 Google，請稍後再試")
+      toast.error(t("googleUnavailable"))
       setRedirecting(false)
     }
   }
@@ -56,15 +66,15 @@ export function AccountSection() {
     e.preventDefault()
     const invalid = validateDisplayName(displayName)
     if (invalid) {
-      setNameError(invalid)
+      setNameError(errorText(invalid))
       return
     }
     setSaving(true)
     try {
-      await saveProfile({ displayName, showEmail })
-      toast.success("已更新個人資料")
+      await saveProfile({ displayName, showEmail, tags })
+      toast.success(t("profileUpdated"))
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "儲存失敗")
+      toast.error(errorText(error, "saveFailed"))
     } finally {
       setSaving(false)
     }
@@ -77,7 +87,7 @@ export function AccountSection() {
     // Flush pending edits first so nothing is lost when the device data is removed
     if (hasPendingChanges()) await syncNow()
     if (removeLocal && hasPendingChanges()) {
-      toast.error("還有變更尚未上傳，請連上網路後再試")
+      toast.error(t("pendingChanges"))
       setSigningOut(false)
       return
     }
@@ -86,31 +96,31 @@ export function AccountSection() {
     if (removeLocal) resetLocalData()
     setSigningOut(false)
     setLogoutOpen(false)
-    toast.success(removeLocal ? "已登出並移除這台裝置上的資料" : "已登出")
+    toast.success(removeLocal ? t("signedOutRemoved") : t("signedOut"))
   }
 
   const identity = session ? googleIdentity(session.user) : null
   const dirty =
-    saved !== null && (displayName.trim() !== saved.displayName || showEmail !== saved.showEmail)
+    saved !== null && (displayName.trim() !== saved.displayName || showEmail !== saved.showEmail || tags.join("\n") !== saved.tags.join("\n"))
 
   return (
     <Card id="account" className="scroll-mt-20">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           <Cloud className="h-5 w-5" />
-          帳號與同步
+          {t("title")}
         </CardTitle>
         <CardDescription>
           {session
-            ? "清單與自訂來源會自動同步到你登入的所有裝置。"
-            : "用 Google 帳號登入，就能在手機、電腦之間同步清單。不登入也能照常使用。"}
+            ? t("signedInDescription")
+            : t("signedOutDescription")}
         </CardDescription>
       </CardHeader>
       <CardContent>
         {!ready ? null : !session || !identity ? (
           <Button onClick={handleSignIn} disabled={redirecting}>
             {redirecting ? <Loader2 className="animate-spin" /> : <GoogleIcon />}
-            使用 Google 登入
+            {t("signIn")}
           </Button>
         ) : (
           <div className="space-y-6">
@@ -124,33 +134,52 @@ export function AccountSection() {
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-lg bg-zinc-50 px-3 py-2.5">
-              <p className="flex-1 text-sm text-zinc-600">
+              <div className="flex-1 min-w-0 text-sm text-zinc-600">
                 {sync.state === "syncing" ? (
-                  "同步中…"
+                  t("syncing")
                 ) : sync.state === "error" ? (
-                  <span className="text-red-600">同步失敗：{sync.error}</span>
+                  <div className={sync.errorKind === "offline" ? "text-zinc-600" : "text-red-600"}>
+                    <p className="font-medium">{t("syncFailed")}</p>
+                    <p>{t(`syncErrors.${sync.errorKind ?? "unknown"}`)}</p>
+                    {/* Raw server message, for bug reports */}
+                    {sync.error && (
+                      <details className="mt-1 text-xs text-zinc-500">
+                        <summary className="cursor-pointer select-none w-fit">{t("syncErrorDetails")}</summary>
+                        <code className="mt-1 block break-all font-mono">{sync.error}</code>
+                      </details>
+                    )}
+                  </div>
                 ) : sync.lastSyncedAt ? (
-                  `上次同步：${sync.lastSyncedAt.toLocaleTimeString("zh-TW")}`
+                  <span title={format.dateTime(sync.lastSyncedAt, DATE_TIME)}>
+                    {t("lastSynced", {
+                      // Relative within a day ("2 minutes ago"), full date and time beyond that
+                      time:
+                        now.getTime() - sync.lastSyncedAt.getTime() < 86_400_000
+                          ? // `now` only ticks every 30s, so it can trail a sync that just finished
+                            format.relativeTime(sync.lastSyncedAt, new Date(Math.max(now.getTime(), sync.lastSyncedAt.getTime())))
+                          : format.dateTime(sync.lastSyncedAt, DATE_TIME),
+                    })}
+                  </span>
                 ) : (
-                  "尚未同步"
+                  t("notSynced")
                 )}
-              </p>
+              </div>
               <Button variant="outline" size="sm" onClick={() => void syncNow()} disabled={sync.state === "syncing"}>
                 {sync.state === "syncing" ? <Loader2 className="animate-spin" /> : <RefreshCw />}
-                立即同步
+                {t("syncNow")}
               </Button>
             </div>
 
             {/* Profile */}
             <div className="border-t border-zinc-100 pt-5">
-              <p className="text-sm font-semibold text-zinc-800 mb-4">個人資料</p>
+              <p className="text-sm font-semibold text-zinc-800 mb-4">{t("profile")}</p>
               {profile.status === "loading" ? (
                 <Loader2 className="h-5 w-5 animate-spin text-zinc-300" />
               ) : profile.status === "error" ? (
                 <div className="text-sm text-zinc-500 space-y-2">
-                  <p>無法載入個人資料，可能是網路中斷。</p>
+                  <p>{t("profileLoadFailed")}</p>
                   <Button variant="outline" size="sm" onClick={reloadProfile}>
-                    重試
+                    {t("retry")}
                   </Button>
                 </div>
               ) : (
@@ -163,13 +192,15 @@ export function AccountSection() {
                     }}
                     showEmail={showEmail}
                     onShowEmailChange={setShowEmail}
+                    tags={tags}
+                    onTagsChange={setTags}
                     email={identity.email}
                     avatarUrl={identity.avatarUrl}
                     error={nameError}
                   />
                   <Button type="submit" size="sm" disabled={saving || (saved !== null && !dirty)}>
                     {saving && <Loader2 className="animate-spin" />}
-                    {saved ? "儲存變更" : "建立個人資料"}
+                    {saved ? t("saveChanges") : t("createProfile")}
                   </Button>
                 </form>
               )}
@@ -178,7 +209,7 @@ export function AccountSection() {
             <div className="border-t border-zinc-100 pt-4">
               <Button variant="ghost" className="-ml-2 text-zinc-600" onClick={() => setLogoutOpen(true)}>
                 <LogOut />
-                登出
+                {t("signOut")}
               </Button>
             </div>
           </div>
@@ -188,18 +219,18 @@ export function AccountSection() {
       <Dialog open={logoutOpen} onOpenChange={(open) => !signingOut && setLogoutOpen(open)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>登出</DialogTitle>
+            <DialogTitle>{t("signOut")}</DialogTitle>
             <DialogDescription>
-              雲端的資料會保留，下次登入就會回來。如果這是共用裝置，建議一併移除這台裝置上的資料。
+              {t("signOutDescription")}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => handleSignOut(false)} disabled={signingOut}>
-              登出，保留這台裝置的資料
+              {t("signOutKeep")}
             </Button>
             <Button variant="destructive" onClick={() => handleSignOut(true)} disabled={signingOut}>
               {signingOut && <Loader2 className="animate-spin" />}
-              登出並移除
+              {t("signOutRemove")}
             </Button>
           </DialogFooter>
         </DialogContent>

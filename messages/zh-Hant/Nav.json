@@ -1,0 +1,16 @@
+{
+  "dashboard": "我的清單",
+  "explore": "探索",
+  "settings": "設定",
+  "about": "關於",
+  "language": "語言",
+  "signIn": "登入",
+  "signInFailed": "無法連線到 Google，請稍後再試",
+  "syncing": "同步中",
+  "syncFailed": "同步失敗",
+  "synced": "已同步",
+  "goToAccount": "{status}，前往帳號設定",
+  "syncErrorToast": "同步失敗",
+  "syncOfflineToast": "目前離線",
+  "retry": "重試"
+}

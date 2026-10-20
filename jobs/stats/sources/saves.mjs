@@ -1,8 +1,14 @@
 // Codes added to playlists by signed-in users, read from their synced playlists.
 // Counts distinct users whose item was added inside the window, so deleting an item drops it.
 
-// Description of the playlist created by loadDemoData() in lib/local-store.ts; its codes aren't real saves
-const DEMO_DESCRIPTION = "這是一份示範清單，可以試著產生連結、加註記或分享。"
+import { readdirSync, readFileSync } from "node:fs"
+
+// Descriptions (in every locale) of the playlist created by loadDemoData() in lib/local-store.ts;
+// its codes aren't real saves
+const MESSAGES_DIR = new URL("../../../messages/", import.meta.url)
+const DEMO_DESCRIPTIONS = readdirSync(MESSAGES_DIR).map(
+  (locale) => JSON.parse(readFileSync(new URL(`${locale}/Demo.json`, MESSAGES_DIR), "utf8")).description
+)
 
 export default {
   name: "saves",
@@ -18,12 +24,12 @@ export default {
        ) as item
        where r.kind = 'playlist'
          and not r.deleted
-         and r.data->>'description' is distinct from $3
+         and coalesce(r.data->>'description', '') <> all($3::text[])
          and item->>'createdAt' >= $1 and item->>'createdAt' < $2
          and item->>'normalizedCode' ~ '^[A-Z0-9][A-Z0-9-]{1,29}$'
          and not exists (select 1 from public.stats_opt_outs o where o.user_id = r.user_id)
        group by 1`,
-      [from.toISOString(), to.toISOString(), DEMO_DESCRIPTION]
+      [from.toISOString(), to.toISOString(), DEMO_DESCRIPTIONS]
     )
     return rows
   },

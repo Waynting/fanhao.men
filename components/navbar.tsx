@@ -1,26 +1,28 @@
 "use client"
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { List, ListVideo, Settings, Info, Compass } from "lucide-react"
 import { AccountButton } from "@/components/account-button"
+import { LanguageSwitcher } from "@/components/language-switcher"
+import { Link, usePathname } from "@/i18n/navigation"
 import { SITE_NAME } from "@/lib/site"
 
 const navItems = [
-  { href: "/dashboard", match: ["/dashboard", "/playlist"], label: "我的清單", icon: List },
-  { href: "/explore", match: ["/explore"], label: "探索", icon: Compass },
-  { href: "/settings", match: ["/settings"], label: "設定", icon: Settings },
-  { href: "/about", match: ["/about"], label: "關於", icon: Info },
-]
+  { href: "/dashboard", match: ["/dashboard", "/playlist"], label: "dashboard", icon: List },
+  { href: "/explore", match: ["/explore"], label: "explore", icon: Compass },
+  { href: "/settings", match: ["/settings"], label: "settings", icon: Settings },
+  { href: "/about", match: ["/about"], label: "about", icon: Info },
+] as const
 
 export function Navbar() {
+  const t = useTranslations("Nav")
   const pathname = usePathname()
-  const isActive = (match: string[]) => match.some((m) => pathname.startsWith(m))
+  const isActive = (match: readonly string[]) => match.some((m) => pathname.startsWith(m))
 
   return (
     <>
       {/* Top Navigation Bar */}
-      <nav className="border-b border-zinc-200/80 bg-zinc-900 sticky top-0 z-50">
+      <nav className="border-b border-zinc-200/80 bg-zinc-900 sticky top-0 z-50 pt-[env(safe-area-inset-top)]">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 max-w-[1400px]">
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-6 sm:gap-8">
@@ -49,14 +51,15 @@ export function Navbar() {
                       }`}
                     >
                       <Icon className="h-4 w-4" />
-                      <span>{item.label}</span>
+                      <span>{t(item.label)}</span>
                     </Link>
                   )
                 })}
               </div>
             </div>
 
-            <div className="flex items-center">
+            <div className="flex items-center gap-1">
+              <LanguageSwitcher />
               <AccountButton />
             </div>
           </div>
@@ -78,7 +81,7 @@ export function Navbar() {
                 }`}
               >
                 <Icon className="h-5 w-5" />
-                <span className="text-[10px] font-medium">{item.label}</span>
+                <span className="text-[10px] font-medium">{t(item.label)}</span>
               </Link>
             )
           })}

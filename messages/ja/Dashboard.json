@@ -1,0 +1,40 @@
+{
+  "title": "マイリスト",
+  "newPlaylist": "新しいリスト",
+  "emptyTitle": "リストはまだありません",
+  "emptyBody": "最初のリストを作って品番を整理しましょう。サンプルデータを読み込んで試すこともできます。",
+  "createFirst": "最初のリストを作成",
+  "loadDemo": "サンプルデータを読み込む",
+  "codeCountLabel": "件の品番",
+  "updatedAt": "{date} 更新",
+  "public": "公開",
+  "new": {
+    "title": "新しいリスト",
+    "description": "作成後に品番を追加できます",
+    "nameLabel": "リスト名 *",
+    "namePlaceholder": "例：2025 お気に入り、あとで見る",
+    "descriptionLabel": "説明（任意）",
+    "descriptionPlaceholder": "どんなリストですか？",
+    "submit": "リストを作成",
+    "created": "リストを作成しました"
+  },
+  "createdAt": "{date} 作成",
+  "library": {
+    "searchPlaceholder": "リスト名・説明・品番で検索",
+    "clearSearch": "検索をクリア",
+    "sortLabel": "並べ替え",
+    "sort": {
+      "updated": "最近の更新",
+      "created": "最近の作成",
+      "name": "名前",
+      "most": "品番が多い順",
+      "fewest": "品番が少ない順"
+    },
+    "viewGrid": "カード表示",
+    "viewList": "リスト表示",
+    "total": "{count} 件のリスト",
+    "matches": "{count} 件見つかりました",
+    "noMatchTitle": "該当するリストがありません",
+    "noMatchBody": "「{query}」に一致するリスト名・説明・品番はありません"
+  }
+}

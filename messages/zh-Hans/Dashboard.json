@@ -1,0 +1,40 @@
+{
+  "title": "我的清单",
+  "newPlaylist": "新建清单",
+  "emptyTitle": "还没有任何清单",
+  "emptyBody": "创建第一份清单开始整理番号，或先加载示例数据看看效果。",
+  "createFirst": "创建第一份清单",
+  "loadDemo": "加载示例数据",
+  "codeCountLabel": "个番号",
+  "updatedAt": "更新于 {date}",
+  "public": "公开",
+  "new": {
+    "title": "新建清单",
+    "description": "创建后即可添加番号",
+    "nameLabel": "清单名称 *",
+    "namePlaceholder": "例如：2025 精选、待看清单",
+    "descriptionLabel": "描述（选填）",
+    "descriptionPlaceholder": "这份清单的内容是？",
+    "submit": "创建清单",
+    "created": "清单已创建"
+  },
+  "createdAt": "创建于 {date}",
+  "library": {
+    "searchPlaceholder": "搜索清单名称、描述或番号",
+    "clearSearch": "清除搜索",
+    "sortLabel": "排序",
+    "sort": {
+      "updated": "最近更新",
+      "created": "最近创建",
+      "name": "名称",
+      "most": "番号最多",
+      "fewest": "番号最少"
+    },
+    "viewGrid": "卡片视图",
+    "viewList": "列表视图",
+    "total": "共 {count} 个清单",
+    "matches": "找到 {count} 个清单",
+    "noMatchTitle": "找不到符合的清单",
+    "noMatchBody": "没有清单的名称、描述或番号符合「{query}」"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "generic": "エラーが発生しました。しばらくしてからもう一度お試しください",
+  "storageFull": "保存できません：ブラウザのストレージが一杯か無効になっています",
+  "playlistNotFound": "リストが見つかりません",
+  "playlistNameRequired": "リスト名を入力してください",
+  "nameRequired": "名前を入力してください",
+  "templateMissingCode": "URL に '{code}' を含めてください",
+  "invalidUrl": "URL の形式が正しくありません",
+  "invalidFile": "ファイルの形式が正しくありません",
+  "nicknameRequired": "ニックネームを入力してください",
+  "nicknameTooLong": "ニックネームは {max} 文字以内です",
+  "signInRequired": "先にログインしてください",
+  "saveFailed": "保存できませんでした。しばらくしてからもう一度お試しください",
+  "emptyInput": "入力が空です",
+  "invalidCode": "品番の形式が正しくありません",
+  "noCodeInUrl": "URL から品番が見つかりません",
+  "urlCodeInvalid": "URL から「{code}」を取得しましたが、有効な品番ではないようです",
+  "tagTooLong": "タグは {max} 文字までです",
+  "tagLimit": "タグは {max} 個までです"
+}

@@ -1,0 +1,16 @@
+{
+  "dashboard": "マイリスト",
+  "explore": "ランキング",
+  "settings": "設定",
+  "about": "概要",
+  "language": "言語",
+  "signIn": "ログイン",
+  "signInFailed": "Google に接続できません。しばらくしてからもう一度お試しください",
+  "syncing": "同期中",
+  "syncFailed": "同期に失敗",
+  "synced": "同期済み",
+  "goToAccount": "{status}。アカウント設定へ",
+  "syncErrorToast": "同期に失敗しました",
+  "syncOfflineToast": "オフラインです",
+  "retry": "再試行"
+}

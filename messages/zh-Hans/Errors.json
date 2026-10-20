@@ -1,0 +1,20 @@
+{
+  "generic": "发生错误，请稍后再试",
+  "storageFull": "保存失败：浏览器存储空间已满或被禁用",
+  "playlistNotFound": "找不到这个清单",
+  "playlistNameRequired": "请输入清单名称",
+  "nameRequired": "请输入名称",
+  "templateMissingCode": "网址必须包含 '{code}'",
+  "invalidUrl": "网址格式不正确",
+  "invalidFile": "文件格式不正确",
+  "nicknameRequired": "请输入昵称",
+  "nicknameTooLong": "昵称最多 {max} 个字",
+  "signInRequired": "请先登录",
+  "saveFailed": "保存失败，请稍后再试",
+  "emptyInput": "输入为空",
+  "invalidCode": "番号格式不正确",
+  "noCodeInUrl": "无法从网址中找到番号",
+  "urlCodeInvalid": "从网址获取到“{code}”，但它不像有效的番号",
+  "tagTooLong": "每个标签最多 {max} 个字",
+  "tagLimit": "最多 {max} 个标签"
+}

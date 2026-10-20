@@ -21,9 +21,18 @@ const PUSH_BATCH = 200
 // Rows from transactions that committed late can carry a slightly older synced_at; re-read a margin.
 const CURSOR_OVERLAP_MS = 60_000
 
-export type SyncStatus = { state: "idle" | "syncing" | "error"; lastSyncedAt: Date | null; error: string | null }
+/** Coarse cause of a failed sync, so the UI can show friendly text instead of the raw message. */
+export type SyncErrorKind = "offline" | "network" | "auth" | "permission" | "unknown"
 
-let status: SyncStatus = { state: "idle", lastSyncedAt: null, error: null }
+export type SyncStatus = {
+  state: "idle" | "syncing" | "error"
+  lastSyncedAt: Date | null
+  /** Raw message of the last failure (for details/tooltips), null when the last run succeeded. */
+  error: string | null
+  errorKind: SyncErrorKind | null
+}
+
+let status: SyncStatus = { state: "idle", lastSyncedAt: null, error: null, errorKind: null }
 const listeners = new Set<() => void>()
 
 function setStatus(next: Partial<SyncStatus>) {
@@ -114,7 +123,7 @@ export function syncNow(): Promise<void> {
     const user = data.session?.user
     if (!user) return
     setSyncUser(user.id)
-    setStatus({ state: "syncing", error: null })
+    setStatus({ state: "syncing", error: null, errorKind: null })
     try {
       do {
         again = false
@@ -125,12 +134,26 @@ export function syncNow(): Promise<void> {
     } catch (error) {
       // Supabase errors are plain objects with a message, not Error instances
       const message = (error as { message?: string } | null)?.message
-      setStatus({ state: "error", error: message || "同步失敗" })
+      setStatus({ state: "error", error: message || null, errorKind: classifySyncError(error) })
     }
   })().finally(() => {
     running = null
   })
   return running
+}
+
+function classifySyncError(error: unknown): SyncErrorKind {
+  if (typeof navigator !== "undefined" && !navigator.onLine) return "offline"
+  const { message = "", code = "" } = (error ?? {}) as { message?: string; code?: string }
+  // fetch() rejections surface as "TypeError: Failed to fetch" (Chrome), "Load failed" (Safari),
+  // "NetworkError when attempting to fetch resource" (Firefox)
+  if (error instanceof TypeError || /failed to fetch|load failed|networkerror|network request failed/i.test(message)) {
+    return "network"
+  }
+  // PostgREST: PGRST301/302/303 = missing/invalid/expired JWT
+  if (/^PGRST30/.test(code) || /jwt|refresh token|not authenticated/i.test(message)) return "auth"
+  if (code === "42501" || /permission denied|row-level security/i.test(message)) return "permission"
+  return "unknown"
 }
 
 export function hasPendingChanges() {

@@ -3,6 +3,7 @@
 import { useRef, useState } from "react"
 import { ArrowLeft, ArrowRight, Check, CloudUpload, Loader2, RefreshCw, Smartphone } from "lucide-react"
 import { toast } from "sonner"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
 import { ProfileFields } from "@/components/profile-fields"
@@ -10,6 +11,7 @@ import { UserAvatar } from "@/components/user-avatar"
 import { useSession } from "@/lib/supabase"
 import { googleIdentity, saveProfile, useProfile, validateDisplayName } from "@/lib/profile"
 import { useStore } from "@/lib/local-store"
+import { useErrorText } from "@/i18n/use-error-text"
 
 /** Staggered entrance for each step's content: RISE class + delay(ms) style. */
 const RISE = "animate-in fade-in slide-in-from-bottom-2 duration-500"
@@ -52,10 +54,13 @@ interface OnboardingFlowProps {
 
 /** The two-step dialog itself, without the session/profile wiring. */
 export function OnboardingFlow({ open, identity, playlistCount, onDismiss }: OnboardingFlowProps) {
+  const t = useTranslations("Settings.onboarding")
+  const errorText = useErrorText()
   const [step, setStep] = useState<1 | 2>(1)
   const primaryRef = useRef<HTMLButtonElement>(null)
   const [displayName, setDisplayName] = useState(identity.name)
   const [showEmail, setShowEmail] = useState(false)
+  const [tags, setTags] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
@@ -63,15 +68,15 @@ export function OnboardingFlow({ open, identity, playlistCount, onDismiss }: Onb
     e.preventDefault()
     const invalid = validateDisplayName(displayName)
     if (invalid) {
-      setError(invalid)
+      setError(errorText(invalid))
       return
     }
     setSaving(true)
     try {
-      await saveProfile({ displayName, showEmail })
-      toast.success(`歡迎，${displayName.trim()}！`)
+      await saveProfile({ displayName, showEmail, tags })
+      toast.success(t("welcomeToast", { name: displayName.trim() }))
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "儲存失敗")
+      toast.error(errorText(err, "saveFailed"))
     } finally {
       setSaving(false)
     }
@@ -81,7 +86,7 @@ export function OnboardingFlow({ open, identity, playlistCount, onDismiss }: Onb
     <Dialog open={open} onOpenChange={(next) => !next && !saving && onDismiss()}>
       <DialogContent
         // minmax(0,1fr): without it a long nickname widens the grid track past the viewport on phones
-        className="p-0 gap-0 grid-cols-[minmax(0,1fr)] w-[calc(100vw-2rem)] rounded-xl sm:rounded-xl sm:max-w-md max-h-[calc(100dvh-2rem)] overflow-x-hidden overflow-y-auto [&>button:last-child]:text-white [&>button:last-child]:top-3.5"
+        className="p-0 gap-0 grid-cols-[minmax(0,1fr)] sm:w-[calc(100vw-2rem)] sm:rounded-xl sm:max-w-md overflow-x-hidden overflow-y-auto [&>button:last-child]:text-white sm:[&>button:last-child]:top-3.5"
         onInteractOutside={(e) => e.preventDefault()}
         // Focus the primary action rather than "稍後再說", which otherwise opens looking pre-selected
         onOpenAutoFocus={(e) => {
@@ -100,7 +105,7 @@ export function OnboardingFlow({ open, identity, playlistCount, onDismiss }: Onb
               maskImage: "linear-gradient(to bottom, black, transparent)",
             }}
           />
-          <div className="relative flex items-center gap-1.5" aria-label={`第 ${step} 步，共 2 步`}>
+          <div className="relative flex items-center gap-1.5" aria-label={t("stepLabel", { step, total: 2 })}>
             {[1, 2].map((n) => (
               <span
                 key={n}
@@ -125,10 +130,13 @@ export function OnboardingFlow({ open, identity, playlistCount, onDismiss }: Onb
           <div key="welcome" className="px-6 pt-3 pb-6 space-y-5">
             <div className={RISE} style={delay(0)}>
               <DialogTitle className="text-xl font-semibold tracking-tight text-zinc-900">
-                歡迎{identity.name ? `，${identity.name}` : ""}
+                {identity.name ? t("welcomeName", { name: identity.name }) : t("welcome")}
               </DialogTitle>
               <DialogDescription className="mt-1 text-sm text-zinc-500">
-                已用 <span className="text-zinc-700">{identity.email}</span> 登入
+                {t.rich("signedInAs", {
+                  hl: (chunks) => <span className="text-zinc-700">{chunks}</span>,
+                  email: identity.email,
+                })}
               </DialogDescription>
             </div>
 
@@ -136,11 +144,11 @@ export function OnboardingFlow({ open, identity, playlistCount, onDismiss }: Onb
               {[
                 {
                   icon: CloudUpload,
-                  title: playlistCount > 0 ? `這台裝置上的 ${playlistCount} 份清單會同步到帳號` : "清單會自動備份到帳號",
-                  body: "和帳號裡已有的清單合併，不會互相覆蓋。",
+                  title: playlistCount > 0 ? t("syncLocal", { count: playlistCount }) : t("backupAuto"),
+                  body: t("mergeBody"),
                 },
-                { icon: RefreshCw, title: "之後自動同步", body: "編輯、切回 App、重新連線時都會同步，不用手動存檔。" },
-                { icon: Smartphone, title: "換裝置也在", body: "在手機或電腦用同一個 Google 帳號登入就能看到。" },
+                { icon: RefreshCw, title: t("autoSyncTitle"), body: t("autoSyncBody") },
+                { icon: Smartphone, title: t("devicesTitle"), body: t("devicesBody") },
               ].map(({ icon: Icon, title, body }, i) => (
                 <li key={title} style={delay(80 + i * 70)} className={`${RISE} flex gap-3`}>
                   <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-100">
@@ -156,10 +164,10 @@ export function OnboardingFlow({ open, identity, playlistCount, onDismiss }: Onb
 
             <div style={delay(320)} className={`${RISE} flex flex-col-reverse sm:flex-row sm:justify-between gap-2 pt-1`}>
               <Button variant="ghost" className="text-zinc-500" onClick={onDismiss}>
-                稍後再說
+                {t("later")}
               </Button>
               <Button ref={primaryRef} onClick={() => setStep(2)}>
-                設定個人資料
+                {t("setupProfile")}
                 <ArrowRight />
               </Button>
             </div>
@@ -167,8 +175,8 @@ export function OnboardingFlow({ open, identity, playlistCount, onDismiss }: Onb
         ) : (
           <form key="profile" onSubmit={handleFinish} className="px-6 pt-3 pb-6 space-y-5">
             <div className={RISE} style={delay(0)}>
-              <DialogTitle className="text-xl font-semibold tracking-tight text-zinc-900">你想怎麼被看見？</DialogTitle>
-              <DialogDescription className="mt-1 text-sm text-zinc-500">之後隨時可以在設定裡修改。</DialogDescription>
+              <DialogTitle className="text-xl font-semibold tracking-tight text-zinc-900">{t("profileTitle")}</DialogTitle>
+              <DialogDescription className="mt-1 text-sm text-zinc-500">{t("profileDescription")}</DialogDescription>
             </div>
 
             <div className={RISE} style={delay(80)}>
@@ -180,6 +188,8 @@ export function OnboardingFlow({ open, identity, playlistCount, onDismiss }: Onb
                 }}
                 showEmail={showEmail}
                 onShowEmailChange={setShowEmail}
+                tags={tags}
+                onTagsChange={setTags}
                 email={identity.email}
                 avatarUrl={identity.avatarUrl}
                 error={error}
@@ -190,11 +200,11 @@ export function OnboardingFlow({ open, identity, playlistCount, onDismiss }: Onb
             <div style={delay(160)} className={`${RISE} flex flex-col-reverse sm:flex-row sm:justify-between gap-2 pt-1`}>
               <Button type="button" variant="ghost" className="text-zinc-500" onClick={() => setStep(1)} disabled={saving}>
                 <ArrowLeft />
-                上一步
+                {t("back")}
               </Button>
               <Button type="submit" disabled={saving}>
                 {saving ? <Loader2 className="animate-spin" /> : <Check />}
-                完成
+                {t("finish")}
               </Button>
             </div>
           </form>

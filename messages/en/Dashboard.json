@@ -1,0 +1,40 @@
+{
+  "title": "My playlists",
+  "newPlaylist": "New playlist",
+  "emptyTitle": "No playlists yet",
+  "emptyBody": "Create your first playlist to start organizing codes, or load sample data to see how it works.",
+  "createFirst": "Create your first playlist",
+  "loadDemo": "Load sample data",
+  "codeCountLabel": "codes",
+  "updatedAt": "Updated {date}",
+  "public": "Public",
+  "new": {
+    "title": "New playlist",
+    "description": "You can add codes once it's created",
+    "nameLabel": "Playlist name *",
+    "namePlaceholder": "e.g. 2025 favorites, Watch later",
+    "descriptionLabel": "Description (optional)",
+    "descriptionPlaceholder": "What's this playlist about?",
+    "submit": "Create playlist",
+    "created": "Playlist created"
+  },
+  "createdAt": "Created {date}",
+  "library": {
+    "searchPlaceholder": "Search names, descriptions or codes",
+    "clearSearch": "Clear search",
+    "sortLabel": "Sort",
+    "sort": {
+      "updated": "Recently updated",
+      "created": "Recently created",
+      "name": "Name",
+      "most": "Most codes",
+      "fewest": "Fewest codes"
+    },
+    "viewGrid": "Card view",
+    "viewList": "List view",
+    "total": "{count, plural, one {# playlist} other {# playlists}}",
+    "matches": "{count, plural, =0 {No playlists found} one {# playlist found} other {# playlists found}}",
+    "noMatchTitle": "No matching playlists",
+    "noMatchBody": "No playlist name, description or code matches “{query}”"
+  }
+}

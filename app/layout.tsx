@@ -1,59 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { Toaster } from "sonner";
-import { GoogleAnalytics } from "@next/third-parties/google";
-import { ServiceWorkerRegister } from "@/components/service-worker-register";
-import { SyncProvider } from "@/components/sync-provider";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/site";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 
-const inter = Inter({ subsets: ["latin"] });
-
+// The real root layout (<html>, providers) is app/[locale]/layout.tsx, so it can set lang per
+// locale. This one only exists for the routes outside [locale]: icons, OG image, manifest, robots.
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: SITE_TITLE, template: `%s｜${SITE_NAME}` },
-  description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
-  keywords: ["番號", "番號收藏", "番號清單", "播放清單", "FC2", "JAV", "番號管理", "fanhao"],
-  openGraph: {
-    type: "website",
-    siteName: SITE_NAME,
-    title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
-    locale: "zh_TW",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
-  },
-  appleWebApp: {
-    capable: true,
-    title: "番號收藏",
-    statusBarStyle: "black-translucent",
-  },
+  category: "utilities",
+  // Codes like FC2-PPV-1234567 must not turn into phone links on iOS
+  formatDetection: { telephone: false, email: false, address: false },
 };
 
 export const viewport: Viewport = {
   themeColor: "#18181b",
+  colorScheme: "light",
+  // Lets env(safe-area-inset-*) work, which black-translucent needs in standalone mode
+  viewportFit: "cover",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-
-  return (
-    <html lang="zh-Hant">
-      <body className={inter.className}>
-        {children}
-        <Toaster position="top-center" richColors />
-        <ServiceWorkerRegister />
-        <SyncProvider />
-        {gaId && <GoogleAnalytics gaId={gaId} />}
-      </body>
-    </html>
-  );
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return children;
 }

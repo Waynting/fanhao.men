@@ -1,5 +1,8 @@
 import path from "node:path";
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const nextConfig: NextConfig = {
   // Pin the project root: a stray package-lock.json in the home directory
@@ -13,6 +16,10 @@ const nextConfig: NextConfig = {
   },
   typescript: {
     ignoreBuildErrors: false,
+  },
+  async rewrites() {
+    // Browsers and crawlers still ask for /favicon.ico; serve the generated icon
+    return [{ source: '/favicon.ico', destination: '/icon' }]
   },
   async headers() {
     return [
@@ -62,4 +69,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

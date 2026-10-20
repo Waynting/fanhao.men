@@ -1,0 +1,29 @@
+{
+  "title": "探索",
+  "subtitle": "大家最近收藏和点击最多的番号",
+  "periods": {
+    "7d": "本周",
+    "30d": "本月"
+  },
+  "counts": {
+    "saves": "{count} 人收藏",
+    "clicks": "{count} 人点击"
+  },
+  "disabledTitle": "本站未启用热门统计",
+  "disabledBody": "排行需要登录功能，目前只能使用自己的清单。",
+  "errorTitle": "排行加载失败",
+  "errorBody": "可能是网络不稳定，请稍后再试。",
+  "reload": "重新加载",
+  "emptyTitle": "数据积累中",
+  "emptyBody": "还没有足够多的人收藏或点击同一个番号。登录后你的收藏也会计入排行。",
+  "signIn": "登录",
+  "saved": "已收藏",
+  "defaultPlaylistName": "探索收藏",
+  "addLabel": "把 {code} 加入清单",
+  "addToPlaylist": "加入清单",
+  "linksLabel": "{code} 的链接",
+  "footer": "排行只统计登录用户，至少 3 人以上的番号才会列出，不会显示是谁收藏或点击。",
+  "updatedAt": " 更新于 {time}。",
+  "optOut": " 可以在<link>设置</link>中退出统计。",
+  "new": "新"
+}

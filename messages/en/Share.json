@@ -1,0 +1,44 @@
+{
+  "page": {
+    "invalidTitle": "Invalid share link",
+    "invalidBody": "The link may be incomplete. Make sure you copied the full URL.",
+    "goToDashboard": "Go to my playlists",
+    "label": "Shared playlist"
+  },
+  "content": {
+    "empty": "This playlist is empty",
+    "copiedCode": "Copied {code}",
+    "copiedUrl": "Copied {source} link",
+    "searchPlaceholder": "Search codes or notes...",
+    "matchCount": "{shown} of {total}",
+    "saveTitle": "Want to keep this playlist?",
+    "saveFiltered": "Save the {count, plural, one {# filtered code} other {# filtered codes}} as a new playlist",
+    "saveAll": "Save it as a new playlist of your own in one click ({count, plural, one {# code} other {# codes}})",
+    "saveFilteredButton": "Save filtered results",
+    "saveAllButton": "Save to my playlists",
+    "noResults": "No codes match \"{query}\"",
+    "clearSearch": "Clear search",
+    "addToMyPlaylists": "Add to my playlists",
+    "addToPlaylist": "Add to playlist",
+    "copyCode": "Copy code",
+    "sources": "Video sources",
+    "openLink": "Open link",
+    "copyLink": "Copy link",
+    "addToExisting": "Add to an existing playlist",
+    "alreadySaved": "In my playlists · View",
+    "savedAsNew": "Saved as “{name}” ({count, plural, one {# code} other {# codes}})",
+    "view": "View",
+    "generateAllLinks": "Generate links for all",
+    "generateFilteredLinks": "Generate links for results"
+  },
+  "public": {
+    "label": "Public playlist",
+    "labelWithOwner": "Public playlist by {name}",
+    "edit": "Edit",
+    "updatedAt": "Updated {date}",
+    "missingTitle": "Public playlist not found",
+    "missingBody": "It may have been deleted, or its owner made it private.",
+    "errorTitle": "Couldn't load the playlist",
+    "errorBody": "Check your connection and reload the page."
+  }
+}

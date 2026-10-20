@@ -1,0 +1,29 @@
+{
+  "title": "探索",
+  "subtitle": "大家最近收藏和點擊最多的番號",
+  "periods": {
+    "7d": "本週",
+    "30d": "本月"
+  },
+  "counts": {
+    "saves": "{count} 人收藏",
+    "clicks": "{count} 人點擊"
+  },
+  "disabledTitle": "這個站台沒有啟用熱門統計",
+  "disabledBody": "排行需要登入功能，目前只能使用自己的清單。",
+  "errorTitle": "排行載入失敗",
+  "errorBody": "可能是網路不穩，稍後再試一次。",
+  "reload": "重新載入",
+  "emptyTitle": "資料累積中",
+  "emptyBody": "還沒有足夠多人收藏或點擊同一個番號。登入後你的收藏也會計入排行。",
+  "signIn": "登入",
+  "saved": "已收藏",
+  "defaultPlaylistName": "探索收藏",
+  "addLabel": "把 {code} 加入清單",
+  "addToPlaylist": "加入清單",
+  "linksLabel": "{code} 的連結",
+  "footer": "排行只統計登入用戶，至少 3 人以上的番號才會列出，不會顯示是誰收藏或點擊。",
+  "updatedAt": " 更新於 {time}。",
+  "optOut": " 可以在<link>設定</link>退出統計。",
+  "new": "新"
+}

@@ -1,7 +1,9 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
   Dialog,
@@ -20,6 +22,7 @@ import {
   getParseStats,
   type ParseResult
 } from "@/lib/url-parser"
+import { useErrorText } from "@/i18n/use-error-text"
 
 type Mode = "single" | "bulk"
 
@@ -36,20 +39,51 @@ export function UnifiedAddVideosDialog({
   onOpenChange,
   existingItems,
 }: UnifiedAddVideosDialogProps) {
+  const t = useTranslations("Playlist.addDialog")
+  const tCommon = useTranslations("Common")
+  const errorText = useErrorText()
   const [mode, setMode] = useState<Mode>("single")
   const [input, setInput] = useState("")
   const [singleResult, setSingleResult] = useState<ParseResult | null>(null)
   const [bulkResults, setBulkResults] = useState<ParseResult[]>([])
+  // Feedback for the last add while the dialog stays open (cleared as soon as the user types again)
+  const [lastAdded, setLastAdded] = useState<string | null>(null)
+  const [bulkNotice, setBulkNotice] = useState<{ added: number; skipped: number; failed: number } | null>(null)
+  const [addedAny, setAddedAny] = useState(false)
+  const [isMac, setIsMac] = useState(true)
+  const singleInputRef = useRef<HTMLInputElement>(null)
+  const bulkInputRef = useRef<HTMLTextAreaElement>(null)
 
-  // Smart mode detection based on input
   useEffect(() => {
-    const lines = input.split('\n').filter(line => line.trim().length > 0)
+    setIsMac(/Mac|iPhone|iPad|iPod/.test(navigator.userAgent))
+  }, [])
 
-    if (lines.length > 1 && mode === "single") {
-      // Auto-switch to bulk if multiple lines detected
-      setMode("bulk")
-    }
-  }, [input, mode])
+  const isMultiLine = input.split("\n").filter((line) => line.trim().length > 0).length > 1
+
+  const changeInput = (value: string) => {
+    setInput(value)
+    setLastAdded(null)
+    setBulkNotice(null)
+  }
+
+  const switchMode = (next: Mode) => {
+    if (next === mode) return
+    setMode(next)
+    // Hand focus to the newly mounted field
+    requestAnimationFrame(() => (next === "single" ? singleInputRef.current : bulkInputRef.current)?.focus())
+  }
+
+  // An <input> drops newlines, so a multi-line paste switches to bulk with the pasted text intact
+  const handleSinglePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pasted = e.clipboardData.getData("text")
+    if (pasted.split(/\r?\n/).filter((line) => line.trim().length > 0).length < 2) return
+    e.preventDefault()
+    const el = e.currentTarget
+    const before = input.slice(0, el.selectionStart ?? input.length).trim()
+    const after = input.slice(el.selectionEnd ?? input.length).trim()
+    changeInput([before, pasted.replace(/\r\n/g, "\n").trim(), after].filter(Boolean).join("\n"))
+    switchMode("bulk")
+  }
 
   // Parse input in real-time with duplicate checking
   useEffect(() => {
@@ -89,6 +123,9 @@ export function UnifiedAddVideosDialog({
       setMode("single")
       setSingleResult(null)
       setBulkResults([])
+      setLastAdded(null)
+      setBulkNotice(null)
+      setAddedAny(false)
     }
   }, [open])
 
@@ -100,41 +137,65 @@ export function UnifiedAddVideosDialog({
     normalizedCode: r.normalizedCode!,
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-
+  const submit = () => {
     try {
       if (mode === "single") {
-        if (!singleResult?.success) {
-          toast.error(singleResult?.error || "格式不正確")
-          return
-        }
-        if (singleResult.isDuplicate) {
-          toast.error("這個番號已經在清單中")
-          return
-        }
+        // Invalid or duplicate input is already explained by the inline preview
+        if (!singleResult?.success || singleResult.isDuplicate) return
         addItems(playlistId, [toNewItem(singleResult)])
         trackAddItems({ playlist_id: playlistId, item_count: 1, method: singleResult.source === "url" ? "url_parse" : "single" })
-        toast.success(`已加入 ${singleResult.normalizedCode}`)
-      } else {
-        if (stats.successful === 0) {
-          toast.error("沒有可加入的有效番號")
-          return
-        }
-        const count = addItems(
-          playlistId,
-          bulkResults.filter((r) => r.success && !r.isDuplicate).map(toNewItem)
-        )
-        trackAddItems({ playlist_id: playlistId, item_count: count, method: "bulk" })
-        const parts = [`已加入 ${count} 個番號`]
-        if (stats.duplicates > 0) parts.push(`略過 ${stats.duplicates} 個重複`)
-        if (stats.failed > 0) parts.push(`${stats.failed} 個無法辨識`)
-        toast.success(parts.join("，"))
+        // Stay open for the next code: clear, refocus, and say what was just added
+        setInput("")
+        setBulkNotice(null)
+        setLastAdded(singleResult.normalizedCode!)
+        setAddedAny(true)
+        singleInputRef.current?.focus()
+        return
       }
+
+      if (stats.successful === 0) {
+        toast.error(t("noValidCodes"))
+        return
+      }
+      const count = addItems(
+        playlistId,
+        bulkResults.filter((r) => r.success && !r.isDuplicate).map(toNewItem)
+      )
+      trackAddItems({ playlist_id: playlistId, item_count: count, method: "bulk" })
+      if (stats.failed > 0) {
+        // Keep only the unrecognized lines so they can be fixed instead of lost
+        setInput(bulkResults.filter((r) => !r.success).map((r) => r.originalInput.trim()).join("\n"))
+        setLastAdded(null)
+        setBulkNotice({ added: count, skipped: stats.duplicates, failed: stats.failed })
+        setAddedAny(true)
+        bulkInputRef.current?.focus()
+        return
+      }
+      const parts = [t("bulkAdded", { count })]
+      if (stats.duplicates > 0) parts.push(t("bulkSkipped", { count: stats.duplicates }))
+      toast.success(parts.join(t("separator")))
       onOpenChange(false)
-    } catch (error: any) {
-      toast.error(error.message || "加入失敗")
+    } catch (error) {
+      toast.error(errorText(error))
     }
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    submit()
+  }
+
+  const handleSingleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Enter that confirms an IME candidate (Chinese/Japanese input) must not submit
+    if (e.key !== "Enter" || e.nativeEvent.isComposing || e.keyCode === 229) return
+    e.preventDefault()
+    submit()
+  }
+
+  const handleBulkKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key !== "Enter" || !(e.metaKey || e.ctrlKey) || e.nativeEvent.isComposing) return
+    e.preventDefault()
+    submit()
   }
 
   const isValid = mode === "single"
@@ -146,60 +207,99 @@ export function UnifiedAddVideosDialog({
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-xl">新增番號</DialogTitle>
+            <DialogTitle className="text-xl">{t("title")}</DialogTitle>
             {/* Mode Toggle */}
-            <div className="flex bg-gray-100 rounded-lg p-0.5">
+            <div className="flex bg-zinc-100 rounded-lg p-0.5">
               <button
                 type="button"
-                onClick={() => setMode("single")}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                onClick={() => switchMode("single")}
+                // Several lines can't go into the single-line field
+                disabled={mode === "bulk" && isMultiLine}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
                   mode === "single"
                     ? "bg-white text-black shadow-sm"
-                    : "text-gray-600 hover:text-black"
+                    : "text-zinc-600 hover:text-black"
                 }`}
               >
                 <Plus className="h-3 w-3 inline mr-1" />
-                單筆
+                {t("single")}
               </button>
               <button
                 type="button"
-                onClick={() => setMode("bulk")}
+                onClick={() => switchMode("bulk")}
                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                   mode === "bulk"
                     ? "bg-white text-black shadow-sm"
-                    : "text-gray-600 hover:text-black"
+                    : "text-zinc-600 hover:text-black"
                 }`}
               >
                 <ListPlus className="h-3 w-3 inline mr-1" />
-                批次
+                {t("bulk")}
               </button>
             </div>
           </div>
           <DialogDescription>
             {mode === "single"
-              ? "輸入番號或貼上影片網址"
-              : "一行一個番號或網址，可直接整批貼上"}
+              ? t("singleDescription")
+              : t("bulkDescription")}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-3">
-            <Textarea
-              id="video-input"
-              placeholder={
-                mode === "single"
-                  ? "SSIS-123、fc2ppv1234567 或網址..."
-                  : "SSIS-123\nIPX-920\nFC2-PPV-1234567\n..."
-              }
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              rows={mode === "single" ? 3 : 10}
-              autoFocus
-              required
-                            className={`border-gray-300 focus:border-black focus:ring-black transition-all ${
-                mode === "bulk" ? "font-mono text-sm" : ""
-              }`}
-            />
+            {mode === "single" ? (
+              <Input
+                ref={singleInputRef}
+                id="video-input"
+                placeholder={t("singlePlaceholder")}
+                value={input}
+                onChange={(e) => changeInput(e.target.value)}
+                onKeyDown={handleSingleKeyDown}
+                onPaste={handleSinglePaste}
+                autoFocus
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="characters"
+                spellCheck={false}
+                enterKeyHint="go"
+                className="h-11 border-zinc-300"
+              />
+            ) : (
+              <Textarea
+                ref={bulkInputRef}
+                id="video-input"
+                placeholder={"SSIS-123\nIPX-920\nFC2-PPV-1234567\n..."}
+                value={input}
+                onChange={(e) => changeInput(e.target.value)}
+                onKeyDown={handleBulkKeyDown}
+                rows={10}
+                autoFocus
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck={false}
+                className="border-zinc-300 font-mono text-sm"
+              />
+            )}
+
+            {/* What the last submit did, while the dialog stays open for more */}
+            {mode === "single" && lastAdded && !input && (
+              <div role="status" className="flex items-center gap-2 text-sm text-green-700">
+                <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
+                <span>{t.rich("addedInline", { code: lastAdded, c: (chunks) => <code className="font-mono font-semibold">{chunks}</code> })}</span>
+              </div>
+            )}
+            {mode === "bulk" && bulkNotice && (
+              <div role="status" className="flex items-start gap-2 p-3 text-sm bg-amber-50 border border-amber-200 rounded-lg text-amber-900">
+                <XCircle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                <span>
+                  {[
+                    t("bulkAdded", { count: bulkNotice.added }),
+                    ...(bulkNotice.skipped > 0 ? [t("bulkSkipped", { count: bulkNotice.skipped })] : []),
+                    t("failedKept", { count: bulkNotice.failed }),
+                  ].join(t("separator"))}
+                </span>
+              </div>
+            )}
 
             {/* Real-time Preview */}
             {mode === "single" && singleResult && (
@@ -209,7 +309,7 @@ export function UnifiedAddVideosDialog({
                     <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-300 rounded-lg">
                       <XCircle className="h-4 w-4 text-amber-600 flex-shrink-0" />
                       <div>
-                        <p className="text-xs font-medium text-amber-900 mb-1">⚠️ 已在清單中</p>
+                        <p className="text-xs font-medium text-amber-900 mb-1">{t("alreadyInPlaylist")}</p>
                         <code className="font-mono font-semibold text-amber-900">
                           {singleResult.normalizedCode}
                         </code>
@@ -220,7 +320,7 @@ export function UnifiedAddVideosDialog({
                       <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
                       <div>
                         <p className="text-xs text-green-700 mb-1">
-                          {singleResult.source === 'url' ? '✓ 已從網址擷取' : '✓ 格式正確'}
+                          {singleResult.source === 'url' ? t("extractedFromUrl") : t("validFormat")}
                         </p>
                         <code className="font-mono font-semibold text-green-900">
                           {singleResult.normalizedCode}
@@ -232,8 +332,8 @@ export function UnifiedAddVideosDialog({
                   <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
                     <XCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
                     <div>
-                      <p className="text-xs font-medium text-red-900 mb-1">無法辨識</p>
-                      <p className="text-xs text-red-700">{singleResult.error}</p>
+                      <p className="text-xs font-medium text-red-900 mb-1">{t("unrecognized")}</p>
+                      <p className="text-xs text-red-700">{errorText(singleResult.error, "invalidCode")}</p>
                     </div>
                   </div>
                 )}
@@ -247,19 +347,19 @@ export function UnifiedAddVideosDialog({
                   {stats.successful > 0 && (
                     <div className="flex items-center gap-1.5 px-2.5 py-1 bg-green-100 border border-green-300 rounded-md">
                       <CheckCircle2 className="h-3.5 w-3.5 text-green-700" />
-                      <span className="font-semibold text-green-900">{stats.successful} 個有效</span>
+                      <span className="font-semibold text-green-900">{t("validCount", { count: stats.successful })}</span>
                     </div>
                   )}
                   {stats.duplicates > 0 && (
                     <div className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 border border-amber-300 rounded-md">
                       <XCircle className="h-3.5 w-3.5 text-amber-700" />
-                      <span className="text-amber-900">{stats.duplicates} 個重複</span>
+                      <span className="text-amber-900">{t("duplicateCount", { count: stats.duplicates })}</span>
                     </div>
                   )}
                   {stats.failed > 0 && (
                     <div className="flex items-center gap-1.5 px-2.5 py-1 bg-red-100 border border-red-300 rounded-md">
                       <XCircle className="h-3.5 w-3.5 text-red-700" />
-                      <span className="text-red-900">{stats.failed} 個無法辨識</span>
+                      <span className="text-red-900">{t("failedCount", { count: stats.failed })}</span>
                     </div>
                   )}
                 </div>
@@ -268,7 +368,7 @@ export function UnifiedAddVideosDialog({
                 {stats.duplicates > 0 && (
                   <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
                     <p className="text-xs font-medium text-amber-900 mb-2">
-                      ⚠️ {stats.duplicates} 個番號重複，將略過
+                      {t("duplicatesSkipped", { count: stats.duplicates })}
                     </p>
                     <div className="space-y-1 max-h-32 overflow-y-auto">
                       {bulkResults
@@ -281,7 +381,7 @@ export function UnifiedAddVideosDialog({
                         ))}
                       {stats.duplicates > 5 && (
                         <p className="text-xs text-amber-700 pt-1">
-                          還有 {stats.duplicates - 5} 個...
+                          {t("moreItems", { count: stats.duplicates - 5 })}
                         </p>
                       )}
                     </div>
@@ -292,7 +392,7 @@ export function UnifiedAddVideosDialog({
                 {stats.failed > 0 && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
                     <p className="text-xs font-medium text-red-900 mb-2">
-                      {stats.failed} 行無法辨識
+                      {t("failedLines", { count: stats.failed })}
                     </p>
                     <div className="space-y-1 max-h-32 overflow-y-auto">
                       {bulkResults
@@ -305,7 +405,7 @@ export function UnifiedAddVideosDialog({
                         ))}
                       {stats.failed > 5 && (
                         <p className="text-xs text-red-700 pt-1">
-                          還有 {stats.failed - 5} 個...
+                          {t("moreItems", { count: stats.failed - 5 })}
                         </p>
                       )}
                     </div>
@@ -315,13 +415,19 @@ export function UnifiedAddVideosDialog({
             )}
           </div>
 
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex items-center justify-end gap-2 pt-2">
+            {/* Keyboard hint, desktop only */}
+            <p className="hidden sm:block mr-auto text-xs text-zinc-400">
+              {mode === "single"
+                ? t("singleHint")
+                : t("bulkHint", { key: isMac ? "⌘" : "Ctrl" })}
+            </p>
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-                          >
-              取消
+            >
+              {addedAny ? tCommon("close") : tCommon("cancel")}
             </Button>
             <Button
               type="submit"
@@ -331,12 +437,12 @@ export function UnifiedAddVideosDialog({
               {mode === "single" ? (
                 <>
                   <Plus className="h-4 w-4 mr-1.5" />
-                  加入
+                  {t("add")}
                 </>
               ) : (
                 <>
                   <ListPlus className="h-4 w-4 mr-1.5" />
-                  {`加入 ${stats.successful} 個`}
+                  {t("addCount", { count: stats.successful })}
                 </>
               )}
             </Button>

@@ -7,6 +7,7 @@
 
 import { useSyncExternalStore } from "react"
 import { nanoid } from "nanoid"
+import { AppError } from "./errors"
 
 export interface PlaylistItem {
   id: string
@@ -21,6 +22,8 @@ export interface Playlist {
   name: string
   description: string | null
   items: PlaylistItem[]
+  /** Anyone can view it at /p/<owner>/<id> once synced. Needs sign-in; absent = private. */
+  isPublic?: boolean
   createdAt: string
   updatedAt: string
 }
@@ -110,7 +113,7 @@ function save(next: StoreData, touched: string[] = []) {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
   } catch {
-    throw new Error("儲存失敗：瀏覽器儲存空間已滿或被停用")
+    throw new AppError("storageFull")
   }
   listeners.forEach((l) => l())
 }
@@ -139,7 +142,7 @@ const now = () => new Date().toISOString()
 
 function updatePlaylistIn(data: StoreData, id: string, fn: (p: Playlist) => Playlist): StoreData {
   const exists = data.playlists.some((p) => p.id === id)
-  if (!exists) throw new Error("找不到這個清單")
+  if (!exists) throw new AppError("playlistNotFound")
   return {
     ...data,
     playlists: data.playlists.map((p) => (p.id === id ? { ...fn(p), updatedAt: now() } : p)),
@@ -150,7 +153,7 @@ function updatePlaylistIn(data: StoreData, id: string, fn: (p: Playlist) => Play
 
 export function createPlaylist(input: { name: string; description?: string | null; items?: NewItem[] }): Playlist {
   const name = input.name.trim()
-  if (!name) throw new Error("請輸入清單名稱")
+  if (!name) throw new AppError("playlistNameRequired")
   const playlist: Playlist = {
     id: nanoid(10),
     name,
@@ -167,8 +170,12 @@ export function createPlaylist(input: { name: string; description?: string | nul
 
 export function updatePlaylist(id: string, input: { name: string; description?: string | null }) {
   const name = input.name.trim()
-  if (!name) throw new Error("請輸入清單名稱")
+  if (!name) throw new AppError("playlistNameRequired")
   save(updatePlaylistIn(load(), id, (p) => ({ ...p, name, description: input.description?.trim() || null })), [id])
+}
+
+export function setPlaylistPublic(id: string, isPublic: boolean) {
+  save(updatePlaylistIn(load(), id, (p) => ({ ...p, isPublic })), [id])
 }
 
 export function deletePlaylist(id: string) {
@@ -235,6 +242,84 @@ export function restoreItems(playlistId: string, snapshot: PlaylistItem[]) {
   save(updatePlaylistIn(load(), playlistId, (p) => ({ ...p, items: snapshot })), [playlistId])
 }
 
+/**
+ * Undo for deleteItems: puts back only the removed items at their old indexes, so
+ * edits made since (notes, adds, other deletes) survive. Skips codes already back.
+ */
+export function restoreDeletedItems(playlistId: string, removed: { item: PlaylistItem; index: number }[]) {
+  const data = load()
+  if (!data.playlists.some((p) => p.id === playlistId)) return
+  save(
+    updatePlaylistIn(data, playlistId, (p) => {
+      const items = [...p.items]
+      const seen = new Set(items.map((i) => i.normalizedCode))
+      // Ascending order so earlier inserts don't shift later target indexes
+      for (const { item, index } of [...removed].sort((a, b) => a.index - b.index)) {
+        if (seen.has(item.normalizedCode)) continue
+        seen.add(item.normalizedCode)
+        items.splice(Math.min(Math.max(index, 0), items.length), 0, item)
+      }
+      return { ...p, items }
+    }),
+    [playlistId]
+  )
+}
+
+/** Restores several playlists' item lists in one save (undo for multi-playlist edits). Skips deleted playlists. */
+export function restoreItemSnapshots(snapshots: Pick<Playlist, "id" | "items">[]) {
+  const data = load()
+  const byId = new Map(snapshots.map((s) => [s.id, s.items]))
+  const touched = data.playlists.filter((p) => byId.has(p.id)).map((p) => p.id)
+  if (touched.length === 0) return
+  save(
+    {
+      ...data,
+      playlists: data.playlists.map((p) => (byId.has(p.id) ? { ...p, items: byId.get(p.id)!, updatedAt: now() } : p)),
+    },
+    touched
+  )
+}
+
+/**
+ * Moves items to another playlist in one save. Codes the target already has are
+ * only removed from the source. Returns the number actually added to the target.
+ */
+export function moveItems(fromId: string, itemIds: string[], toId: string): number {
+  const data = load()
+  const from = data.playlists.find((p) => p.id === fromId)
+  if (!from) throw new AppError("playlistNotFound")
+  const ids = new Set(itemIds)
+  let added = 0
+  const next = updatePlaylistIn(data, toId, (p) => {
+    const result = mergeItems(p.items, from.items.filter((i) => ids.has(i.id)))
+    added = result.added
+    return { ...p, items: result.items }
+  })
+  save(updatePlaylistIn(next, fromId, (p) => ({ ...p, items: p.items.filter((i) => !ids.has(i.id)) })), [fromId, toId])
+  return added
+}
+
+/**
+ * Puts one code in exactly the given playlists: adds it where missing, removes it
+ * elsewhere. Only playlists whose membership changes are touched; returns their ids.
+ */
+export function setCodePlaylists(item: NewItem, playlistIds: string[]): string[] {
+  const data = load()
+  const want = new Set(playlistIds)
+  const touched: string[] = []
+  const playlists = data.playlists.map((p) => {
+    const has = p.items.some((i) => i.normalizedCode === item.normalizedCode)
+    if (has === want.has(p.id)) return p
+    touched.push(p.id)
+    const items = has
+      ? p.items.filter((i) => i.normalizedCode !== item.normalizedCode)
+      : mergeItems(p.items, [item]).items
+    return { ...p, items, updatedAt: now() }
+  })
+  if (touched.length > 0) save({ ...data, playlists }, touched)
+  return touched
+}
+
 export function updateItemNote(playlistId: string, itemId: string, note: string) {
   save(
     updatePlaylistIn(load(), playlistId, (p) => ({
@@ -250,12 +335,12 @@ export function updateItemNote(playlistId: string, itemId: string, note: string)
 export function createTemplate(input: { name: string; baseTemplate: string }) {
   const name = input.name.trim()
   const baseTemplate = input.baseTemplate.trim()
-  if (!name) throw new Error("請輸入名稱")
-  if (!baseTemplate.includes("{code}")) throw new Error("網址必須包含 {code}")
+  if (!name) throw new AppError("nameRequired")
+  if (!baseTemplate.includes("{code}")) throw new AppError("templateMissingCode")
   try {
     new URL(baseTemplate.replace("{code}", "TEST-001"))
   } catch {
-    throw new Error("網址格式不正確")
+    throw new AppError("invalidUrl")
   }
   const data = load()
   const id = nanoid(10)
@@ -275,6 +360,15 @@ export function deleteTemplate(id: string) {
     },
     [id]
   )
+}
+
+/** Restores a previously deleted template (used for undo). */
+export function restoreTemplate(template: SourceTemplate) {
+  const data = load()
+  if (data.templates.some((t) => t.id === template.id)) return
+  const { [template.id]: _, ...deleted } = data.deleted
+  // Fresh updatedAt so the restore beats the already-synced deletion
+  save({ ...data, templates: [...data.templates, { ...template, updatedAt: now() }], deleted }, [template.id])
 }
 
 // ---------- Backup ----------
@@ -298,7 +392,7 @@ export function importData(json: string, mode: "merge" | "replace"): number {
   try {
     parsed = normalize(JSON.parse(json))
   } catch {
-    throw new Error("檔案格式不正確")
+    throw new AppError("invalidFile")
   }
   const data = load()
   // Imported records count as fresh edits, so they win over older cloud copies
@@ -442,15 +536,19 @@ export function applyRemote(records: SyncRecord[], cursor: string | null) {
 
 // ---------- Demo ----------
 
-export function loadDemoData(): Playlist {
+/**
+ * Text comes from the Demo messages of the current locale. jobs/stats/sources/saves.mjs spots the
+ * demo playlist by its description in any locale, so keep those strings unique.
+ */
+export function loadDemoData(text: { name: string; description: string; note: string }): Playlist {
   const codes = ["SSIS-001", "IPX-920", "WAAA-412", "MIDV-018", "FC2-PPV-1234567"]
   return createPlaylist({
-    name: "示範清單",
-    description: "這是一份示範清單，可以試著產生連結、加註記或分享。",
+    name: text.name,
+    description: text.description,
     items: codes.map((c, i) => ({
       videoCode: c,
       normalizedCode: c,
-      note: i === 0 ? "這是一則註記範例" : null,
+      note: i === 0 ? text.note : null,
     })),
   })
 }

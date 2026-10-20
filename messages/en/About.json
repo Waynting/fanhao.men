@@ -1,0 +1,43 @@
+{
+  "title": "About",
+  "subtitle": "Learn more about this project",
+  "contact": {
+    "title": "Contact & support",
+    "description": "Found a problem or have a suggestion? Get in touch",
+    "body": "For any questions, suggestions or help, please send an email to:",
+    "tip": "💡 Tip: describe your issue or suggestion clearly in the email and I'll reply as soon as I can."
+  },
+  "openSource": {
+    "title": "Open source",
+    "description": "This project is open source. Feel free to read the code and contribute",
+    "button": "View on GitHub"
+  },
+  "why": {
+    "title": "Why I built this",
+    "description": "The motivation and philosophy behind this project",
+    "problemLead": "The problem with saving links: ",
+    "problemIntro": "Once you have a big collection of AV codes, you'll probably run into these:",
+    "problem1": "Video sites keep changing domains or shutting down, breaking your saved links",
+    "problem2": "Collections scattered across platforms are hard to manage",
+    "problem3": "Sharing a list is awkward when everyone uses a different site",
+    "problem4": "There's no simple way to organize and search your collection",
+    "solutionLead": "A code-first solution: ",
+    "solutionIntro": "This project puts the code first, so you can:",
+    "solution1Label": "Keep it forever: ",
+    "solution1": "Save only the codes, independent of any specific site",
+    "solution2Label": "Switch freely: ",
+    "solution2": "Move between video sites whenever you like",
+    "solution3Label": "Share easily: ",
+    "solution3": "Share a code list and let friends pick their own site",
+    "solution4Label": "Stay organized: ",
+    "solution4": "Create as many playlists as you need",
+    "techLead": "Tech: ",
+    "tech": "Built with Next.js 15. Works without signing in."
+  },
+  "changelog": {
+    "title": "Changelog",
+    "description": "See what's been added and improved recently",
+    "button": "View changelog",
+    "note": "The changelog is currently only available in Traditional Chinese."
+  }
+}

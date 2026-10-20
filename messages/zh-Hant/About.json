@@ -1,0 +1,43 @@
+{
+  "title": "關於",
+  "subtitle": "了解這個專案的更多資訊",
+  "contact": {
+    "title": "聯絡與支援",
+    "description": "遇到問題或有建議嗎？歡迎與我聯絡",
+    "body": "如有任何問題、建議或需要協助，請透過電子郵件聯絡：",
+    "tip": "💡 提示：請在郵件中清楚描述您的問題或建議，我會盡快回覆。"
+  },
+  "openSource": {
+    "title": "開源專案",
+    "description": "這是一個開源專案，歡迎查看原始碼和貢獻",
+    "button": "在 GitHub 上查看"
+  },
+  "why": {
+    "title": "為什麼要做這個專案？",
+    "description": "建立這個工具的動機與理念",
+    "problemLead": "番號管理的困境：",
+    "problemIntro": "當你收藏了大量的番號，你可能會遇到以下問題：",
+    "problem1": "影片網站經常更換網域或關閉，保存的連結會失效",
+    "problem2": "分散在不同平台的收藏難以統一管理",
+    "problem3": "想要分享清單給朋友，但不同人使用的網站不同",
+    "problem4": "沒有一個簡單的方式來整理和搜尋你的收藏",
+    "solutionLead": "以番號為核心的解決方案：",
+    "solutionIntro": "這個專案採用「番號優先」的理念，讓你：",
+    "solution1Label": "永久保存：",
+    "solution1": "只記錄番號，不依賴任何特定網站",
+    "solution2Label": "靈活切換：",
+    "solution2": "可以隨時切換到不同的影片網站",
+    "solution3Label": "輕鬆分享：",
+    "solution3": "分享番號清單，讓朋友自行選擇觀看網站",
+    "solution4Label": "簡單管理：",
+    "solution4": "建立多個播放清單，輕鬆分類整理",
+    "techLead": "技術實作：",
+    "tech": "使用 Next.js 15 打造，不登入也能使用。"
+  },
+  "changelog": {
+    "title": "更新紀錄",
+    "description": "看看最近新增和改善了什麼",
+    "button": "查看更新紀錄",
+    "note": ""
+  }
+}

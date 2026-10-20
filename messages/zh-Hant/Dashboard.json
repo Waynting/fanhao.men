@@ -1,0 +1,40 @@
+{
+  "title": "我的清單",
+  "newPlaylist": "新增清單",
+  "emptyTitle": "還沒有任何清單",
+  "emptyBody": "建立第一份清單開始整理番號，或先載入示範資料看看效果。",
+  "createFirst": "建立第一份清單",
+  "loadDemo": "載入示範資料",
+  "codeCountLabel": "個番號",
+  "updatedAt": "更新於 {date}",
+  "public": "公開",
+  "new": {
+    "title": "新增清單",
+    "description": "建立後即可加入番號",
+    "nameLabel": "清單名稱 *",
+    "namePlaceholder": "例如：2025 精選、待看清單",
+    "descriptionLabel": "描述（選填）",
+    "descriptionPlaceholder": "這份清單的內容是？",
+    "submit": "建立清單",
+    "created": "清單已建立"
+  },
+  "createdAt": "建立於 {date}",
+  "library": {
+    "searchPlaceholder": "搜尋清單名稱、描述或番號",
+    "clearSearch": "清除搜尋",
+    "sortLabel": "排序",
+    "sort": {
+      "updated": "最近更新",
+      "created": "最近建立",
+      "name": "名稱",
+      "most": "番號最多",
+      "fewest": "番號最少"
+    },
+    "viewGrid": "卡片檢視",
+    "viewList": "列表檢視",
+    "total": "共 {count} 份清單",
+    "matches": "找到 {count} 份清單",
+    "noMatchTitle": "找不到符合的清單",
+    "noMatchBody": "沒有清單的名稱、描述或番號符合「{query}」"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "siteTitle": "番号收藏清单管理工具・一键生成影片链接｜fanhao.men",
+  "siteDescription": "免费的番号（车牌号）收藏管理工具：创建播放清单，批量粘贴番号或网址并自动格式化（支持 SSIS-123、FC2-PPV-1234567 等格式），一键生成影片网址，用链接分享清单。无需注册，登录后可跨设备同步。",
+  "keywords": "番号,番号查询,番号收藏,番号清单,番号管理,车牌,车牌号,AV番号,FC2番号,JAV,播放清单,fanhao",
+  "ogAlt": "fanhao.men 番号收藏清单管理",
+  "appleTitle": "番号收藏",
+  "pages": {
+    "about": {
+      "title": "关于",
+      "description": "fanhao.men 是一个开源的番号收藏管理工具。了解这个项目的理念与联系方式。"
+    },
+    "dashboard": {
+      "title": "我的清单"
+    },
+    "newPlaylist": {
+      "title": "创建清单"
+    },
+    "explore": {
+      "title": "探索",
+      "description": "大家最近收藏和点击最多的番号排行。"
+    },
+    "playlist": {
+      "title": "播放清单"
+    },
+    "settings": {
+      "title": "设置"
+    },
+    "share": {
+      "title": "分享的清单",
+      "description": "有人给你分享了一份番号清单。打开即可查看、复制番号或一键生成影片链接，也能保存到自己的清单。"
+    },
+    "publicPlaylist": {
+      "title": "公开清单",
+      "description": "有人公开了一份番号清单。打开即可查看、复制番号或一键生成视频链接，也能存到自己的清单。"
+    },
+    "auth": {
+      "title": "登录中"
+    },
+    "notFound": {
+      "title": "页面不存在"
+    },
+    "changelog": {
+      "title": "更新记录",
+      "description": "fanhao.men 每次更新的内容，最新的在最上面。"
+    }
+  }
+}

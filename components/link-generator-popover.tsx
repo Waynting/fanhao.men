@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
+import { useTranslations } from "next-intl"
+import { Link } from "@/i18n/navigation"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Copy, Check, ExternalLink, Settings } from "lucide-react"
 import { toast } from "sonner"
@@ -16,6 +17,8 @@ interface LinkGeneratorPopoverProps {
 }
 
 export function LinkGeneratorPopover({ items, templates, trigger }: LinkGeneratorPopoverProps) {
+  const t = useTranslations("Playlist.links")
+  const tCommon = useTranslations("Common")
   const [open, setOpen] = useState(false)
   const [copiedSource, setCopiedSource] = useState<string | null>(null)
 
@@ -29,13 +32,13 @@ export function LinkGeneratorPopover({ items, templates, trigger }: LinkGenerato
     try {
       await navigator.clipboard.writeText(items.map((item) => buildUrl(template, item.normalizedCode)).join("\n"))
     } catch {
-      toast.error("無法存取剪貼簿")
+      toast.error(tCommon("clipboardUnavailable"))
       return
     }
     trackGenerateLinks({ source_name: template.name, item_count: items.length, is_single_item: isSingle })
     recordClicks(items.map((item) => item.normalizedCode))
     setCopiedSource(template.id)
-    toast.success(`已複製 ${items.length} 個 ${template.name} 連結`)
+    toast.success(t("copiedLinks", { count: items.length, source: template.name }))
     setTimeout(() => setCopiedSource(null), 2000)
   }
 
@@ -48,9 +51,9 @@ export function LinkGeneratorPopover({ items, templates, trigger }: LinkGenerato
         align="end"
       >
         <div className="px-3 py-2.5 border-b border-zinc-100">
-          <h3 className="text-sm font-semibold text-zinc-800">產生連結</h3>
+          <h3 className="text-sm font-semibold text-zinc-800">{t("title")}</h3>
           <p className="text-xs text-zinc-400 mt-0.5">
-            {isSingle ? `${previewCode}：開啟或複製網址` : `將 ${items.length} 個番號轉成網址並複製`}
+            {isSingle ? t("singleHint", { code: previewCode }) : t("multiHint", { count: items.length })}
           </p>
         </div>
 
@@ -68,7 +71,7 @@ export function LinkGeneratorPopover({ items, templates, trigger }: LinkGenerato
                   <div className="flex items-center gap-1.5">
                     <span className="font-medium text-sm text-zinc-800 truncate">{template.name}</span>
                     {!template.isBuiltIn && (
-                      <span className="text-[9px] px-1.5 py-0.5 bg-zinc-900 text-white rounded-md font-medium">自訂</span>
+                      <span className="text-[9px] px-1.5 py-0.5 bg-zinc-900 text-white rounded-md font-medium">{t("custom")}</span>
                     )}
                   </div>
                   <p className="text-[10px] font-mono text-zinc-400 truncate">{previewUrl}</p>
@@ -79,16 +82,16 @@ export function LinkGeneratorPopover({ items, templates, trigger }: LinkGenerato
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => recordClicks([previewCode])}
-                    className="w-8 h-8 flex items-center justify-center hover:bg-zinc-100 rounded-lg"
-                    aria-label={`在 ${template.name} 開啟`}
+                    className="w-10 h-10 sm:w-8 sm:h-8 flex-shrink-0 flex items-center justify-center hover:bg-zinc-100 rounded-lg"
+                    aria-label={t("openIn", { source: template.name })}
                   >
                     <ExternalLink className="h-3.5 w-3.5 text-zinc-500" />
                   </a>
                 )}
                 <button
                   onClick={() => handleCopyLinks(template)}
-                  className="w-8 h-8 flex items-center justify-center hover:bg-zinc-100 rounded-lg"
-                  aria-label={`複製 ${template.name} 連結`}
+                  className="w-10 h-10 sm:w-8 sm:h-8 flex-shrink-0 flex items-center justify-center hover:bg-zinc-100 rounded-lg"
+                  aria-label={t("copyLinksAria", { source: template.name })}
                 >
                   {isCopied ? (
                     <Check className="h-4 w-4 text-green-600" strokeWidth={3} />
@@ -108,7 +111,7 @@ export function LinkGeneratorPopover({ items, templates, trigger }: LinkGenerato
             onClick={() => setOpen(false)}
           >
             <Settings className="h-3 w-3" />
-            管理自訂來源
+            {t("manageSources")}
           </Link>
         </div>
       </PopoverContent>

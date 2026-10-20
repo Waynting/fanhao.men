@@ -1,0 +1,44 @@
+{
+  "page": {
+    "invalidTitle": "分享連結無效",
+    "invalidBody": "連結可能不完整，請確認有複製到完整的網址。",
+    "goToDashboard": "前往我的清單",
+    "label": "分享的清單"
+  },
+  "content": {
+    "empty": "這份清單是空的",
+    "copiedCode": "已複製 {code}",
+    "copiedUrl": "已複製 {source} 連結",
+    "searchPlaceholder": "搜尋番號或註記...",
+    "matchCount": "{shown} / {total}",
+    "saveTitle": "想保存這份清單？",
+    "saveFiltered": "將篩選出的 {count} 個番號存成新清單",
+    "saveAll": "一鍵存成你的新清單，共 {count} 個番號",
+    "saveFilteredButton": "儲存篩選結果",
+    "saveAllButton": "一鍵存成我的清單",
+    "noResults": "找不到符合「{query}」的番號",
+    "clearSearch": "清除搜尋",
+    "addToMyPlaylists": "加入我的清單",
+    "addToPlaylist": "加入清單",
+    "copyCode": "複製番號",
+    "sources": "影片來源",
+    "openLink": "開啟連結",
+    "copyLink": "複製連結",
+    "addToExisting": "加入現有清單",
+    "alreadySaved": "已在我的清單 · 查看",
+    "savedAsNew": "已存成「{name}」，共 {count} 個番號",
+    "view": "查看",
+    "generateAllLinks": "產生全部連結",
+    "generateFilteredLinks": "產生篩選結果的連結"
+  },
+  "public": {
+    "label": "公開清單",
+    "labelWithOwner": "{name} 的公開清單",
+    "edit": "編輯",
+    "updatedAt": "更新於 {date}",
+    "missingTitle": "找不到這份公開清單",
+    "missingBody": "它可能已被刪除，或擁有者已將它設為不公開。",
+    "errorTitle": "無法載入清單",
+    "errorBody": "請檢查網路連線後重新整理。"
+  }
+}

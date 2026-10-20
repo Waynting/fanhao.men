@@ -1,0 +1,16 @@
+{
+  "dashboard": "내 목록",
+  "explore": "탐색",
+  "settings": "설정",
+  "about": "소개",
+  "language": "언어",
+  "signIn": "로그인",
+  "signInFailed": "Google에 연결할 수 없습니다. 잠시 후 다시 시도하세요",
+  "syncing": "동기화 중",
+  "syncFailed": "동기화 실패",
+  "synced": "동기화됨",
+  "goToAccount": "{status}, 계정 설정으로 이동",
+  "syncErrorToast": "동기화 실패",
+  "syncOfflineToast": "오프라인 상태",
+  "retry": "다시 시도"
+}

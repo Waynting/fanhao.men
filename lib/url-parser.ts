@@ -1,4 +1,5 @@
 import { normalizeVideoCode, isValidVideoCode } from "./code-normalizer"
+import { AppError } from "./errors"
 
 export interface ParseResult {
   success: boolean
@@ -6,7 +7,7 @@ export interface ParseResult {
   normalizedCode: string | null
   source: 'url' | 'direct' | 'unknown'
   originalInput: string
-  error?: string
+  error?: AppError
   isDuplicate?: boolean
 }
 
@@ -29,7 +30,7 @@ export function parseVideoInput(input: string): ParseResult {
       normalizedCode: null,
       source: 'unknown',
       originalInput: input,
-      error: '輸入是空的'
+      error: new AppError("emptyInput")
     }
   }
 
@@ -59,7 +60,7 @@ function parseDirectCode(input: string): ParseResult {
       normalizedCode: null,
       source: 'direct',
       originalInput: input,
-      error: '番號格式不正確'
+      error: new AppError("invalidCode")
     }
   }
 
@@ -154,7 +155,7 @@ function parseFromUrl(urlString: string): ParseResult {
         normalizedCode: null,
         source: 'url',
         originalInput: urlString,
-        error: '無法從網址中找到番號'
+        error: new AppError("noCodeInUrl")
       }
     }
 
@@ -166,7 +167,7 @@ function parseFromUrl(urlString: string): ParseResult {
         normalizedCode: null,
         source: 'url',
         originalInput: urlString,
-        error: `從網址取得「${extractedCode}」，但它不像有效的番號`
+        error: new AppError("urlCodeInvalid", { code: extractedCode })
       }
     }
 
@@ -187,7 +188,7 @@ function parseFromUrl(urlString: string): ParseResult {
       normalizedCode: null,
       source: 'url',
       originalInput: urlString,
-      error: '網址格式不正確'
+      error: new AppError("invalidUrl")
     }
   }
 }

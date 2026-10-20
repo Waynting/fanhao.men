@@ -1,0 +1,20 @@
+{
+  "generic": "Something went wrong. Please try again later",
+  "storageFull": "Couldn't save: browser storage is full or disabled",
+  "playlistNotFound": "Playlist not found",
+  "playlistNameRequired": "Please enter a playlist name",
+  "nameRequired": "Please enter a name",
+  "templateMissingCode": "The URL must contain '{code}'",
+  "invalidUrl": "Invalid URL",
+  "invalidFile": "Invalid file format",
+  "nicknameRequired": "Please enter a nickname",
+  "nicknameTooLong": "Nicknames can be at most {max} characters",
+  "signInRequired": "Please sign in first",
+  "saveFailed": "Couldn't save. Please try again later",
+  "emptyInput": "Input is empty",
+  "invalidCode": "Not a valid code",
+  "noCodeInUrl": "Couldn't find a code in this URL",
+  "urlCodeInvalid": "Found \"{code}\" in the URL, but it doesn't look like a valid code",
+  "tagTooLong": "Each tag can be up to {max} characters",
+  "tagLimit": "Up to {max} tags"
+}

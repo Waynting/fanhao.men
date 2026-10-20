@@ -1,0 +1,44 @@
+{
+  "page": {
+    "invalidTitle": "共有リンクが無効です",
+    "invalidBody": "リンクが不完全な可能性があります。URL 全体をコピーしたか確認してください。",
+    "goToDashboard": "マイリストへ",
+    "label": "共有されたリスト"
+  },
+  "content": {
+    "empty": "このリストは空です",
+    "copiedCode": "{code} をコピーしました",
+    "copiedUrl": "{source} のリンクをコピーしました",
+    "searchPlaceholder": "品番やメモを検索...",
+    "matchCount": "{shown} / {total}",
+    "saveTitle": "このリストを保存しますか？",
+    "saveFiltered": "絞り込んだ {count} 件の品番を新しいリストとして保存",
+    "saveAll": "ワンクリックで自分の新しいリストとして保存（{count} 件の品番）",
+    "saveFilteredButton": "絞り込み結果を保存",
+    "saveAllButton": "マイリストに保存",
+    "noResults": "「{query}」に一致する品番はありません",
+    "clearSearch": "検索をクリア",
+    "addToMyPlaylists": "マイリストに追加",
+    "addToPlaylist": "リストに追加",
+    "copyCode": "品番をコピー",
+    "sources": "動画ソース",
+    "openLink": "リンクを開く",
+    "copyLink": "リンクをコピー",
+    "addToExisting": "既存のリストに追加",
+    "alreadySaved": "マイリストにあります · 表示",
+    "savedAsNew": "「{name}」として保存しました（{count} 件）",
+    "view": "表示",
+    "generateAllLinks": "すべてのリンクを生成",
+    "generateFilteredLinks": "絞り込み結果のリンクを生成"
+  },
+  "public": {
+    "label": "公開リスト",
+    "labelWithOwner": "{name} さんの公開リスト",
+    "edit": "編集",
+    "updatedAt": "{date} 更新",
+    "missingTitle": "公開リストが見つかりません",
+    "missingBody": "削除されたか、所有者が非公開にした可能性があります。",
+    "errorTitle": "リストを読み込めません",
+    "errorBody": "接続を確認してページを再読み込みしてください。"
+  }
+}

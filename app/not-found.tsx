@@ -1,21 +1,19 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import "./globals.css"
 
-export default function NotFound() {
+// Only reached for paths the middleware skips (see middleware.ts); everything else gets the
+// localized app/[locale]/not-found.tsx. The root layout renders no <html>, so this page does.
+export default function GlobalNotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <div className="text-center px-4">
-        <h1 className="text-6xl font-bold text-slate-900 mb-4">404</h1>
-        <h2 className="text-2xl font-semibold text-slate-700 mb-2">
-          找不到頁面
-        </h2>
-        <p className="text-slate-600 mb-8">
-          你要找的頁面不存在或已被移動。
-        </p>
-        <Button asChild size="lg">
-          <Link href="/dashboard">前往我的清單</Link>
-        </Button>
-      </div>
-    </div>
+    <html lang="en">
+      <body className="min-h-screen flex items-center justify-center bg-zinc-50 font-sans">
+        <div className="text-center px-4">
+          <h1 className="text-6xl font-bold text-zinc-900 mb-4">404</h1>
+          <p className="text-zinc-600 mb-8">Page not found</p>
+          <a href="/" className="text-zinc-900 underline">
+            fanhao.men
+          </a>
+        </div>
+      </body>
+    </html>
   )
 }

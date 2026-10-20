@@ -3,10 +3,12 @@
 import { useSyncExternalStore } from "react"
 import type { User } from "@supabase/supabase-js"
 import { getSupabase } from "@/lib/supabase"
+import { AppError } from "@/lib/errors"
 
 export interface Profile {
   displayName: string
   showEmail: boolean
+  tags: string[]
 }
 
 type ProfileState =
@@ -17,12 +19,33 @@ type ProfileState =
 
 export const DISPLAY_NAME_MAX = 20
 
-/** Returns an error message, or null when valid. Mirrors the check in 0002_profiles.sql. */
-export function validateDisplayName(name: string): string | null {
+/** Returns the error, or null when valid. Mirrors the check in 0002_profiles.sql. */
+export function validateDisplayName(name: string): AppError | null {
   const length = [...name.trim()].length
-  if (length === 0) return "請輸入暱稱"
-  if (length > DISPLAY_NAME_MAX) return `暱稱最多 ${DISPLAY_NAME_MAX} 個字`
+  if (length === 0) return new AppError("nicknameRequired")
+  if (length > DISPLAY_NAME_MAX) return new AppError("nicknameTooLong", { max: DISPLAY_NAME_MAX })
   return null
+}
+
+export const TAG_MAX_COUNT = 5
+export const TAG_MAX_LENGTH = 12
+
+/** Trims, collapses inner whitespace and drops a leading "#", so "#FC2  派" and "FC2 派" are the same tag. */
+export function normalizeTag(raw: string) {
+  return raw.trim().replace(/^#+/, "").replace(/\s+/g, " ").trim()
+}
+
+/**
+ * Adds a tag, or returns the error that prevents it. Duplicates (ignoring case) are a no-op.
+ * Mirrors profile_tags_valid() in 0005_profile_tags.sql.
+ */
+export function addTag(tags: string[], raw: string): string[] | AppError {
+  const tag = normalizeTag(raw)
+  if (!tag) return tags
+  if (tags.some((t) => t.toLowerCase() === tag.toLowerCase())) return tags
+  if ([...tag].length > TAG_MAX_LENGTH) return new AppError("tagTooLong", { max: TAG_MAX_LENGTH })
+  if (tags.length >= TAG_MAX_COUNT) return new AppError("tagLimit", { max: TAG_MAX_COUNT })
+  return [...tags, tag]
 }
 
 /** Google profile fields Supabase copies into user_metadata. */
@@ -53,7 +76,7 @@ async function fetchProfile(userId: string) {
   if (!supabase) return
   const { data, error } = await supabase
     .from("profiles")
-    .select("display_name, show_email")
+    .select("display_name, show_email, tags")
     .eq("id", userId)
     .maybeSingle()
   if (state.userId !== userId) return // signed out or switched account meanwhile
@@ -62,7 +85,7 @@ async function fetchProfile(userId: string) {
     set({
       status: "ready",
       userId,
-      profile: data ? { displayName: data.display_name, showEmail: data.show_email } : null,
+      profile: data ? { displayName: data.display_name, showEmail: data.show_email, tags: data.tags ?? [] } : null,
     })
 }
 
@@ -99,17 +122,18 @@ export function useProfile(): ProfileState {
 export async function saveProfile(input: Profile) {
   const supabase = getSupabase()
   const userId = state.userId
-  if (!supabase || !userId) throw new Error("請先登入")
+  if (!supabase || !userId) throw new AppError("signInRequired")
   const invalid = validateDisplayName(input.displayName)
-  if (invalid) throw new Error(invalid)
+  if (invalid) throw invalid
   const { error } = await supabase.from("profiles").upsert({
     id: userId,
     display_name: input.displayName.trim(),
     show_email: input.showEmail,
+    tags: input.tags,
     updated_at: new Date().toISOString(),
   })
-  if (error) throw new Error("儲存失敗，請稍後再試")
-  set({ status: "ready", userId, profile: { displayName: input.displayName.trim(), showEmail: input.showEmail } })
+  if (error) throw new AppError("saveFailed")
+  set({ status: "ready", userId, profile: { ...input, displayName: input.displayName.trim() } })
 }
 
 /** Retry after a failed load (e.g. offline at sign-in). */

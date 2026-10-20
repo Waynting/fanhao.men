@@ -1,0 +1,44 @@
+{
+  "page": {
+    "invalidTitle": "分享链接无效",
+    "invalidBody": "链接可能不完整，请确认复制了完整的网址。",
+    "goToDashboard": "前往我的清单",
+    "label": "分享的清单"
+  },
+  "content": {
+    "empty": "这份清单是空的",
+    "copiedCode": "已复制 {code}",
+    "copiedUrl": "已复制 {source} 链接",
+    "searchPlaceholder": "搜索番号或备注...",
+    "matchCount": "{shown} / {total}",
+    "saveTitle": "想保存这份清单？",
+    "saveFiltered": "将筛选出的 {count} 个番号存成新清单",
+    "saveAll": "一键存成你的新清单，共 {count} 个番号",
+    "saveFilteredButton": "保存筛选结果",
+    "saveAllButton": "一键存成我的清单",
+    "noResults": "找不到符合“{query}”的番号",
+    "clearSearch": "清除搜索",
+    "addToMyPlaylists": "加入我的清单",
+    "addToPlaylist": "加入清单",
+    "copyCode": "复制番号",
+    "sources": "视频来源",
+    "openLink": "打开链接",
+    "copyLink": "复制链接",
+    "addToExisting": "加入现有清单",
+    "alreadySaved": "已在我的清单 · 查看",
+    "savedAsNew": "已存成「{name}」，共 {count} 个番号",
+    "view": "查看",
+    "generateAllLinks": "生成全部链接",
+    "generateFilteredLinks": "生成筛选结果的链接"
+  },
+  "public": {
+    "label": "公开清单",
+    "labelWithOwner": "{name} 的公开清单",
+    "edit": "编辑",
+    "updatedAt": "更新于 {date}",
+    "missingTitle": "找不到这份公开清单",
+    "missingBody": "它可能已被删除，或所有者已将它设为不公开。",
+    "errorTitle": "无法加载清单",
+    "errorBody": "请检查网络连接后刷新页面。"
+  }
+}

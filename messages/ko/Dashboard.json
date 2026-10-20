@@ -1,0 +1,40 @@
+{
+  "title": "내 목록",
+  "newPlaylist": "새 목록",
+  "emptyTitle": "아직 목록이 없습니다",
+  "emptyBody": "첫 목록을 만들어 품번을 정리해 보세요. 샘플 데이터를 불러와 먼저 살펴볼 수도 있습니다.",
+  "createFirst": "첫 목록 만들기",
+  "loadDemo": "샘플 데이터 불러오기",
+  "codeCountLabel": "개 품번",
+  "updatedAt": "{date} 업데이트",
+  "public": "공개",
+  "new": {
+    "title": "새 목록",
+    "description": "만든 뒤 품번을 추가할 수 있습니다",
+    "nameLabel": "목록 이름 *",
+    "namePlaceholder": "예: 2025 베스트, 나중에 볼 것",
+    "descriptionLabel": "설명(선택)",
+    "descriptionPlaceholder": "어떤 목록인가요?",
+    "submit": "목록 만들기",
+    "created": "목록을 만들었습니다"
+  },
+  "createdAt": "{date} 생성",
+  "library": {
+    "searchPlaceholder": "목록 이름, 설명 또는 품번 검색",
+    "clearSearch": "검색 지우기",
+    "sortLabel": "정렬",
+    "sort": {
+      "updated": "최근 업데이트",
+      "created": "최근 생성",
+      "name": "이름",
+      "most": "품번 많은 순",
+      "fewest": "품번 적은 순"
+    },
+    "viewGrid": "카드 보기",
+    "viewList": "목록 보기",
+    "total": "목록 {count}개",
+    "matches": "목록 {count}개 찾음",
+    "noMatchTitle": "일치하는 목록이 없습니다",
+    "noMatchBody": "“{query}”와 일치하는 목록 이름, 설명 또는 품번이 없습니다"
+  }
+}

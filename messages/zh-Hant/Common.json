@@ -1,0 +1,16 @@
+{
+  "cancel": "取消",
+  "save": "儲存",
+  "saving": "儲存中…",
+  "delete": "刪除",
+  "undo": "復原",
+  "close": "關閉",
+  "confirm": "確定",
+  "copy": "複製",
+  "copied": "已複製",
+  "loading": "載入中…",
+  "backToDashboard": "返回我的清單",
+  "clipboardUnavailable": "無法存取剪貼簿",
+  "copyManually": "無法自動複製，請手動選取",
+  "codeCount": "{count} 個番號"
+}

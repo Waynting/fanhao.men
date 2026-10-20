@@ -1,0 +1,16 @@
+{
+  "dashboard": "Playlists",
+  "explore": "Explore",
+  "settings": "Settings",
+  "about": "About",
+  "language": "Language",
+  "signIn": "Sign in",
+  "signInFailed": "Couldn't reach Google. Please try again later",
+  "syncing": "Syncing",
+  "syncFailed": "Sync failed",
+  "synced": "Synced",
+  "goToAccount": "{status}. Go to account settings",
+  "syncErrorToast": "Sync failed",
+  "syncOfflineToast": "You're offline",
+  "retry": "Retry"
+}
