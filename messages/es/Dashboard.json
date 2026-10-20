@@ -1,0 +1,40 @@
+{
+  "title": "Mis listas",
+  "newPlaylist": "Nueva lista",
+  "emptyTitle": "Aún no tienes listas",
+  "emptyBody": "Crea tu primera lista para empezar a organizar códigos, o carga datos de ejemplo para ver cómo funciona.",
+  "createFirst": "Crea tu primera lista",
+  "loadDemo": "Cargar datos de ejemplo",
+  "codeCountLabel": "códigos",
+  "updatedAt": "Actualizada {date}",
+  "public": "Pública",
+  "new": {
+    "title": "Nueva lista",
+    "description": "Podrás añadir códigos cuando esté creada",
+    "nameLabel": "Nombre de la lista *",
+    "namePlaceholder": "p. ej. Favoritos 2025, Ver más tarde",
+    "descriptionLabel": "Descripción (opcional)",
+    "descriptionPlaceholder": "¿De qué trata esta lista?",
+    "submit": "Crear lista",
+    "created": "Lista creada"
+  },
+  "createdAt": "Creada {date}",
+  "library": {
+    "searchPlaceholder": "Buscar nombres, descripciones o códigos",
+    "clearSearch": "Borrar búsqueda",
+    "sortLabel": "Ordenar",
+    "sort": {
+      "updated": "Actualizadas recientemente",
+      "created": "Creadas recientemente",
+      "name": "Nombre",
+      "most": "Más códigos",
+      "fewest": "Menos códigos"
+    },
+    "viewGrid": "Vista de tarjetas",
+    "viewList": "Vista de lista",
+    "total": "{count, plural, one {# lista} other {# listas}}",
+    "matches": "{count, plural, =0 {No se encontraron listas} one {# lista encontrada} other {# listas encontradas}}",
+    "noMatchTitle": "No hay listas que coincidan",
+    "noMatchBody": "Ningún nombre, descripción ni código de lista coincide con “{query}”"
+  }
+}

@@ -3,7 +3,7 @@ import { defineRouting } from "next-intl/routing"
 export const routing = defineRouting({
   // zh-Hant is the original language and keeps the unprefixed URLs (and existing links/SEO);
   // the others live under /en, /ja, ...
-  locales: ["zh-Hant", "zh-Hans", "en", "ja", "ko"],
+  locales: ["zh-Hant", "zh-Hans", "en", "ja", "ko", "es", "pt"],
   defaultLocale: "zh-Hant",
   localePrefix: "as-needed",
   // hreflang is emitted in each page's <head> by localizedMetadata()
@@ -19,6 +19,8 @@ export const LOCALE_NAMES: Record<Locale, string> = {
   en: "English",
   ja: "日本語",
   ko: "한국어",
+  es: "Español",
+  pt: "Português",
 }
 
 /** Open Graph locale per app locale. */
@@ -28,6 +30,8 @@ export const OG_LOCALES: Record<Locale, string> = {
   en: "en_US",
   ja: "ja_JP",
   ko: "ko_KR",
+  es: "es_ES",
+  pt: "pt_BR",
 }
 
 /** Path of `path` (unprefixed, starting with "/") in `locale`. */

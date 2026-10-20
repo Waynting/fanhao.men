@@ -1,0 +1,16 @@
+{
+  "dashboard": "Playlists",
+  "explore": "Explorar",
+  "settings": "Configurações",
+  "about": "Sobre",
+  "language": "Idioma",
+  "signIn": "Entrar",
+  "signInFailed": "Não foi possível conectar ao Google. Tente novamente mais tarde",
+  "syncing": "Sincronizando",
+  "syncFailed": "Falha na sincronização",
+  "synced": "Sincronizado",
+  "goToAccount": "{status}. Ir para as configurações da conta",
+  "syncErrorToast": "Falha na sincronização",
+  "syncOfflineToast": "Você está offline",
+  "retry": "Tentar de novo"
+}

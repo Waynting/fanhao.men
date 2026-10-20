@@ -1,0 +1,43 @@
+{
+  "title": "Acerca de",
+  "subtitle": "Conoce más sobre este proyecto",
+  "contact": {
+    "title": "Contacto y soporte",
+    "description": "¿Encontraste un problema o tienes una sugerencia? Escríbeme",
+    "body": "Para cualquier pregunta, sugerencia o ayuda, envía un correo a:",
+    "tip": "💡 Consejo: describe con claridad tu problema o sugerencia en el correo y te responderé lo antes posible."
+  },
+  "openSource": {
+    "title": "Código abierto",
+    "description": "Este proyecto es de código abierto. Puedes leer el código y contribuir",
+    "button": "Ver en GitHub"
+  },
+  "why": {
+    "title": "Por qué lo creé",
+    "description": "La motivación y la filosofía detrás de este proyecto",
+    "problemLead": "El problema de guardar enlaces: ",
+    "problemIntro": "Cuando tu colección de códigos AV crece, seguramente te pase esto:",
+    "problem1": "Los sitios de videos cambian de dominio o cierran, y tus enlaces guardados dejan de funcionar",
+    "problem2": "Las colecciones repartidas en varias plataformas son difíciles de gestionar",
+    "problem3": "Compartir una lista es complicado cuando cada uno usa un sitio distinto",
+    "problem4": "No hay una forma sencilla de organizar y buscar en tu colección",
+    "solutionLead": "Una solución centrada en el código: ",
+    "solutionIntro": "Este proyecto pone el código en primer lugar, así puedes:",
+    "solution1Label": "Conservarlo para siempre: ",
+    "solution1": "Guarda solo los códigos, sin depender de ningún sitio concreto",
+    "solution2Label": "Cambiar cuando quieras: ",
+    "solution2": "Pasa de un sitio de videos a otro cuando te apetezca",
+    "solution3Label": "Compartir fácilmente: ",
+    "solution3": "Comparte una lista de códigos y deja que tus amigos elijan su propio sitio",
+    "solution4Label": "Mantener el orden: ",
+    "solution4": "Crea todas las listas que necesites",
+    "techLead": "Tecnología: ",
+    "tech": "Hecho con Next.js 15. Funciona sin iniciar sesión."
+  },
+  "changelog": {
+    "title": "Novedades",
+    "description": "Mira lo que se ha añadido y mejorado recientemente",
+    "button": "Ver novedades",
+    "note": "Por ahora, el registro de cambios solo está disponible en chino tradicional."
+  }
+}

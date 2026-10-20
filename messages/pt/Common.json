@@ -1,0 +1,16 @@
+{
+  "cancel": "Cancelar",
+  "save": "Salvar",
+  "saving": "Salvando…",
+  "delete": "Excluir",
+  "undo": "Desfazer",
+  "close": "Fechar",
+  "confirm": "OK",
+  "copy": "Copiar",
+  "copied": "Copiado",
+  "loading": "Carregando…",
+  "backToDashboard": "Voltar para minhas playlists",
+  "clipboardUnavailable": "Não foi possível acessar a área de transferência",
+  "copyManually": "Não foi possível copiar automaticamente. Selecione e copie manualmente",
+  "codeCount": "{count, plural, one {# código} other {# códigos}}"
+}

@@ -1,0 +1,47 @@
+{
+  "siteTitle": "Organizador de Códigos JAV – Salve, Organize e Compartilhe Listas | fanhao.men",
+  "siteDescription": "Ferramenta grátis para colecionar códigos JAV (IDs como SSIS-123 ou FC2-PPV-1234567). Cole códigos ou links em massa com formatação automática, gere links de vídeos com um clique e compartilhe suas playlists por link. Sem cadastro; entre para sincronizar entre dispositivos.",
+  "keywords": "código JAV,códigos JAV,ID JAV,código AV,lista JAV,playlist JAV,filmes JAV,JAV em português,organizar códigos JAV,FC2 PPV,fanhao",
+  "ogAlt": "fanhao.men – organizador de playlists de códigos JAV",
+  "appleTitle": "fanhao.men",
+  "pages": {
+    "about": {
+      "title": "Sobre",
+      "description": "fanhao.men é uma ferramenta de código aberto para organizar coleções de códigos JAV. Conheça a ideia por trás do projeto e como entrar em contato."
+    },
+    "dashboard": {
+      "title": "Minhas playlists"
+    },
+    "newPlaylist": {
+      "title": "Nova playlist"
+    },
+    "explore": {
+      "title": "Explorar",
+      "description": "Os códigos JAV mais salvos e abertos nos últimos dias."
+    },
+    "playlist": {
+      "title": "Playlist"
+    },
+    "settings": {
+      "title": "Configurações"
+    },
+    "share": {
+      "title": "Playlist compartilhada",
+      "description": "Alguém compartilhou uma lista de códigos JAV com você. Abra para ver, copiar os códigos ou gerar links de vídeos, e salve nas suas próprias playlists."
+    },
+    "publicPlaylist": {
+      "title": "Playlist pública",
+      "description": "Alguém tornou pública uma lista de códigos JAV. Abra para ver, copiar os códigos ou gerar links de vídeos, e salve nas suas próprias playlists."
+    },
+    "auth": {
+      "title": "Entrando"
+    },
+    "notFound": {
+      "title": "Página não encontrada"
+    },
+    "changelog": {
+      "title": "Novidades",
+      "description": "O que mudou no fanhao.men, do mais recente para o mais antigo."
+    }
+  }
+}

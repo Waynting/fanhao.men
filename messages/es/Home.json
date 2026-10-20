@@ -1,0 +1,44 @@
+{
+  "tagline": "Gestor de listas para códigos JAV",
+  "intro": "Mantén ordenada tu colección de códigos JAV. Crea listas, compártelas con tus amigos y genera al instante enlaces a tus sitios de videos favoritos.",
+  "cta": "Empezar",
+  "whatIs": {
+    "title": "¿Qué es un código JAV?",
+    "body": "Un código JAV (también llamado código AV, ID JAV, código de producto o DVD ID; 番號 en chino, 品番 en japonés) identifica un video para adultos japonés. Se compone del prefijo del sello de la productora y un número, como SSIS-123 o IPX-920. Los títulos de FC2 usan el formato FC2-PPV-1234567. Los códigos nunca cambian, así que guardar códigos es mucho más fiable que guardar enlaces."
+  },
+  "formats": {
+    "title": "Detección y formato automáticos",
+    "body": "Pega códigos o URLs de videos, uno por línea. Las mayúsculas y los guiones se corrigen solos, y los duplicados se omiten:",
+    "url": "URL del video"
+  },
+  "steps": {
+    "title": "Tres pasos",
+    "add": {
+      "title": "Pega los códigos",
+      "body": "Pega un montón de códigos o URLs de videos, uno por línea. Se les da formato automáticamente y se omiten los duplicados."
+    },
+    "links": {
+      "title": "Genera enlaces",
+      "body": "Elige los sitios de videos que usas y abre o copia el enlace de cualquier código con un clic."
+    },
+    "share": {
+      "title": "Comparte y sincroniza",
+      "body": "Envía un enlace y tu amigo podrá abrir la lista al momento. Inicia sesión con Google para sincronizar tus listas entre dispositivos."
+    }
+  },
+  "free": "Gratis y sin registro. Tus datos se guardan en tu navegador; inicia sesión con Google para sincronizarlos entre dispositivos.",
+  "otherLanguages": "Otros idiomas",
+  "navLabel": "Navegación principal",
+  "demoCta": "Ver una lista de ejemplo",
+  "heroNote": "Gratis, sin registro y listo para usar",
+  "screens": {
+    "title": "Hecho para móvil y computadora",
+    "body": "Añádelo a tu pantalla de inicio y úsalo como una app.",
+    "alt": {
+      "dashboard": "Página Mis listas: todas las listas con una vista previa de sus códigos",
+      "playlist": "Página de lista: lista de códigos con búsqueda y acciones en bloque",
+      "links": "Generar enlaces: la URL de un código en cada sitio de videos, lista para abrir o copiar"
+    }
+  },
+  "closing": "Empieza con tu primera lista"
+}

@@ -1,0 +1,29 @@
+{
+  "title": "Explorar",
+  "subtitle": "Os códigos mais salvos e clicados nos últimos dias",
+  "periods": {
+    "7d": "Esta semana",
+    "30d": "Este mês"
+  },
+  "counts": {
+    "saves": "{count, plural, one {# salvamento} other {# salvamentos}}",
+    "clicks": "{count, plural, one {# clique} other {# cliques}}"
+  },
+  "disabledTitle": "Os destaques não estão ativados neste site",
+  "disabledBody": "O ranking precisa de login, então aqui só dá para usar as suas próprias playlists.",
+  "errorTitle": "Não foi possível carregar o ranking",
+  "errorBody": "Sua conexão pode estar instável. Tente novamente daqui a pouco.",
+  "reload": "Recarregar",
+  "emptyTitle": "Ainda juntando dados",
+  "emptyBody": "Ainda não há pessoas suficientes que salvaram ou clicaram no mesmo código. Quando você entra, seus salvamentos também contam para o ranking.",
+  "signIn": "Entrar",
+  "saved": "Salvo",
+  "defaultPlaylistName": "Do Explorar",
+  "addLabel": "Adicionar {code} a uma playlist",
+  "addToPlaylist": "Adicionar à playlist",
+  "linksLabel": "Links de {code}",
+  "footer": "O ranking conta só usuários logados, mostra um código apenas quando pelo menos 3 pessoas o têm e nunca revela quem salvou ou clicou.",
+  "updatedAt": " Atualizado em {time}.",
+  "optOut": " Você pode sair das estatísticas em <link>Configurações</link>.",
+  "new": "Novo"
+}

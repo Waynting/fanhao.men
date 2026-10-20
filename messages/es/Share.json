@@ -1,0 +1,44 @@
+{
+  "page": {
+    "invalidTitle": "Enlace compartido no válido",
+    "invalidBody": "Puede que el enlace esté incompleto. Asegúrate de haber copiado la URL completa.",
+    "goToDashboard": "Ir a mis listas",
+    "label": "Lista compartida"
+  },
+  "content": {
+    "empty": "Esta lista está vacía",
+    "copiedCode": "{code} copiado",
+    "copiedUrl": "Enlace de {source} copiado",
+    "searchPlaceholder": "Buscar códigos o notas...",
+    "matchCount": "{shown} de {total}",
+    "saveTitle": "¿Quieres conservar esta lista?",
+    "saveFiltered": "Guarda {count, plural, one {el # código filtrado} other {los # códigos filtrados}} como una lista nueva",
+    "saveAll": "Guárdala como una lista nueva tuya con un clic ({count, plural, one {# código} other {# códigos}})",
+    "saveFilteredButton": "Guardar resultados filtrados",
+    "saveAllButton": "Guardar en mis listas",
+    "noResults": "Ningún código coincide con \"{query}\"",
+    "clearSearch": "Borrar búsqueda",
+    "addToMyPlaylists": "Añadir a mis listas",
+    "addToPlaylist": "Añadir a una lista",
+    "copyCode": "Copiar código",
+    "sources": "Sitios de videos",
+    "openLink": "Abrir enlace",
+    "copyLink": "Copiar enlace",
+    "addToExisting": "Añadir a una lista existente",
+    "alreadySaved": "En mis listas · Ver",
+    "savedAsNew": "Guardada como “{name}” ({count, plural, one {# código} other {# códigos}})",
+    "view": "Ver",
+    "generateAllLinks": "Generar enlaces de todos",
+    "generateFilteredLinks": "Generar enlaces de los resultados"
+  },
+  "public": {
+    "label": "Lista pública",
+    "labelWithOwner": "Lista pública de {name}",
+    "edit": "Editar",
+    "updatedAt": "Actualizada {date}",
+    "missingTitle": "No se encontró la lista pública",
+    "missingBody": "Puede que se haya eliminado o que su dueño la haya hecho privada.",
+    "errorTitle": "No se pudo cargar la lista",
+    "errorBody": "Revisa tu conexión y recarga la página."
+  }
+}

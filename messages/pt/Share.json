@@ -1,0 +1,44 @@
+{
+  "page": {
+    "invalidTitle": "Link de compartilhamento inválido",
+    "invalidBody": "O link pode estar incompleto. Verifique se você copiou a URL inteira.",
+    "goToDashboard": "Ir para minhas playlists",
+    "label": "Playlist compartilhada"
+  },
+  "content": {
+    "empty": "Esta playlist está vazia",
+    "copiedCode": "{code} copiado",
+    "copiedUrl": "Link do {source} copiado",
+    "searchPlaceholder": "Buscar códigos ou notas...",
+    "matchCount": "{shown} de {total}",
+    "saveTitle": "Quer guardar esta playlist?",
+    "saveFiltered": "Salvar {count, plural, one {o # código filtrado} other {os # códigos filtrados}} como uma nova playlist",
+    "saveAll": "Salve como uma nova playlist sua com um clique ({count, plural, one {# código} other {# códigos}})",
+    "saveFilteredButton": "Salvar resultados filtrados",
+    "saveAllButton": "Salvar nas minhas playlists",
+    "noResults": "Nenhum código corresponde a \"{query}\"",
+    "clearSearch": "Limpar busca",
+    "addToMyPlaylists": "Adicionar às minhas playlists",
+    "addToPlaylist": "Adicionar à playlist",
+    "copyCode": "Copiar código",
+    "sources": "Sites de vídeo",
+    "openLink": "Abrir link",
+    "copyLink": "Copiar link",
+    "addToExisting": "Adicionar a uma playlist existente",
+    "alreadySaved": "Nas minhas playlists · Ver",
+    "savedAsNew": "Salva como “{name}” ({count, plural, one {# código} other {# códigos}})",
+    "view": "Ver",
+    "generateAllLinks": "Gerar links de todos",
+    "generateFilteredLinks": "Gerar links dos resultados"
+  },
+  "public": {
+    "label": "Playlist pública",
+    "labelWithOwner": "Playlist pública de {name}",
+    "edit": "Editar",
+    "updatedAt": "Atualizada em {date}",
+    "missingTitle": "Playlist pública não encontrada",
+    "missingBody": "Ela pode ter sido excluída, ou o dono a tornou privada.",
+    "errorTitle": "Não foi possível carregar a playlist",
+    "errorBody": "Verifique sua conexão e recarregue a página."
+  }
+}

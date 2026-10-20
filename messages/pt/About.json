@@ -1,0 +1,43 @@
+{
+  "title": "Sobre",
+  "subtitle": "Saiba mais sobre este projeto",
+  "contact": {
+    "title": "Contato e suporte",
+    "description": "Encontrou um problema ou tem uma sugestão? Fale comigo",
+    "body": "Para dúvidas, sugestões ou ajuda, envie um e-mail para:",
+    "tip": "💡 Dica: descreva bem o problema ou a sugestão no e-mail e eu respondo assim que puder."
+  },
+  "openSource": {
+    "title": "Código aberto",
+    "description": "Este projeto é de código aberto. Fique à vontade para ver o código e contribuir",
+    "button": "Ver no GitHub"
+  },
+  "why": {
+    "title": "Por que criei este projeto",
+    "description": "A motivação e a ideia por trás desta ferramenta",
+    "problemLead": "O problema de salvar links: ",
+    "problemIntro": "Quando você junta muitos códigos JAV, provavelmente esbarra nisto:",
+    "problem1": "Os sites de vídeo vivem mudando de domínio ou saindo do ar, e os links salvos quebram",
+    "problem2": "Coleções espalhadas por várias plataformas são difíceis de organizar",
+    "problem3": "Compartilhar uma lista é complicado quando cada pessoa usa um site diferente",
+    "problem4": "Não existe um jeito simples de organizar e pesquisar a sua coleção",
+    "solutionLead": "Uma solução baseada no código: ",
+    "solutionIntro": "Este projeto coloca o código em primeiro lugar, para você:",
+    "solution1Label": "Guardar para sempre: ",
+    "solution1": "Salve só os códigos, sem depender de nenhum site",
+    "solution2Label": "Trocar à vontade: ",
+    "solution2": "Mude de site de vídeo quando quiser",
+    "solution3Label": "Compartilhar fácil: ",
+    "solution3": "Envie uma lista de códigos e deixe cada amigo escolher o próprio site",
+    "solution4Label": "Manter tudo organizado: ",
+    "solution4": "Crie quantas playlists precisar",
+    "techLead": "Tecnologia: ",
+    "tech": "Feito com Next.js 15. Funciona sem login."
+  },
+  "changelog": {
+    "title": "Novidades",
+    "description": "Veja o que foi adicionado e melhorado recentemente",
+    "button": "Ver novidades",
+    "note": "Por enquanto, o histórico de novidades está disponível só em chinês tradicional."
+  }
+}

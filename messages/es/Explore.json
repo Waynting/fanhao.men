@@ -1,0 +1,29 @@
+{
+  "title": "Explorar",
+  "subtitle": "Los códigos más guardados y con más clics últimamente",
+  "periods": {
+    "7d": "Esta semana",
+    "30d": "Este mes"
+  },
+  "counts": {
+    "saves": "{count, plural, one {# guardado} other {# guardados}}",
+    "clicks": "{count, plural, one {# clic} other {# clics}}"
+  },
+  "disabledTitle": "Las tendencias no están activadas en este sitio",
+  "disabledBody": "Los rankings requieren inicio de sesión, así que aquí solo están disponibles tus propias listas.",
+  "errorTitle": "No se pudieron cargar los rankings",
+  "errorBody": "Puede que tu conexión sea inestable. Inténtalo de nuevo en un momento.",
+  "reload": "Recargar",
+  "emptyTitle": "Todavía estamos recopilando datos",
+  "emptyBody": "Aún no hay suficientes personas que hayan guardado o abierto el mismo código. Cuando inicies sesión, lo que guardes también contará para los rankings.",
+  "signIn": "Iniciar sesión",
+  "saved": "Guardado",
+  "defaultPlaylistName": "Desde Explorar",
+  "addLabel": "Añadir {code} a una lista",
+  "addToPlaylist": "Añadir a una lista",
+  "linksLabel": "Enlaces de {code}",
+  "footer": "Los rankings solo cuentan a usuarios con sesión iniciada, muestran un código solo cuando lo tienen al menos 3 personas y nunca revelan quién lo guardó o abrió.",
+  "updatedAt": " Actualizado {time}.",
+  "optOut": " Puedes excluirte en <link>Ajustes</link>.",
+  "new": "Nuevo"
+}

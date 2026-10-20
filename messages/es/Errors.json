@@ -1,0 +1,20 @@
+{
+  "generic": "Algo salió mal. Inténtalo de nuevo más tarde",
+  "storageFull": "No se pudo guardar: el almacenamiento del navegador está lleno o desactivado",
+  "playlistNotFound": "No se encontró la lista",
+  "playlistNameRequired": "Escribe un nombre para la lista",
+  "nameRequired": "Escribe un nombre",
+  "templateMissingCode": "La URL debe contener '{code}'",
+  "invalidUrl": "URL no válida",
+  "invalidFile": "Formato de archivo no válido",
+  "nicknameRequired": "Escribe un apodo",
+  "nicknameTooLong": "El apodo puede tener como máximo {max} caracteres",
+  "signInRequired": "Primero inicia sesión",
+  "saveFailed": "No se pudo guardar. Inténtalo de nuevo más tarde",
+  "emptyInput": "No escribiste nada",
+  "invalidCode": "No es un código válido",
+  "noCodeInUrl": "No se encontró ningún código en esta URL",
+  "urlCodeInvalid": "Se encontró \"{code}\" en la URL, pero no parece un código válido",
+  "tagTooLong": "Cada etiqueta puede tener hasta {max} caracteres",
+  "tagLimit": "Hasta {max} etiquetas"
+}

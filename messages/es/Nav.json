@@ -1,0 +1,16 @@
+{
+  "dashboard": "Listas",
+  "explore": "Explorar",
+  "settings": "Ajustes",
+  "about": "Acerca de",
+  "language": "Idioma",
+  "signIn": "Iniciar sesión",
+  "signInFailed": "No se pudo conectar con Google. Inténtalo de nuevo más tarde",
+  "syncing": "Sincronizando",
+  "syncFailed": "Error de sincronización",
+  "synced": "Sincronizado",
+  "goToAccount": "{status}. Ir a los ajustes de la cuenta",
+  "syncErrorToast": "Error de sincronización",
+  "syncOfflineToast": "Estás sin conexión",
+  "retry": "Reintentar"
+}

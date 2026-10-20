@@ -1,0 +1,47 @@
+{
+  "siteTitle": "Gestor de códigos JAV – Guarda, organiza y comparte listas de códigos AV | fanhao.men",
+  "siteDescription": "Herramienta gratis para coleccionar códigos JAV (IDs como SSIS-123 o FC2-PPV-1234567). Pega códigos o URLs en bloque y se formatean solos, genera enlaces a videos con un clic y comparte tus listas con un enlace. Sin registro; inicia sesión para sincronizar entre dispositivos.",
+  "keywords": "código JAV,códigos JAV,código AV,ID JAV,buscar código JAV,lista JAV,lista de códigos JAV,gestor de códigos JAV,FC2 PPV,JAV,fanhao",
+  "ogAlt": "fanhao.men – gestor de listas de códigos JAV",
+  "appleTitle": "fanhao.men",
+  "pages": {
+    "about": {
+      "title": "Acerca de",
+      "description": "fanhao.men es una herramienta de código abierto para gestionar colecciones de códigos JAV. Conoce la idea detrás del proyecto y cómo contactar."
+    },
+    "dashboard": {
+      "title": "Mis listas"
+    },
+    "newPlaylist": {
+      "title": "Nueva lista"
+    },
+    "explore": {
+      "title": "Explorar",
+      "description": "Los códigos JAV más guardados y abiertos últimamente."
+    },
+    "playlist": {
+      "title": "Lista"
+    },
+    "settings": {
+      "title": "Ajustes"
+    },
+    "share": {
+      "title": "Lista compartida",
+      "description": "Alguien compartió contigo una lista de códigos JAV. Ábrela para explorarla, copiar códigos o generar enlaces a videos, y guárdala en tus propias listas."
+    },
+    "publicPlaylist": {
+      "title": "Lista pública",
+      "description": "Alguien hizo pública una lista de códigos JAV. Ábrela para explorarla, copiar códigos o generar enlaces a videos, y guárdala en tus propias listas."
+    },
+    "auth": {
+      "title": "Iniciando sesión"
+    },
+    "notFound": {
+      "title": "Página no encontrada"
+    },
+    "changelog": {
+      "title": "Novedades",
+      "description": "Lo nuevo en fanhao.men, de lo más reciente a lo más antiguo."
+    }
+  }
+}

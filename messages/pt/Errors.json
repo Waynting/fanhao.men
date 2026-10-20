@@ -1,0 +1,20 @@
+{
+  "generic": "Algo deu errado. Tente novamente mais tarde",
+  "storageFull": "Não foi possível salvar: o armazenamento do navegador está cheio ou desativado",
+  "playlistNotFound": "Playlist não encontrada",
+  "playlistNameRequired": "Digite um nome para a playlist",
+  "nameRequired": "Digite um nome",
+  "templateMissingCode": "A URL precisa conter '{code}'",
+  "invalidUrl": "URL inválida",
+  "invalidFile": "Formato de arquivo inválido",
+  "nicknameRequired": "Digite um apelido",
+  "nicknameTooLong": "O apelido pode ter no máximo {max} caracteres",
+  "signInRequired": "Faça login primeiro",
+  "saveFailed": "Não foi possível salvar. Tente novamente mais tarde",
+  "emptyInput": "O campo está vazio",
+  "invalidCode": "Código inválido",
+  "noCodeInUrl": "Não foi encontrado nenhum código nesta URL",
+  "urlCodeInvalid": "Encontramos \"{code}\" na URL, mas não parece ser um código válido",
+  "tagTooLong": "Cada tag pode ter no máximo {max} caracteres",
+  "tagLimit": "No máximo {max} tags"
+}

@@ -1,0 +1,16 @@
+{
+  "cancel": "Cancelar",
+  "save": "Guardar",
+  "saving": "Guardando…",
+  "delete": "Eliminar",
+  "undo": "Deshacer",
+  "close": "Cerrar",
+  "confirm": "Aceptar",
+  "copy": "Copiar",
+  "copied": "Copiado",
+  "loading": "Cargando…",
+  "backToDashboard": "Volver a mis listas",
+  "clipboardUnavailable": "No se puede acceder al portapapeles",
+  "copyManually": "No se pudo copiar automáticamente. Selecciónalo y cópialo a mano",
+  "codeCount": "{count, plural, one {# código} other {# códigos}}"
+}
