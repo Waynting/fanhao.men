@@ -67,6 +67,7 @@ app/
 │   ├── dashboard/            # 清單列表、示範資料按鈕；new/ 建立清單
 │   ├── playlist/[id]/        # 清單詳細頁（client，依 id 讀 store）
 │   ├── share/                # 解析 URL hash 的分享清單
+│   ├── recent/               # 快速開啟 + 最近開啟的番號
 │   ├── explore/              # 熱門番號排行（讀 trending_codes，開發中）
 │   ├── settings/             # 帳號與同步、個人資料、自訂來源、JSON 備份／匯入、清除資料
 │   └── about/                # 唯一會被索引的內頁
@@ -299,11 +300,11 @@ type Payload = { n: string; d?: string; i: ([code] | [code, note])[] }
 | 註冊 | `components/service-worker-register.tsx`，**只在 production** 註冊（dev 下會快取到過期的 Turbopack chunk） |
 | 標頭 | `next.config.ts` 讓 `/sw.js` 回傳 `Cache-Control: no-cache, no-store, must-revalidate` |
 
-`public/sw.js` 快取策略（撰寫時 `CACHE_VERSION = "v3"`）：
+`public/sw.js` 快取策略（撰寫時 `CACHE_VERSION = "v4"`）：
 
 | 請求 | 策略 |
 | --- | --- |
-| 安裝時 | 預先快取 `/dashboard`、`/dashboard/new`、`/explore`、`/settings`、`/about`、`/share`，接著 `skipWaiting()` |
+| 安裝時 | 預先快取 `/dashboard`、`/dashboard/new`、`/recent`、`/explore`、`/settings`、`/about`、`/share`，接著 `skipWaiting()` |
 | `/_next/static/*`、`/pwa-icon/*` | Cache-first（檔名有 hash，不會變），存到 `assets-<版本>` |
 | 頁面導覽（`mode === "navigate"`，`/auth/*` 除外） | Network-first，成功就以 pathname 為 key 存到 `pages-<版本>`；離線時回傳快取，沒有快取就回傳內嵌的離線頁 |
 | 其他（非 GET、跨網域、RSC fetch） | 不處理，直接走網路 |
@@ -320,7 +321,7 @@ type Payload = { n: string; d?: string; i: ([code] | [code, note])[] }
 | OG 圖片 | `app/opengraph-image.tsx`，1200×630，只用英文（預設字型沒有 CJK 字形） |
 | 首頁 | canonical `/`，附 `WebApplication` JSON-LD |
 | `/about` | canonical `/about`，可被索引 |
-| `noindex, nofollow` | `/dashboard`（含 `/dashboard/new`）、`/playlist/*`、`/explore`、`/settings`、`/share`，在各自的 `layout.tsx` 設定 |
+| `noindex, nofollow` | `/dashboard`（含 `/dashboard/new`）、`/playlist/*`、`/recent`、`/explore`、`/settings`、`/share`，在各自的 `layout.tsx` 設定 |
 | `robots.ts` | allow `/`、disallow `/auth/`，指向 sitemap |
 | `sitemap.ts` | 只有 `/` 與 `/about` |
 
@@ -347,12 +348,13 @@ type Payload = { n: string; d?: string; i: ([code] | [code, note])[] }
 使用者從網站開啟來源連結後，可以事後勾選要把哪些番號加入清單。
 
 - 獨立的 `localStorage` key `av-collector:recent-opens`：`{ entries: { code, openedAt }[], dismissedAt }`，新的在前，最多 100 筆，超過 7 天的在讀取時丟掉。**不屬於 store**：不經 `save()`、不同步、不進備份、不納入熱門統計。
-- 寫入點：`LinkGeneratorPopover` 的「開啟」連結與單一番號的「複製連結」、分享頁的開啟／複製連結，都在 `recordClicks()` 旁呼叫 `rememberOpened(codes)`。批次複製多個番號的連結不記錄，避免把列表塞滿。同一番號再開會移回最上面。
+- 寫入點：`/recent` 的快速開啟、`LinkGeneratorPopover` 的「開啟」連結與單一番號的「複製連結」、分享頁的開啟／複製連結，都在 `recordClicks()` 旁呼叫 `rememberOpened(codes)`。批次複製多個番號的連結不記錄，避免把列表塞滿。同一番號再開會移回最上面。
 - 讀取：`useRecentOpens()`（`useSyncExternalStore`，SSR 回傳 `null`，其他分頁透過 `storage` 事件更新）。
+- 寫入前一律重新讀取 `localStorage`（`current()`），不依賴可能過時的記憶體 cache。
 - UI（`components/recent-opens.tsx`）：
-  - `RecentOpensPrompt` 掛在 `app/(main)/layout.tsx`，有「不在任何清單、且晚於 `dismissedAt`」的紀錄時浮出提示；按 ✕ 或關閉對話框會 `dismissRecentOpens()`。
-  - `RecentOpensDialog` 列出全部紀錄，已在清單的標示且預設不勾，勾選的經 `AddItemsToPlaylistDialog`（`source="recent"`）加入後 `forgetOpened()`。我的清單頁也有入口按鈕。
-- 限制：跨網域看不到使用者在對方網站內的瀏覽，也無法得知停留時間，所以只記錄從本站點出去的連結。
+  - `/recent` 頁（導覽列「最近開啟」分頁，也是 PWA 捷徑）：`QuickOpen` 接受番號或影片網址（`parseVideoInput`），按 Enter 用預設來源開啟，或點任一來源按鈕；`RecentOpensPicker` 列出全部紀錄，已在清單的標示且預設不勾，勾選的經 `AddItemsToPlaylistDialog`（`source="recent"`）加入後 `forgetOpened()`。
+  - `RecentOpensPrompt` 掛在 `app/(main)/layout.tsx`（在 `/recent` 上隱藏），有「不在任何清單、且晚於 `dismissedAt`」的紀錄時浮出連到 `/recent` 的提示；按 ✕、進入或離開 `/recent`、從 `/recent` 開啟都會 `dismissRecentOpens()`。
+- 限制：跨網域看不到使用者在對方網站內的瀏覽，也無法得知停留時間，所以只記錄從本站點出去的連結。也無法用 iframe 內嵌影片網站：missav、jable、javdb、javlibrary 都回傳 `X-Frame-Options: SAMEORIGIN`。
 
 ## 熱門排行（開發中）
 

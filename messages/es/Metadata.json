@@ -42,6 +42,10 @@
     "changelog": {
       "title": "Novedades",
       "description": "Lo nuevo en fanhao.men, de lo más reciente a lo más antiguo."
+    },
+    "recent": {
+      "title": "Abiertos recientemente",
+      "description": "Abre videos desde aquí y luego elige qué códigos añadir a una lista."
     }
   }
 }

@@ -8,7 +8,7 @@
 - **Code normalization**: `ssis123` → `SSIS-123`, `fc2ppv1234567` / `1234567` → `FC2-PPV-1234567`
 - **Bulk add**: paste codes or video URLs (missav, javdb, javlibrary, FC2, ...) one per line; duplicates and invalid lines are flagged
 - **Link generation**: turn one or many codes into URLs for built-in or custom sources
-- **Recently opened**: codes you open from the site are remembered on the device; pick which ones to add to a playlist afterwards
+- **Recent tab**: quick-open a code or URL in any source; codes you open from the site are remembered on the device so you can pick which ones to add to a playlist afterwards
 - **Multiple playlists per code**: save a code to several playlists, copy or move selections between them, with undo
 - **Share links**: the playlist is encoded into the URL hash (no server); recipients can save it with one click
 - **Public playlists** (signed in): a live link at `/p/<owner>/<id>` that always shows the latest synced version

@@ -42,6 +42,10 @@
     "changelog": {
       "title": "更新紀錄",
       "description": "fanhao.men 每次更新的內容，最新的在最上面。"
+    },
+    "recent": {
+      "title": "最近開啟",
+      "description": "從這裡開啟影片，看完再挑要加入清單的番號。"
     }
   }
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { List, ListVideo, Settings, Info, Compass } from "lucide-react"
+import { List, ListVideo, Settings, Info, Compass, History } from "lucide-react"
 import { AccountButton } from "@/components/account-button"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { Link, usePathname } from "@/i18n/navigation"
@@ -9,6 +9,7 @@ import { SITE_NAME } from "@/lib/site"
 
 const navItems = [
   { href: "/dashboard", match: ["/dashboard", "/playlist"], label: "dashboard", icon: List },
+  { href: "/recent", match: ["/recent"], label: "recent", icon: History },
   { href: "/explore", match: ["/explore"], label: "explore", icon: Compass },
   { href: "/settings", match: ["/settings"], label: "settings", icon: Settings },
   { href: "/about", match: ["/about"], label: "about", icon: Info },

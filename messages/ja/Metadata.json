@@ -42,6 +42,10 @@
     "changelog": {
       "title": "更新履歴",
       "description": "fanhao.men の更新内容です。新しいものが上にあります。"
+    },
+    "recent": {
+      "title": "最近開いた品番",
+      "description": "ここから作品を開き、見終わったらリストに追加する品番を選べます。"
     }
   }
 }

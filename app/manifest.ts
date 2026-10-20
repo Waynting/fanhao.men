@@ -20,6 +20,7 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ["utilities", "productivity"],
     shortcuts: [
       { name: dashboard.new.title, url: "/dashboard/new", icons: [{ src: "/pwa-icon/192", sizes: "192x192" }] },
+      { name: nav.recent, url: "/recent", icons: [{ src: "/pwa-icon/192", sizes: "192x192" }] },
       { name: nav.explore, url: "/explore", icons: [{ src: "/pwa-icon/192", sizes: "192x192" }] },
     ],
     icons: [

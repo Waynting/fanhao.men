@@ -43,6 +43,12 @@ function load(): RecentData {
   return cache
 }
 
+/** Re-reads storage before a write, so a write never rests on a stale cache. */
+function current(): RecentData {
+  cache = null
+  return load()
+}
+
 function save(next: RecentData) {
   cache = next
   try {
@@ -77,14 +83,14 @@ export function rememberOpened(codes: string[]) {
   if (typeof window === "undefined" || codes.length === 0) return
   const now = new Date().toISOString()
   const fresh = [...new Set(codes)]
-  const { entries, dismissedAt } = load()
+  const { entries, dismissedAt } = current()
   const rest = entries.filter((e) => !fresh.includes(e.code))
   save({ entries: [...fresh.map((code) => ({ code, openedAt: now })), ...rest].slice(0, MAX_ENTRIES), dismissedAt })
 }
 
 export function forgetOpened(codes: string[]) {
   const drop = new Set(codes)
-  const data = load()
+  const data = current()
   save({ ...data, entries: data.entries.filter((e) => !drop.has(e.code)) })
 }
 
@@ -94,5 +100,5 @@ export function clearRecentOpens() {
 
 /** Hides the prompt until something new is opened; the list itself stays. */
 export function dismissRecentOpens() {
-  save({ ...load(), dismissedAt: new Date().toISOString() })
+  save({ ...current(), dismissedAt: new Date().toISOString() })
 }

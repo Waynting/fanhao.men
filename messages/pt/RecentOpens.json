@@ -1,6 +1,6 @@
 {
   "title": "Abertos recentemente",
-  "description": "Códigos que você abriu ou cujo link copiou daqui. Marque os que quer guardar e adicione todos de uma vez.",
+  "description": "Marque os que quer guardar e adicione todos de uma vez.",
   "empty": "Nada aberto ainda.",
   "selectAll": "Selecionar tudo",
   "selectNone": "Limpar seleção",
@@ -11,5 +11,10 @@
   "defaultPlaylistName": "Vistos recentemente",
   "privacy": "Fica só neste dispositivo. Não é sincronizado nem entra nas estatísticas, e é apagado após 7 dias.",
   "prompt": "{count, plural, one {Você abriu # código. Salvar?} other {Você abriu # códigos. Salvar?}}",
-  "dismiss": "Agora não"
+  "dismiss": "Agora não",
+  "subtitle": "Comece aqui: abra vídeos por esta página e depois escolha quais guardar.",
+  "quickOpenTitle": "Abrir rápido",
+  "inputPlaceholder": "Digite um código ou cole uma URL, ex. SSIS-123",
+  "invalid": "Código não reconhecido",
+  "listTitle": "Códigos abertos recentemente"
 }

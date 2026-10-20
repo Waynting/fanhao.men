@@ -99,6 +99,10 @@ export function PlaylistHeader({ playlist }: { playlist: Playlist }) {
   }
 
   const togglePublic = (next: boolean) => {
+    if (!session) {
+      toast(t("publicNeedsSignIn"), { action: { label: t("signIn"), onClick: handleSignIn } })
+      return
+    }
     try {
       setPlaylistPublic(playlist.id, next)
       toast.success(next ? t("madePublic") : t("madePrivate"))
@@ -223,7 +227,7 @@ export function PlaylistHeader({ playlist }: { playlist: Playlist }) {
           </div>
         </div>
 
-        <div className="mt-4 pt-4 border-t border-zinc-100">
+        <div className="mt-4 pt-4 border-t border-zinc-100 flex flex-wrap items-center gap-x-6 gap-y-2">
           <Button
             variant="ghost"
             size="sm"
@@ -233,6 +237,20 @@ export function PlaylistHeader({ playlist }: { playlist: Playlist }) {
             <Trash2 className="h-4 w-4 mr-2" />
             {t("deletePlaylist")}
           </Button>
+          {authEnabled && (
+            <div className="flex items-center gap-2">
+              <Switch
+                id="public-switch"
+                checked={isPublic}
+                onCheckedChange={togglePublic}
+                aria-label={t("publicLabel")}
+              />
+              <Label htmlFor="public-switch" className="flex items-center gap-1.5 text-sm font-normal text-zinc-600 cursor-pointer">
+                <Globe className="h-4 w-4 text-zinc-500" />
+                {t("publicLabel")}
+              </Label>
+            </div>
+          )}
         </div>
       </div>
 
@@ -283,54 +301,35 @@ export function PlaylistHeader({ playlist }: { playlist: Playlist }) {
             <DialogTitle>{t("shareTitle")}</DialogTitle>
           </DialogHeader>
 
-          {authEnabled && (
-            <div className="rounded-lg border border-zinc-200 p-4 space-y-3">
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
-                  <Label htmlFor="public-switch" className="flex items-center gap-1.5">
-                    <Globe className="h-4 w-4 text-zinc-500" />
-                    {t("publicLabel")}
-                  </Label>
-                  <p className="text-xs text-zinc-500 mt-1">{isPublic ? t("publicOnHint") : t("publicOffHint")}</p>
-                </div>
-                <Switch
-                  id="public-switch"
-                  checked={isPublic}
-                  onCheckedChange={togglePublic}
-                  disabled={!session}
-                  aria-label={t("publicLabel")}
-                />
-              </div>
-              {!session ? (
-                <p className="text-xs text-zinc-500">
-                  {t("publicNeedsSignIn")}{" "}
-                  <button type="button" onClick={handleSignIn} className="font-medium text-zinc-900 underline underline-offset-2">
-                    {t("signIn")}
-                  </button>
+          {authEnabled &&
+            (isPublic && session ? (
+              <div className="rounded-lg border border-zinc-200 p-4 space-y-2">
+                <p className="flex items-center gap-1.5 text-sm font-medium text-zinc-900">
+                  <Globe className="h-4 w-4 text-zinc-500" />
+                  {t("publicLinkLabel")}
                 </p>
-              ) : (
-                isPublic && (
-                  <div className="flex gap-2">
-                    <Input
-                      id="public-url"
-                      readOnly
-                      value={publicUrl ?? ""}
-                      onFocus={(e) => e.currentTarget.select()}
-                      className="font-mono text-xs"
-                    />
-                    <Button variant="outline" size="icon" onClick={() => copyUrl(publicUrl, "public-url")} aria-label={t("copyLink")}>
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                    <Button variant="outline" size="icon" asChild aria-label={t("preview")}>
-                      <a href={publicUrl ?? "#"} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="h-4 w-4" />
-                      </a>
-                    </Button>
-                  </div>
-                )
-              )}
-            </div>
-          )}
+                <p className="text-xs text-zinc-500">{t("publicOnHint")}</p>
+                <div className="flex gap-2">
+                  <Input
+                    id="public-url"
+                    readOnly
+                    value={publicUrl ?? ""}
+                    onFocus={(e) => e.currentTarget.select()}
+                    className="font-mono text-xs"
+                  />
+                  <Button variant="outline" size="icon" onClick={() => copyUrl(publicUrl, "public-url")} aria-label={t("copyLink")}>
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                  <Button variant="outline" size="icon" asChild aria-label={t("preview")}>
+                    <a href={publicUrl ?? "#"} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-xs text-zinc-500">{t("publicOffHint")}</p>
+            ))}
 
           <div className="space-y-2">
             <p className="text-sm font-medium text-zinc-900">{t("snapshotLabel")}</p>

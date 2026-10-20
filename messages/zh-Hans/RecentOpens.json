@@ -1,6 +1,6 @@
 {
   "title": "最近打开",
-  "description": "你从这里打开或复制链接的番号。勾选要留下的，一次加入清单。",
+  "description": "勾选要留下的，一次加入清单。",
   "empty": "还没有打开记录。",
   "selectAll": "全选",
   "selectNone": "全不选",
@@ -11,5 +11,10 @@
   "defaultPlaylistName": "最近看过",
   "privacy": "记录只保存在这台设备，不会同步或纳入统计，7 天后自动删除。",
   "prompt": "刚刚打开了 {count} 部，要加入清单吗？",
-  "dismiss": "稍后再说"
+  "dismiss": "稍后再说",
+  "subtitle": "把这里当入口：从这里开影片，看完再挑要留的。",
+  "quickOpenTitle": "快速打开",
+  "inputPlaceholder": "输入番号或粘贴网址，例如 SSIS-123",
+  "invalid": "无法识别这个番号",
+  "listTitle": "最近打开的番号"
 }

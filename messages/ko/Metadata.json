@@ -42,6 +42,10 @@
     "changelog": {
       "title": "변경 기록",
       "description": "fanhao.men의 업데이트 내용입니다. 최신 항목이 맨 위에 있습니다."
+    },
+    "recent": {
+      "title": "최근 연 품번",
+      "description": "여기서 영상을 열고, 다 본 뒤 목록에 추가할 품번을 고르세요."
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "title": "Recently opened",
-  "description": "Codes you opened or copied a link for from here. Check the ones to keep and add them in one go.",
+  "description": "Check the ones to keep and add them in one go.",
   "empty": "Nothing opened yet.",
   "selectAll": "Select all",
   "selectNone": "Select none",
@@ -11,5 +11,10 @@
   "defaultPlaylistName": "Recently watched",
   "privacy": "Kept on this device only. Never synced or counted in stats, and removed after 7 days.",
   "prompt": "{count, plural, one {You opened # code. Save it?} other {You opened # codes. Save them?}}",
-  "dismiss": "Not now"
+  "dismiss": "Not now",
+  "subtitle": "Start here: open videos from this page, then pick which ones to keep.",
+  "quickOpenTitle": "Quick open",
+  "inputPlaceholder": "Type a code or paste a URL, e.g. SSIS-123",
+  "invalid": "Not a recognized code",
+  "listTitle": "Recently opened codes"
 }

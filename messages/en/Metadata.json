@@ -42,6 +42,10 @@
     "changelog": {
       "title": "Changelog",
       "description": "What's new in fanhao.men, newest first."
+    },
+    "recent": {
+      "title": "Recently opened",
+      "description": "Open videos from here, then pick which codes to add to a playlist."
     }
   }
 }

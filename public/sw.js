@@ -1,8 +1,8 @@
 // Offline support. Bump CACHE_VERSION to drop old caches after a change to this file.
-const CACHE_VERSION = "v3"
+const CACHE_VERSION = "v4"
 const PAGE_CACHE = `pages-${CACHE_VERSION}`
 const ASSET_CACHE = `assets-${CACHE_VERSION}`
-const PRECACHE_PAGES = ["/dashboard", "/dashboard/new", "/explore", "/settings", "/about", "/share"]
+const PRECACHE_PAGES = ["/dashboard", "/dashboard/new", "/recent", "/explore", "/settings", "/about", "/share"]
 
 const OFFLINE_HTML = `<!doctype html><html lang="zh-Hant"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
