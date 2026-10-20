@@ -16,10 +16,7 @@ export function AccountButton() {
   const sync = useSyncStatus()
   const [redirecting, setRedirecting] = useState(false)
 
-  if (!authEnabled) {
-    return <span className="text-[11px] text-zinc-500 hidden sm:inline">資料僅儲存在此裝置</span>
-  }
-  if (!ready) return null
+  if (!authEnabled || !ready) return null
 
   if (!session) {
     const handleSignIn = async () => {

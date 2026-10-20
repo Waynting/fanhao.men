@@ -26,7 +26,7 @@ npm run dev                        # http://localhost:3000（Turbopack）
 
 | 變數 | 用途 | 留空時 |
 | --- | --- | --- |
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase 專案網址 | 隱藏登入 UI，navbar 顯示「資料僅儲存在此裝置」 |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase 專案網址 | 隱藏登入 UI，navbar 右上角留空 |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key | 同上（兩個都要有才會啟用登入） |
 | `NEXT_PUBLIC_SITE_URL` | 正式網址（metadata、robots、sitemap 用），正式環境設 `https://fanhao.men` | Vercel 上用正式網域，本機用 `http://localhost:3000` |
 | `NEXT_PUBLIC_GA_MEASUREMENT_ID` | GA4 Measurement ID（`G-XXXXXXXXXX`） | 不載入 GA，`trackEvent` 變成 no-op |

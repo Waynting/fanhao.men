@@ -121,7 +121,7 @@ export function SharePageContent({ items, playlistName, templates }: SharePageCo
             <div>
               <h3 className="text-base font-semibold mb-1">想保存這些番號？</h3>
               <p className="text-sm text-zinc-400">
-                將{searchQuery ? `篩選出的 ${filteredItems.length}` : `全部 ${items.length}`} 個番號存到這台裝置
+                將{searchQuery ? `篩選出的 ${filteredItems.length}` : `全部 ${items.length}`} 個番號加入我的清單
               </p>
             </div>
             <AddItemsToPlaylistDialog

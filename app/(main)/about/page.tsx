@@ -121,7 +121,7 @@ export default function AboutPage() {
 
             <p className="pt-2">
               <strong>技術實作：</strong>
-              使用 Next.js 15 打造，免登入，所有資料儲存在你自己裝置的瀏覽器中。
+              使用 Next.js 15 打造，不登入也能使用。
             </p>
           </CardContent>
         </Card>

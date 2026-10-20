@@ -93,7 +93,7 @@
 ## 部署後檢查
 
 - [ ] `https://fanhao.men` 正常，憑證有效。
-- [ ] Navbar 右上角顯示「登入同步」，而不是「資料僅儲存在此裝置」。
+- [ ] Navbar 右上角顯示「登入」按鈕（沒有設定 Supabase 時這裡會是空的）。
 - [ ] Google 登入後回到原頁面，首次登入出現 onboarding 對話框。
 - [ ] 在另一台裝置登入，清單同步過來。
 - [ ] `https://fanhao.men/robots.txt`、`/sitemap.xml` 的網址是 `https://fanhao.men`。
@@ -103,7 +103,7 @@
 
 | 症狀 | 原因 | 解法 |
 | --- | --- | --- |
-| Navbar 顯示「資料僅儲存在此裝置」，沒有登入按鈕 | Build 時沒有 `NEXT_PUBLIC_SUPABASE_URL` 或 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`（`authEnabled === false`） | 在 Vercel 設定兩個變數（注意套用的環境是否包含 Production），然後 **Redeploy** |
+| Navbar 右上角是空的，沒有登入按鈕 | Build 時沒有 `NEXT_PUBLIC_SUPABASE_URL` 或 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`（`authEnabled === false`） | 在 Vercel 設定兩個變數（注意套用的環境是否包含 Production），然後 **Redeploy** |
 | 登入時出現 `Unsupported provider: provider is not enabled` | Supabase 沒有啟用 Google provider，或設到 Third-Party Auth | Authentication → Sign In / Providers → Google 啟用並填入 Client ID／secret |
 | Google 顯示 `Error 400: redirect_uri_mismatch` | Google OAuth client 的 Authorized redirect URI 不是 Supabase callback | 設為 `https://<project-ref>.supabase.co/auth/v1/callback`（注意 project ref、https、沒有結尾斜線） |
 | 登入後被導到 `https://fanhao.men` 首頁而非原頁面，或本機登入跳到正式站 | `redirectTo` 不在 Supabase Redirect URLs 名單，Supabase 退回 Site URL | 把對應的 `/auth/callback` 網址加進 Redirect URLs |

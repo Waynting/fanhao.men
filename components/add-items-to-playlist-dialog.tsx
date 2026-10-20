@@ -84,7 +84,7 @@ export function AddItemsToPlaylistDialog({ items, defaultNewName, trigger, sourc
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>存到我的清單</DialogTitle>
-          <DialogDescription>將 {items.length} 個番號存到這台裝置</DialogDescription>
+          <DialogDescription>將 {items.length} 個番號加入我的清單</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleAdd} className="space-y-5 mt-2">

@@ -103,7 +103,7 @@ export function AccountSection() {
         <CardDescription>
           {session
             ? "清單與自訂來源會自動同步到你登入的所有裝置。"
-            : "用 Google 帳號登入，就能在手機、電腦之間同步清單。不登入也能照常使用，資料只會留在這台裝置。"}
+            : "用 Google 帳號登入，就能在手機、電腦之間同步清單。不登入也能照常使用。"}
         </CardDescription>
       </CardHeader>
       <CardContent>

@@ -189,9 +189,7 @@ export default function SettingsPage() {
             資料與備份
           </CardTitle>
           <CardDescription>
-            {session
-              ? `目前 ${store.playlists.length} 份清單、${itemCount} 個番號，已同步到你的帳號。也可以另外匯出一份備份檔。`
-              : `所有資料只存在這台裝置的瀏覽器中（目前 ${store.playlists.length} 份清單、${itemCount} 個番號）。清除瀏覽器資料或換裝置前，請先匯出備份或登入同步。`}
+            目前 {store.playlists.length} 份清單、{itemCount} 個番號。可以匯出備份檔，或從備份檔還原。
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

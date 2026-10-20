@@ -26,7 +26,6 @@ export default function DashboardPage() {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-6">
         <div>
           <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-900 tracking-tight">我的清單</h1>
-          <p className="text-zinc-500 mt-1 text-sm sm:text-base">管理你的番號收藏，資料儲存在這台裝置的瀏覽器中</p>
         </div>
         <Button asChild size="lg">
           <Link href="/dashboard/new">
