@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { ArrowLeft, ArrowRight, Check, CloudUpload, Loader2, RefreshCw, Smartphone } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
@@ -53,6 +53,7 @@ interface OnboardingFlowProps {
 /** The two-step dialog itself, without the session/profile wiring. */
 export function OnboardingFlow({ open, identity, playlistCount, onDismiss }: OnboardingFlowProps) {
   const [step, setStep] = useState<1 | 2>(1)
+  const primaryRef = useRef<HTMLButtonElement>(null)
   const [displayName, setDisplayName] = useState(identity.name)
   const [showEmail, setShowEmail] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -79,8 +80,14 @@ export function OnboardingFlow({ open, identity, playlistCount, onDismiss }: Onb
   return (
     <Dialog open={open} onOpenChange={(next) => !next && !saving && onDismiss()}>
       <DialogContent
-        className="p-0 gap-0 overflow-hidden sm:max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto [&>button:last-child]:text-white [&>button:last-child]:top-3.5"
+        // minmax(0,1fr): without it a long nickname widens the grid track past the viewport on phones
+        className="p-0 gap-0 grid-cols-[minmax(0,1fr)] w-[calc(100vw-2rem)] rounded-xl sm:rounded-xl sm:max-w-md max-h-[calc(100dvh-2rem)] overflow-x-hidden overflow-y-auto [&>button:last-child]:text-white [&>button:last-child]:top-3.5"
         onInteractOutside={(e) => e.preventDefault()}
+        // Focus the primary action rather than "稍後再說", which otherwise opens looking pre-selected
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+          primaryRef.current?.focus({ preventScroll: true })
+        }}
       >
         {/* Header band: same ink as the navbar, dotted grid for texture */}
         <div className="relative bg-zinc-900 px-6 pt-6 pb-10 text-white">
@@ -151,7 +158,7 @@ export function OnboardingFlow({ open, identity, playlistCount, onDismiss }: Onb
               <Button variant="ghost" className="text-zinc-500" onClick={onDismiss}>
                 稍後再說
               </Button>
-              <Button onClick={() => setStep(2)}>
+              <Button ref={primaryRef} onClick={() => setStep(2)}>
                 設定個人資料
                 <ArrowRight />
               </Button>
