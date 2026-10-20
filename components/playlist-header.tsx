@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Edit, Trash2, Share2, Download, Copy, ExternalLink, Globe } from "lucide-react"
+import { ArrowLeft, Edit, Trash2, Share2, Download, Copy, ExternalLink, Globe, Lock } from "lucide-react"
 import { useFormatter, useTranslations } from "next-intl"
 import { DATE } from "@/lib/date-formats"
 import { Link, useRouter } from "@/i18n/navigation"
@@ -25,12 +25,13 @@ import { encodeShareHash } from "@/lib/share-codec"
 import { publicPlaylistPath } from "@/lib/public-playlist"
 import { authEnabled, signInWithGoogle, useSession } from "@/lib/supabase"
 import { syncNow } from "@/lib/sync"
-import { trackSharePlaylist } from "@/lib/analytics"
+import { trackCopyCodes, trackSharePlaylist } from "@/lib/analytics"
 
 export function PlaylistHeader({ playlist }: { playlist: Playlist }) {
   const router = useRouter()
   const t = useTranslations("Playlist.header")
   const tCommon = useTranslations("Common")
+  const tToolbar = useTranslations("Playlist.toolbar")
   const format = useFormatter()
   const errorText = useErrorText()
   const { session } = useSession()
@@ -125,6 +126,16 @@ export function PlaylistHeader({ playlist }: { playlist: Playlist }) {
     }
   }
 
+  const handleCopyCodes = async () => {
+    try {
+      await navigator.clipboard.writeText(playlist.items.map((i) => i.normalizedCode).join("\n"))
+      trackCopyCodes({ item_count: playlist.items.length, has_selection: false })
+      toast.success(tToolbar("copiedCodes", { count: playlist.items.length }))
+    } catch {
+      toast.error(tCommon("clipboardUnavailable"))
+    }
+  }
+
   const handleExport = () => {
     const text = playlist.items.map((i) => i.normalizedCode).join("\n")
     const blob = new Blob([text], { type: "text/plain;charset=utf-8" })
@@ -169,14 +180,18 @@ export function PlaylistHeader({ playlist }: { playlist: Playlist }) {
                   b: (chunks) => <span className="font-semibold text-zinc-900">{chunks}</span>,
                 })}
               </span>
-              {isPublic && (
+              {(isPublic || authEnabled) && (
                 <button
                   type="button"
                   onClick={handleShare}
-                  className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100"
+                  className={
+                    isPublic
+                      ? "inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100"
+                      : "inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600 hover:bg-zinc-200"
+                  }
                 >
-                  <Globe className="h-3 w-3" />
-                  {t("publicBadge")}
+                  {isPublic ? <Globe className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
+                  {isPublic ? t("publicBadge") : t("privateBadge")}
                 </button>
               )}
               <span>
@@ -188,10 +203,14 @@ export function PlaylistHeader({ playlist }: { playlist: Playlist }) {
           </div>
 
           {/* Action buttons */}
-          <div className="grid grid-cols-3 sm:flex gap-2 w-full sm:w-auto lg:ml-6">
+          <div className="grid grid-cols-2 sm:flex gap-2 w-full sm:w-auto lg:ml-6">
             <Button size="sm" onClick={handleShare}>
               <Share2 className="h-4 w-4 mr-2" />
               {t("share")}
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleCopyCodes} disabled={playlist.items.length === 0}>
+              <Copy className="h-4 w-4 mr-2" />
+              {tToolbar("copyCodes")}
             </Button>
             <Button variant="outline" size="sm" onClick={handleExport} disabled={playlist.items.length === 0}>
               <Download className="h-4 w-4 mr-2" />

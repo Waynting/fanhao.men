@@ -32,13 +32,12 @@ export function SmartActionToolbar({
   const t = useTranslations("Playlist.toolbar")
   const tCommon = useTranslations("Common")
   const hasSelection = selectedItems.length > 0
-  const targetItems = hasSelection ? selectedItems : allItems
-
+  
   const handleCopyCodes = async () => {
     try {
-      await navigator.clipboard.writeText(targetItems.map((item) => item.normalizedCode).join("\n"))
-      trackCopyCodes({ item_count: targetItems.length, has_selection: hasSelection })
-      toast.success(t("copiedCodes", { count: targetItems.length }))
+      await navigator.clipboard.writeText(selectedItems.map((item) => item.normalizedCode).join("\n"))
+      trackCopyCodes({ item_count: selectedItems.length, has_selection: true })
+      toast.success(t("copiedCodes", { count: selectedItems.length }))
     } catch {
       toast.error(tCommon("clipboardUnavailable"))
     }
@@ -101,10 +100,11 @@ export function SmartActionToolbar({
               <span className="hidden sm:inline">{t("add")}</span>
             </Button>
 
-            {allItems.length > 0 && (
+            {/* Whole-playlist copy lives in the header; these act on the selection */}
+            {hasSelection && (
               <>
                 <LinkGeneratorPopover
-                  items={targetItems}
+                  items={selectedItems}
                   templates={templates}
                   trigger={
                     <Button variant="outline" size="sm" aria-label={t("generateLinks")} className={actionClass}>

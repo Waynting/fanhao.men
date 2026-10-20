@@ -28,6 +28,7 @@
     "deleteTitle": "Delete playlist?",
     "deleteDescription": "{count, plural, one {This deletes \"{name}\" and its # code.} other {This deletes \"{name}\" and its # codes.}} You can still press \"Undo\" in the notification afterwards.",
     "publicBadge": "Public",
+    "privateBadge": "Private",
     "publicLabel": "Make this playlist public",
     "publicOffHint": "Turning this on gives the playlist a permanent link anyone can open without signing in. It always shows your latest changes.",
     "publicOnHint": "Anyone with the link sees the latest version. Turn it off and the link stops working right away.",

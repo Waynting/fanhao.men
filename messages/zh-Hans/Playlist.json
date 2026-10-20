@@ -28,6 +28,7 @@
     "deleteTitle": "删除清单？",
     "deleteDescription": "将删除“{name}”及其中的 {count} 个番号。删除后可在提示消息中点击“撤销”。",
     "publicBadge": "公开",
+    "privateBadge": "私人",
     "publicLabel": "公开这份清单",
     "publicOffHint": "开启后会生成固定网址，任何人无需登录都能看到这份清单，内容会随你的修改实时更新。",
     "publicOnHint": "任何拿到网址的人都能看到最新内容。关闭后网址立即失效。",

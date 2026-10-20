@@ -28,6 +28,7 @@
     "deleteTitle": "リストを削除しますか？",
     "deleteDescription": "「{name}」と品番 {count} 件を削除します。削除後も通知の「元に戻す」で復元できます。",
     "publicBadge": "公開",
+    "privateBadge": "非公開",
     "publicLabel": "このリストを公開する",
     "publicOffHint": "オンにすると固定 URL が作られ、ログインしていない人でもこのリストを見られます。内容は編集に合わせてすぐ更新されます。",
     "publicOnHint": "URL を知っている人は誰でも最新の内容を見られます。オフにすると URL はすぐ無効になります。",

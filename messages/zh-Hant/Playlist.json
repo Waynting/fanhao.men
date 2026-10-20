@@ -28,6 +28,7 @@
     "deleteTitle": "刪除清單？",
     "deleteDescription": "將刪除「{name}」與其中 {count} 個番號。刪除後可在提示訊息中按「復原」。",
     "publicBadge": "公開",
+    "privateBadge": "私人",
     "publicLabel": "公開這份清單",
     "publicOffHint": "開啟後會產生固定網址，任何人不用登入都能看到這份清單，內容會隨你的修改即時更新。",
     "publicOnHint": "任何拿到網址的人都能看到最新內容。關閉後網址立即失效。",
