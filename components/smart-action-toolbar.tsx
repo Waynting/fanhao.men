@@ -1,20 +1,18 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Plus, Trash2, Copy, Link as LinkIcon, ListPlus } from "lucide-react"
+import { Plus, Trash2, Copy, ListPlus } from "lucide-react"
 import { toast } from "sonner"
 import { useTranslations } from "next-intl"
 import { trackCopyCodes } from "@/lib/analytics"
-import { LinkGeneratorPopover } from "@/components/link-generator-popover"
 import { AddItemsToPlaylistDialog } from "@/components/add-items-to-playlist-dialog"
-import type { PlaylistItem, SourceTemplate } from "@/lib/local-store"
+import type { PlaylistItem } from "@/lib/local-store"
 import { cn } from "@/lib/utils"
 
 interface SmartActionToolbarProps {
   playlistId: string
   allItems: PlaylistItem[]
   selectedItems: PlaylistItem[]
-  templates: SourceTemplate[]
   onClearSelection: () => void
   onOpenAddDialog: () => void
   onDelete: () => void
@@ -24,7 +22,6 @@ export function SmartActionToolbar({
   playlistId,
   allItems,
   selectedItems,
-  templates,
   onClearSelection,
   onOpenAddDialog,
   onDelete,
@@ -100,27 +97,13 @@ export function SmartActionToolbar({
               <span className="hidden sm:inline">{t("add")}</span>
             </Button>
 
-            {/* Whole-playlist copy lives in the header; these act on the selection */}
+            {/* Whole-playlist copy lives in the header; this one copies the selection */}
             {hasSelection && (
-              <>
-                <LinkGeneratorPopover
-                  items={selectedItems}
-                  templates={templates}
-                  trigger={
-                    <Button variant="outline" size="sm" aria-label={t("generateLinks")} className={actionClass}>
-                      <LinkIcon className="h-4 w-4 sm:mr-1.5" />
-                      <span className="hidden sm:inline">{t("generateLinks")}</span>
-                      {countBadge}
-                    </Button>
-                  }
-                />
-
-                <Button variant="outline" size="sm" onClick={handleCopyCodes} aria-label={t("copyCodes")} className={actionClass}>
-                  <Copy className="h-4 w-4 sm:mr-1.5" />
-                  <span className="hidden sm:inline">{t("copyCodes")}</span>
-                  {countBadge}
-                </Button>
-              </>
+              <Button variant="outline" size="sm" onClick={handleCopyCodes} aria-label={t("copyCodes")} className={actionClass}>
+                <Copy className="h-4 w-4 sm:mr-1.5" />
+                <span className="hidden sm:inline">{t("copyCodes")}</span>
+                {countBadge}
+              </Button>
             )}
 
             {hasSelection && (

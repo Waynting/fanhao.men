@@ -56,7 +56,6 @@ export function PlaylistPageClient({ playlist, templates }: PlaylistPageClientPr
         allItems={items}
         playlistId={playlist.id}
         selectedItems={selectedItems}
-        templates={templates}
         onClearSelection={() => setSelectedIds(new Set())}
         onOpenAddDialog={() => setShowAddDialog(true)}
         onDelete={() => removeItems(selectedItems.map((item) => item.id))}
