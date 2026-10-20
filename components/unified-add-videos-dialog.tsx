@@ -206,7 +206,8 @@ export function UnifiedAddVideosDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <div className="flex items-center justify-between">
+          {/* Right padding keeps the mode toggle clear of the dialog's close button */}
+          <div className="flex items-center justify-between pr-10 sm:pr-8">
             <DialogTitle className="text-xl">{t("title")}</DialogTitle>
             {/* Mode Toggle */}
             <div className="flex bg-zinc-100 rounded-lg p-0.5">
