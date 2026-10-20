@@ -39,5 +39,19 @@
     "description": "Veja o que foi adicionado e melhorado recentemente",
     "button": "Ver novidades",
     "note": "Por enquanto, o histórico de novidades está disponível só em chinês tradicional."
+  },
+  "recentOpens": {
+    "title": "Como funciona Abertos recentemente",
+    "description": "Use o fanhao.men como ponto de partida: abra vídeos daqui e depois escolha quais guardar",
+    "step1Label": "Abra: ",
+    "step1": "Use \"Abrir em …\" no Explorar, numa playlist compartilhada ou no menu de links de qualquer código. O código é lembrado automaticamente (copiar o link de um único código também conta).",
+    "step2Label": "Volte: ",
+    "step2": "Aparece embaixo \"Você abriu N códigos. Salvar?\", contando só os que ainda não estão numa playlist. Toque em ✕ para esconder por enquanto.",
+    "step3Label": "Escolha: ",
+    "step3": "Toque no aviso para ver a lista. Códigos novos já vêm marcados; os já salvos aparecem como \"Em uma playlist\".",
+    "step4Label": "Salve: ",
+    "step4": "Toque em \"Adicionar à playlist\" e crie uma nova (\"Vistos recentemente\" por padrão) ou adicione a uma existente; duplicados são ignorados. Você também pode abrir a lista a qualquer momento pelo botão \"Abertos recentemente\" em Minhas playlists.",
+    "privacy": "A lista fica só neste dispositivo: não é sincronizada, não entra em backups nem nas estatísticas. Até 100 itens, apagados após 7 dias, e você pode limpar quando quiser.",
+    "limit": "O site só vê os links abertos daqui, não o que você clica dentro do site de vídeos, e não registra tempo assistido. Nesses casos, cole as URLs na janela Adicionar de uma playlist e os códigos serão extraídos."
   }
 }

@@ -39,5 +39,19 @@
     "description": "See what's been added and improved recently",
     "button": "View changelog",
     "note": "The changelog is currently only available in Traditional Chinese."
+  },
+  "recentOpens": {
+    "title": "How Recently opened works",
+    "description": "Use fanhao.men as your starting point: open videos from here, then pick which ones to keep",
+    "step1Label": "Open: ",
+    "step1": "Use \"Open in …\" from Explore, a shared playlist, or any code's link menu. The code is remembered automatically (copying a single code's link counts too).",
+    "step2Label": "Come back: ",
+    "step2": "A prompt at the bottom says \"You opened N codes. Save them?\", counting only codes not in a playlist yet. Tap ✕ to hide it for now.",
+    "step3Label": "Pick: ",
+    "step3": "Tap the prompt to see the list. New codes are checked; codes already saved are marked \"In a playlist\".",
+    "step4Label": "Save: ",
+    "step4": "Tap \"Add to playlist\" and create a new playlist (\"Recently watched\" by default) or add to an existing one; duplicates are skipped. You can also open the list any time from the \"Recently opened\" button on My playlists.",
+    "privacy": "The list stays on this device: never synced, backed up or counted in stats. Up to 100 entries, removed after 7 days, and you can clear it any time.",
+    "limit": "The site only sees links opened from here, not what you click inside the video site, and it doesn't track watch time. For those, paste the URLs into a playlist's Add dialog and the codes are extracted for you."
   }
 }

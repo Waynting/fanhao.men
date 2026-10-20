@@ -39,5 +39,19 @@
     "description": "Mira lo que se ha añadido y mejorado recientemente",
     "button": "Ver novedades",
     "note": "Por ahora, el registro de cambios solo está disponible en chino tradicional."
+  },
+  "recentOpens": {
+    "title": "Cómo funciona Abiertos recientemente",
+    "description": "Usa fanhao.men como punto de partida: abre videos desde aquí y luego elige cuáles guardar",
+    "step1Label": "Abre: ",
+    "step1": "Usa \"Abrir en …\" desde Explorar, una lista compartida o el menú de enlaces de cualquier código. El código se guarda automáticamente (copiar el enlace de un solo código también cuenta).",
+    "step2Label": "Vuelve: ",
+    "step2": "Abajo aparece \"Abriste N códigos. ¿Guardarlos?\", contando solo los que aún no están en una lista. Toca ✕ para ocultarlo por ahora.",
+    "step3Label": "Elige: ",
+    "step3": "Toca el aviso para ver la lista. Los códigos nuevos vienen marcados; los ya guardados dicen \"En una lista\".",
+    "step4Label": "Guarda: ",
+    "step4": "Toca \"Añadir a la lista\" y crea una lista nueva (\"Vistos recientemente\" por defecto) o añádelos a una existente; los duplicados se omiten. También puedes abrirla cuando quieras desde el botón \"Abiertos recientemente\" en Mis listas.",
+    "privacy": "La lista se queda en este dispositivo: no se sincroniza, no entra en las copias de seguridad ni en las estadísticas. Hasta 100 entradas, se borran a los 7 días y puedes vaciarla cuando quieras.",
+    "limit": "El sitio solo ve los enlaces abiertos desde aquí, no lo que haces dentro del sitio de videos, y no registra el tiempo de visualización. Para eso, pega las URL en el diálogo Añadir de una lista y se extraerán los códigos."
   }
 }

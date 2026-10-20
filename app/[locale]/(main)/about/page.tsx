@@ -1,7 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, ChevronRight, Github, ExternalLink, History, Mail } from "lucide-react"
+import { ArrowLeft, ChevronRight, Github, ExternalLink, History, Mail, MousePointerClick } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import type { Locale } from "@/i18n/routing"
 import { pageMetadata } from "@/lib/site"
@@ -10,6 +10,7 @@ export const generateMetadata = pageMetadata({ page: "about", path: "/about" })
 
 const PROBLEMS = ["problem1", "problem2", "problem3", "problem4"] as const
 const SOLUTIONS = ["solution1", "solution2", "solution3", "solution4"] as const
+const RECENT_STEPS = ["step1", "step2", "step3", "step4"] as const
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = (await params).locale as Locale
@@ -94,6 +95,29 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             </CardHeader>
           </Card>
         </Link>
+
+        {/* Recently opened: how to use */}
+        <Card id="recent-opens">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MousePointerClick className="h-5 w-5" />
+              {t("recentOpens.title")}
+            </CardTitle>
+            <CardDescription>{t("recentOpens.description")}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 text-zinc-700">
+            <ol className="list-decimal list-inside space-y-2 ml-4">
+              {RECENT_STEPS.map((key) => (
+                <li key={key}>
+                  <strong>{t(`recentOpens.${key}Label`)}</strong>
+                  {t(`recentOpens.${key}`)}
+                </li>
+              ))}
+            </ol>
+            <p className="text-sm text-zinc-500">{t("recentOpens.privacy")}</p>
+            <p className="text-sm text-zinc-500">{t("recentOpens.limit")}</p>
+          </CardContent>
+        </Card>
 
         {/* Why I Built This */}
         <Card>
