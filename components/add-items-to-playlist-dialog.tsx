@@ -31,9 +31,11 @@ interface AddItemsToPlaylistDialogProps {
   items: NewItem[]
   defaultNewName: string
   trigger: React.ReactNode
+  /** Where the items came from, for analytics */
+  source?: "share" | "explore"
 }
 
-export function AddItemsToPlaylistDialog({ items, defaultNewName, trigger }: AddItemsToPlaylistDialogProps) {
+export function AddItemsToPlaylistDialog({ items, defaultNewName, trigger, source = "share" }: AddItemsToPlaylistDialogProps) {
   const store = useStore()
   const router = useRouter()
   const [open, setOpen] = useState(false)
@@ -58,13 +60,13 @@ export function AddItemsToPlaylistDialog({ items, defaultNewName, trigger }: Add
     try {
       if (target === NEW_PLAYLIST) {
         const playlist = createPlaylist({ name: newName, items })
-        trackAddFromSharedPlaylist({ source_playlist_id: "share", target_playlist_id: playlist.id, item_count: items.length })
+        trackAddFromSharedPlaylist({ source_playlist_id: source, target_playlist_id: playlist.id, item_count: items.length })
         toast.success(`已建立「${playlist.name}」，共 ${playlist.items.length} 個番號`, {
           action: { label: "查看", onClick: () => router.push(`/playlist/${playlist.id}`) },
         })
       } else {
         const count = addItems(target, items)
-        trackAddFromSharedPlaylist({ source_playlist_id: "share", target_playlist_id: target, item_count: count })
+        trackAddFromSharedPlaylist({ source_playlist_id: source, target_playlist_id: target, item_count: count })
         const skipped = items.length - count
         toast.success(`已加入 ${count} 個番號${skipped > 0 ? `，略過 ${skipped} 個重複` : ""}`, {
           action: { label: "查看", onClick: () => router.push(`/playlist/${target}`) },

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { trackEvent } from "@/lib/analytics"
 import { copyText } from "@/lib/clipboard"
+import { recordClicks } from "@/lib/trending"
 import type { SourceTemplate } from "@/lib/local-store"
 
 interface SharedItem {
@@ -77,11 +78,12 @@ export function SharePageContent({ items, playlistName, templates }: SharePageCo
     setTimeout(() => setCopiedCode(null), 2000)
   }
 
-  const handleCopyUrl = async (url: string, sourceName: string) => {
+  const handleCopyUrl = async (url: string, sourceName: string, code: string) => {
     if (!(await copyText(url))) {
       toast.error("無法自動複製，請手動選取", { description: url, duration: 10000 })
       return
     }
+    recordClicks([code])
     setCopiedUrl(url)
     toast.success(`已複製 ${sourceName} 連結`)
 
@@ -253,13 +255,14 @@ export function SharePageContent({ items, playlistName, templates }: SharePageCo
                           href={url}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={() => recordClicks([item.normalizedCode])}
                           className="w-8 h-8 flex items-center justify-center hover:bg-zinc-100 transition-all duration-150 rounded-lg"
                           title="開啟連結"
                         >
                           <ExternalLink className="h-4 w-4 text-zinc-400" />
                         </a>
                         <button
-                          onClick={() => handleCopyUrl(url, template.name)}
+                          onClick={() => handleCopyUrl(url, template.name, item.normalizedCode)}
                           className="w-8 h-8 flex items-center justify-center hover:bg-zinc-100 transition-all duration-150 rounded-lg"
                           title="複製連結"
                         >

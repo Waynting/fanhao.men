@@ -29,6 +29,7 @@ import {
 import { PageLoading } from "@/components/page-loading"
 import { SITE_NAME } from "@/lib/site"
 import { AccountSection } from "@/components/account-section"
+import { StatsOptOut } from "@/components/stats-opt-out"
 import { useSession } from "@/lib/supabase"
 
 export default function SettingsPage() {
@@ -91,6 +92,7 @@ export default function SettingsPage() {
       </div>
 
       <AccountSection />
+      <StatsOptOut />
 
       {/* Source templates */}
       <Card>

@@ -2,12 +2,13 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { List, ListVideo, Settings, Info } from "lucide-react"
+import { List, ListVideo, Settings, Info, Compass } from "lucide-react"
 import { AccountButton } from "@/components/account-button"
 import { SITE_NAME } from "@/lib/site"
 
 const navItems = [
   { href: "/dashboard", match: ["/dashboard", "/playlist"], label: "我的清單", icon: List },
+  { href: "/explore", match: ["/explore"], label: "探索", icon: Compass },
   { href: "/settings", match: ["/settings"], label: "設定", icon: Settings },
   { href: "/about", match: ["/about"], label: "關於", icon: Info },
 ]

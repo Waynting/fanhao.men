@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Copy, Check, ExternalLink, Settings } from "lucide-react"
 import { toast } from "sonner"
 import { trackGenerateLinks } from "@/lib/analytics"
+import { recordClicks } from "@/lib/trending"
 import type { SourceTemplate } from "@/lib/local-store"
 
 interface LinkGeneratorPopoverProps {
@@ -32,6 +33,7 @@ export function LinkGeneratorPopover({ items, templates, trigger }: LinkGenerato
       return
     }
     trackGenerateLinks({ source_name: template.name, item_count: items.length, is_single_item: isSingle })
+    recordClicks(items.map((item) => item.normalizedCode))
     setCopiedSource(template.id)
     toast.success(`已複製 ${items.length} 個 ${template.name} 連結`)
     setTimeout(() => setCopiedSource(null), 2000)
@@ -76,6 +78,7 @@ export function LinkGeneratorPopover({ items, templates, trigger }: LinkGenerato
                     href={previewUrl}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => recordClicks([previewCode])}
                     className="w-8 h-8 flex items-center justify-center hover:bg-zinc-100 rounded-lg"
                     aria-label={`在 ${template.name} 開啟`}
                   >
