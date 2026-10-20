@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next"
+import { SITE_NAME } from "@/lib/site"
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "AV Number Collector",
-    short_name: "番號收藏",
+    name: SITE_NAME,
+    short_name: SITE_NAME,
     description: "輕鬆管理你的番號收藏",
     lang: "zh-Hant",
     start_url: "/dashboard",

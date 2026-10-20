@@ -1,4 +1,4 @@
-# AV Number Collector
+# fanhao.men
 
 A web app for managing video code collections. No login, no backend: all data is stored in your browser, per device.
 

@@ -2,6 +2,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Github, ExternalLink, Mail } from "lucide-react"
 import Link from "next/link"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "關於",
+  description: "fanhao.men 是一個開源的番號收藏管理工具。了解這個專案的理念與聯絡方式。",
+  alternates: { canonical: "/about" },
+}
 
 export default function AboutPage() {
   return (
@@ -68,7 +75,7 @@ export default function AboutPage() {
           </CardHeader>
           <CardContent>
             <Link
-              href="https://github.com/Waynting/av_number_collector"
+              href="https://github.com/Waynting/fanhao.men"
               target="_blank"
               rel="noopener noreferrer"
             >

@@ -1,13 +1,36 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: SITE_NAME,
+  url: SITE_URL,
+  description: SITE_DESCRIPTION,
+  applicationCategory: "UtilitiesApplication",
+  operatingSystem: "Web",
+  inLanguage: "zh-Hant",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+};
 
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-zinc-900 mb-6">
-          AV Number Collector
+        <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-zinc-900 mb-3">
+          {SITE_NAME}
         </h1>
+        <p className="text-xl font-medium text-zinc-800 mb-4">番號收藏清單管理工具</p>
         <p className="text-lg text-zinc-600 mb-3 max-w-2xl mx-auto">
           輕鬆管理你的番號收藏。建立播放清單、分享給朋友，
           並自動生成你偏好的影片網址。
@@ -24,7 +47,7 @@ export default function Home() {
 
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
           <div className="p-6 rounded-xl border border-zinc-200/80">
-            <h3 className="font-semibold text-lg mb-2">📋 番號優先管理</h3>
+            <h2 className="font-semibold text-lg mb-2">📋 番號優先管理</h2>
             <p className="text-zinc-600 text-sm mb-2">
               以番號為核心整理收藏，不依賴特定影片網站，永久保存你的清單。
             </p>
@@ -33,7 +56,7 @@ export default function Home() {
             </p>
           </div>
           <div className="p-6 rounded-xl border border-zinc-200/80">
-            <h3 className="font-semibold text-lg mb-2">🔗 智慧網址生成</h3>
+            <h2 className="font-semibold text-lg mb-2">🔗 智慧網址生成</h2>
             <p className="text-zinc-600 text-sm mb-2">
               設定你喜歡的影片網站，一鍵從番號生成完整網址。
             </p>
@@ -42,7 +65,7 @@ export default function Home() {
             </p>
           </div>
           <div className="p-6 rounded-xl border border-zinc-200/80">
-            <h3 className="font-semibold text-lg mb-2">🚀 輕鬆分享</h3>
+            <h2 className="font-semibold text-lg mb-2">🚀 輕鬆分享</h2>
             <p className="text-zinc-600 text-sm mb-2">
               匯出文字清單或產生分享連結，對方打開即可瀏覽並存到自己的裝置。
             </p>

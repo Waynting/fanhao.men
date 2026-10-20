@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { List, ListVideo, Settings, Info } from "lucide-react"
 import { AccountButton } from "@/components/account-button"
+import { SITE_NAME } from "@/lib/site"
 
 const navItems = [
   { href: "/dashboard", match: ["/dashboard", "/playlist"], label: "我的清單", icon: List },
@@ -29,7 +30,7 @@ export function Navbar() {
                 <div className="w-7 h-7 bg-white/90 rounded-lg flex items-center justify-center">
                   <ListVideo className="h-4 w-4 text-zinc-900" />
                 </div>
-                <span>AV Number Collector</span>
+                <span>{SITE_NAME}</span>
               </Link>
 
               {/* Desktop Navigation */}
