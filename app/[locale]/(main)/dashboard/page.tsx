@@ -7,9 +7,11 @@ import { Link, useRouter } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus, ListVideo, Sparkles, Globe, Search, X, LayoutGrid, List, ArrowDownUp, ChevronRight } from "lucide-react"
+import { Plus, History, ListVideo, Sparkles, Globe, Search, X, LayoutGrid, List, ArrowDownUp, ChevronRight } from "lucide-react"
 import { useStore, loadDemoData, type Playlist } from "@/lib/local-store"
 import { PageLoading } from "@/components/page-loading"
+import { RecentOpensDialog } from "@/components/recent-opens"
+import { useRecentOpens } from "@/lib/recent-opens"
 import { cn } from "@/lib/utils"
 
 const SORTS = ["updated", "created", "name", "most", "fewest"] as const
@@ -50,6 +52,8 @@ export default function DashboardPage() {
   const format = useFormatter()
   const locale = useLocale()
   const store = useStore()
+  const recent = useRecentOpens()
+  const tRecent = useTranslations("RecentOpens")
   const router = useRouter()
   const [prefs, setPrefs] = useState(loadPrefs)
   const [searchQuery, setSearchQuery] = useState("")
@@ -109,12 +113,24 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-900 tracking-tight">{t("title")}</h1>
         </div>
-        <Button asChild size="lg">
-          <Link href="/dashboard/new">
-            <Plus className="h-4 w-4 mr-2" />
-            {t("newPlaylist")}
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          {recent && recent.entries.length > 0 && (
+            <RecentOpensDialog
+              trigger={
+                <Button variant="outline" size="lg">
+                  <History className="h-4 w-4 mr-2" />
+                  {tRecent("title")}
+                </Button>
+              }
+            />
+          )}
+          <Button asChild size="lg" className="flex-1 sm:flex-none">
+            <Link href="/dashboard/new">
+              <Plus className="h-4 w-4 mr-2" />
+              {t("newPlaylist")}
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Content Section */}

@@ -1,0 +1,15 @@
+{
+  "title": "최근 연 품번",
+  "description": "여기서 열었거나 링크를 복사한 품번입니다. 남길 것을 체크해 한 번에 목록에 추가하세요.",
+  "empty": "아직 기록이 없습니다.",
+  "selectAll": "모두 선택",
+  "selectNone": "선택 해제",
+  "selectedCount": "{total}개 중 {count}개 선택",
+  "saved": "목록에 있음",
+  "clear": "기록 지우기",
+  "addCount": "목록에 추가 ({count})",
+  "defaultPlaylistName": "최근 본 작품",
+  "privacy": "기록은 이 기기에만 저장되며 동기화나 통계에 쓰이지 않고, 7일 후 자동 삭제됩니다.",
+  "prompt": "방금 {count}개를 열었어요. 목록에 추가할까요?",
+  "dismiss": "나중에"
+}

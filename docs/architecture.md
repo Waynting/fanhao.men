@@ -81,6 +81,7 @@ lib/
 ├── supabase.ts               # Supabase client、authEnabled、signInWithGoogle、useSession
 ├── profile.ts                # profiles 讀寫、useProfile、validateDisplayName
 ├── trending.ts               # fetchTrending、recordClicks、stats opt-out
+├── recent-opens.ts           # 最近開啟紀錄（只存本機，不同步）
 ├── share-codec.ts            # 分享連結 encode / decode
 ├── code-normalizer.ts        # 番號正規化與驗證
 ├── url-parser.ts             # 從網址或文字取出番號
@@ -335,11 +336,23 @@ type Payload = { n: string; d?: string; i: ([code] | [code, note])[] }
 | `create_playlist` | `dashboard/new/page.tsx` | `playlist_id`、`has_description` |
 | `delete_items` | `playlist-page-client.tsx` | `playlist_id`、`item_count` |
 | `share_playlist` | `playlist-header.tsx` | `playlist_id`、`method` |
-| `add_from_shared_playlist` | `add-items-to-playlist-dialog.tsx` | `source_playlist_id`（固定 `"share"`）、`target_playlist_id`、`item_count` |
+| `add_from_shared_playlist` | `add-items-to-playlist-dialog.tsx` | `source_playlist_id`（`share`／`explore`／`playlist`／`recent`）、`target_playlist_id`、`item_count` |
 | `update_note` | `edit-note-dialog.tsx` | `playlist_id`、`has_note` |
 | `create_template` | `settings/page.tsx` | `template_id`（實際傳的是範本名稱）、`is_default` |
 | `copy_code_from_share` | `share-page-content.tsx` | `code` |
 | `copy_url_from_share` | `share-page-content.tsx` | `source_name` |
+
+## 最近開啟（`lib/recent-opens.ts`）
+
+使用者從網站開啟來源連結後，可以事後勾選要把哪些番號加入清單。
+
+- 獨立的 `localStorage` key `av-collector:recent-opens`：`{ entries: { code, openedAt }[], dismissedAt }`，新的在前，最多 100 筆，超過 7 天的在讀取時丟掉。**不屬於 store**：不經 `save()`、不同步、不進備份、不納入熱門統計。
+- 寫入點：`LinkGeneratorPopover` 的「開啟」連結與單一番號的「複製連結」、分享頁的開啟／複製連結，都在 `recordClicks()` 旁呼叫 `rememberOpened(codes)`。批次複製多個番號的連結不記錄，避免把列表塞滿。同一番號再開會移回最上面。
+- 讀取：`useRecentOpens()`（`useSyncExternalStore`，SSR 回傳 `null`，其他分頁透過 `storage` 事件更新）。
+- UI（`components/recent-opens.tsx`）：
+  - `RecentOpensPrompt` 掛在 `app/(main)/layout.tsx`，有「不在任何清單、且晚於 `dismissedAt`」的紀錄時浮出提示；按 ✕ 或關閉對話框會 `dismissRecentOpens()`。
+  - `RecentOpensDialog` 列出全部紀錄，已在清單的標示且預設不勾，勾選的經 `AddItemsToPlaylistDialog`（`source="recent"`）加入後 `forgetOpened()`。我的清單頁也有入口按鈕。
+- 限制：跨網域看不到使用者在對方網站內的瀏覽，也無法得知停留時間，所以只記錄從本站點出去的連結。
 
 ## 熱門排行（開發中）
 

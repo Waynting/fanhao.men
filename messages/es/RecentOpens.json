@@ -1,0 +1,15 @@
+{
+  "title": "Abiertos recientemente",
+  "description": "Códigos que abriste o cuyo enlace copiaste desde aquí. Marca los que quieras guardar y añádelos de una vez.",
+  "empty": "Aún no has abierto nada.",
+  "selectAll": "Seleccionar todo",
+  "selectNone": "Quitar selección",
+  "selectedCount": "{count} de {total} seleccionados",
+  "saved": "En una lista",
+  "clear": "Borrar historial",
+  "addCount": "Añadir a la lista ({count})",
+  "defaultPlaylistName": "Vistos recientemente",
+  "privacy": "Solo se guarda en este dispositivo. No se sincroniza ni cuenta en las estadísticas, y se borra a los 7 días.",
+  "prompt": "{count, plural, one {Abriste # código. ¿Guardarlo?} other {Abriste # códigos. ¿Guardarlos?}}",
+  "dismiss": "Ahora no"
+}

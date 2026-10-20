@@ -8,6 +8,7 @@ import { Copy, Check, ExternalLink, Settings } from "lucide-react"
 import { toast } from "sonner"
 import { trackGenerateLinks } from "@/lib/analytics"
 import { recordClicks } from "@/lib/trending"
+import { rememberOpened } from "@/lib/recent-opens"
 import type { SourceTemplate } from "@/lib/local-store"
 
 interface LinkGeneratorPopoverProps {
@@ -37,6 +38,8 @@ export function LinkGeneratorPopover({ items, templates, trigger }: LinkGenerato
     }
     trackGenerateLinks({ source_name: template.name, item_count: items.length, is_single_item: isSingle })
     recordClicks(items.map((item) => item.normalizedCode))
+    // A bulk copy isn't "watching" each code, so only a single code goes into recent opens
+    if (isSingle) rememberOpened([previewCode])
     setCopiedSource(template.id)
     toast.success(t("copiedLinks", { count: items.length, source: template.name }))
     setTimeout(() => setCopiedSource(null), 2000)
@@ -81,7 +84,10 @@ export function LinkGeneratorPopover({ items, templates, trigger }: LinkGenerato
                     href={previewUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={() => recordClicks([previewCode])}
+                    onClick={() => {
+                      recordClicks([previewCode])
+                      rememberOpened([previewCode])
+                    }}
                     className="w-10 h-10 sm:w-8 sm:h-8 flex-shrink-0 flex items-center justify-center hover:bg-zinc-100 rounded-lg"
                     aria-label={t("openIn", { source: template.name })}
                   >

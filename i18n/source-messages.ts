@@ -14,6 +14,7 @@ import Explore from "../messages/zh-Hant/Explore.json"
 import Auth from "../messages/zh-Hant/Auth.json"
 import NotFound from "../messages/zh-Hant/NotFound.json"
 import Demo from "../messages/zh-Hant/Demo.json"
+import RecentOpens from "../messages/zh-Hant/RecentOpens.json"
 
-const messages = { Common, Errors, Metadata, Nav, Home, About, Dashboard, Playlist, Share, Settings, Explore, Auth, NotFound, Demo }
+const messages = { Common, Errors, Metadata, Nav, Home, About, Dashboard, Playlist, Share, Settings, Explore, Auth, NotFound, Demo, RecentOpens }
 export default messages

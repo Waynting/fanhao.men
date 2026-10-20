@@ -1,0 +1,15 @@
+{
+  "title": "Recently opened",
+  "description": "Codes you opened or copied a link for from here. Check the ones to keep and add them in one go.",
+  "empty": "Nothing opened yet.",
+  "selectAll": "Select all",
+  "selectNone": "Select none",
+  "selectedCount": "{count} of {total} selected",
+  "saved": "In a playlist",
+  "clear": "Clear history",
+  "addCount": "Add to playlist ({count})",
+  "defaultPlaylistName": "Recently watched",
+  "privacy": "Kept on this device only. Never synced or counted in stats, and removed after 7 days.",
+  "prompt": "{count, plural, one {You opened # code. Save it?} other {You opened # codes. Save them?}}",
+  "dismiss": "Not now"
+}

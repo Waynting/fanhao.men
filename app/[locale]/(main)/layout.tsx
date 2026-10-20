@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/navbar"
 import { OnboardingDialog } from "@/components/onboarding-dialog"
+import { RecentOpensPrompt } from "@/components/recent-opens"
 
 export default function MainLayout({
   children,
@@ -13,6 +14,7 @@ export default function MainLayout({
         {children}
       </main>
       <OnboardingDialog />
+      <RecentOpensPrompt />
     </div>
   )
 }

@@ -45,7 +45,7 @@ interface AddItemsToPlaylistDialogProps {
   defaultNewName: string
   trigger: React.ReactNode
   /** Where the items came from, for analytics */
-  source?: "share" | "explore" | "playlist"
+  source?: "share" | "explore" | "playlist" | "recent"
   /** Set when copying out of one of the user's own playlists: hides it as a target and offers "move" */
   fromPlaylist?: { id: string; itemIds: string[] }
   onDone?: () => void

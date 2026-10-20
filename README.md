@@ -9,6 +9,7 @@ A web app for managing video code collections. No login, no backend: all data is
 - **Bulk add**: paste codes or video URLs one per line; duplicates and invalid lines are flagged
 - **Link generation**: turn one or many codes into URLs for built-in or custom sources
 - **Share links**: the playlist is encoded into the URL hash; recipients can save it to their own device
+- **Recently opened**: codes you open from the site are remembered on the device; pick which ones to add to a playlist afterwards
 - **Backup**: export/import all data as JSON to move between devices
 - **Export**: download a playlist as `.txt`
 

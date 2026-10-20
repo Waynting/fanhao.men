@@ -1,0 +1,15 @@
+{
+  "title": "最近開いた品番",
+  "description": "ここから開いた、またはリンクをコピーした品番です。残したいものにチェックして、まとめてリストに追加できます。",
+  "empty": "まだ履歴はありません。",
+  "selectAll": "すべて選択",
+  "selectNone": "選択を解除",
+  "selectedCount": "{count} / {total} 件を選択",
+  "saved": "リスト登録済み",
+  "clear": "履歴を消去",
+  "addCount": "リストに追加（{count}）",
+  "defaultPlaylistName": "最近見た作品",
+  "privacy": "履歴はこの端末だけに保存され、同期や統計には使われません。7 日後に自動で削除されます。",
+  "prompt": "{count} 件開きました。リストに追加しますか？",
+  "dismiss": "あとで"
+}

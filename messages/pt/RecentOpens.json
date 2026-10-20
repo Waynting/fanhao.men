@@ -1,0 +1,15 @@
+{
+  "title": "Abertos recentemente",
+  "description": "Códigos que você abriu ou cujo link copiou daqui. Marque os que quer guardar e adicione todos de uma vez.",
+  "empty": "Nada aberto ainda.",
+  "selectAll": "Selecionar tudo",
+  "selectNone": "Limpar seleção",
+  "selectedCount": "{count} de {total} selecionados",
+  "saved": "Em uma playlist",
+  "clear": "Limpar histórico",
+  "addCount": "Adicionar à playlist ({count})",
+  "defaultPlaylistName": "Vistos recentemente",
+  "privacy": "Fica só neste dispositivo. Não é sincronizado nem entra nas estatísticas, e é apagado após 7 dias.",
+  "prompt": "{count, plural, one {Você abriu # código. Salvar?} other {Você abriu # códigos. Salvar?}}",
+  "dismiss": "Agora não"
+}

@@ -16,6 +16,7 @@ export const NAMESPACES = [
   "Auth",
   "NotFound",
   "Demo",
+  "RecentOpens",
 ] as const
 
 export async function loadMessages(locale: Locale) {

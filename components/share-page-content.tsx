@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input"
 import { trackAddFromSharedPlaylist, trackEvent } from "@/lib/analytics"
 import { copyText } from "@/lib/clipboard"
 import { recordClicks } from "@/lib/trending"
+import { rememberOpened } from "@/lib/recent-opens"
 import { createPlaylist, deletePlaylist, useStore, type SourceTemplate } from "@/lib/local-store"
 
 interface SharedItem {
@@ -116,6 +117,7 @@ export function SharePageContent({ items, playlistName, playlistDescription, tem
       return
     }
     recordClicks([code])
+    rememberOpened([code])
     setCopiedUrl(url)
     toast.success(t("copiedUrl", { source: sourceName }))
 
@@ -323,7 +325,10 @@ export function SharePageContent({ items, playlistName, playlistDescription, tem
                           href={url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          onClick={() => recordClicks([item.normalizedCode])}
+                          onClick={() => {
+                            recordClicks([item.normalizedCode])
+                            rememberOpened([item.normalizedCode])
+                          }}
                           className="w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center hover:bg-zinc-100 transition-all duration-150 rounded-lg"
                           aria-label={`${t("openLink")}: ${template.name}`}
                           title={t("openLink")}

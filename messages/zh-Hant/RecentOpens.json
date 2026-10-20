@@ -1,0 +1,15 @@
+{
+  "title": "最近開啟",
+  "description": "你從這裡打開或複製連結的番號。勾選要留下的，一次加入清單。",
+  "empty": "還沒有開啟紀錄。",
+  "selectAll": "全選",
+  "selectNone": "全不選",
+  "selectedCount": "已選 {count} / {total}",
+  "saved": "已在清單",
+  "clear": "清除紀錄",
+  "addCount": "加入清單（{count}）",
+  "defaultPlaylistName": "最近看過",
+  "privacy": "紀錄只存在這台裝置，不會同步或納入統計，7 天後自動刪除。",
+  "prompt": "剛剛開啟了 {count} 部，要加入清單嗎？",
+  "dismiss": "稍後再說"
+}
