@@ -24,11 +24,15 @@ import {
   exportData,
   importData,
   clearAllData,
+  resetLocalData,
 } from "@/lib/local-store"
 import { PageLoading } from "@/components/page-loading"
+import { AccountSection } from "@/components/account-section"
+import { useSession } from "@/lib/supabase"
 
 export default function SettingsPage() {
   const store = useStore()
+  const { session } = useSession()
   const [name, setName] = useState("")
   const [template, setTemplate] = useState("")
   const [clearOpen, setClearOpen] = useState(false)
@@ -82,8 +86,10 @@ export default function SettingsPage() {
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-900 tracking-tight">設定</h1>
-        <p className="text-zinc-500 mt-1 text-sm sm:text-base">影片來源與資料備份</p>
+        <p className="text-zinc-500 mt-1 text-sm sm:text-base">帳號同步、影片來源與資料備份</p>
       </div>
+
+      <AccountSection />
 
       {/* Source templates */}
       <Card>
@@ -180,8 +186,9 @@ export default function SettingsPage() {
             資料與備份
           </CardTitle>
           <CardDescription>
-            所有資料只存在這台裝置的瀏覽器中（目前 {store.playlists.length} 份清單、{itemCount} 個番號）。
-            清除瀏覽器資料或換裝置前，請先匯出備份。
+            {session
+              ? `目前 ${store.playlists.length} 份清單、${itemCount} 個番號，已同步到你的帳號。也可以另外匯出一份備份檔。`
+              : `所有資料只存在這台裝置的瀏覽器中（目前 ${store.playlists.length} 份清單、${itemCount} 個番號）。清除瀏覽器資料或換裝置前，請先匯出備份或登入同步。`}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -216,7 +223,7 @@ export default function SettingsPage() {
               onClick={() => setClearOpen(true)}
             >
               <Trash2 className="h-4 w-4 mr-2" />
-              清除這台裝置上的所有資料
+              {session ? "清除所有資料（含雲端）" : "清除這台裝置上的所有資料"}
             </Button>
           </div>
         </CardContent>
@@ -227,7 +234,8 @@ export default function SettingsPage() {
           <DialogHeader>
             <DialogTitle>清除所有資料？</DialogTitle>
             <DialogDescription>
-              將刪除 {store.playlists.length} 份清單與所有自訂來源，且無法復原。建議先匯出備份。
+              將刪除 {store.playlists.length} 份清單與所有自訂來源，且無法復原。
+              {session && "已登入，雲端和其他同步中的裝置也會一併刪除。"}建議先匯出備份。
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -237,7 +245,9 @@ export default function SettingsPage() {
             <Button
               variant="destructive"
               onClick={() => {
-                clearAllData()
+                // Signed out, this only wipes the device; the cloud copy comes back on next sign-in
+                if (session) clearAllData()
+                else resetLocalData()
                 setClearOpen(false)
                 toast.success("已清除所有資料")
               }}

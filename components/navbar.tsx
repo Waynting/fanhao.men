@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { List, ListVideo, Settings, Info } from "lucide-react"
+import { AccountButton } from "@/components/account-button"
 
 const navItems = [
   { href: "/dashboard", match: ["/dashboard", "/playlist"], label: "我的清單", icon: List },
@@ -54,7 +55,7 @@ export function Navbar() {
             </div>
 
             <div className="flex items-center">
-              <span className="text-[11px] text-zinc-500 hidden sm:inline">資料僅儲存在此裝置</span>
+              <AccountButton />
             </div>
           </div>
         </div>

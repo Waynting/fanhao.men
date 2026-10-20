@@ -10,6 +10,14 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        // The service worker must be revalidated on every load so updates roll out
+        source: '/sw.js',
+        headers: [
+          { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
+          { key: 'Content-Type', value: 'application/javascript; charset=utf-8' },
+        ],
+      },
+      {
         // Apply security headers to all routes
         source: '/:path*',
         headers: [
