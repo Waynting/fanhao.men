@@ -96,7 +96,7 @@ export function renameItem(playlistId: string, itemId: string, videoCode: string
 
 ### 登入與 onboarding
 
-- [ ] Google 登入後回到原本的頁面（`?next=`）。
+- [ ] Google 登入後回到原本的頁面（路徑存在 `sessionStorage`，`redirectTo` 不帶 query）。
 - [ ] 第一次登入出現 onboarding 對話框，暱稱預填 Google 名字；空白或超過 20 字被拒絕。
 - [ ] 完成後重新整理不再出現；在 B 登入也不出現（profile 在雲端）。
 - [ ] 關閉 onboarding 不填，本次瀏覽不再跳出，重新整理後再次出現。

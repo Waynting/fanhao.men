@@ -25,14 +25,24 @@ export function getSupabase(): SupabaseClient | null {
   return client
 }
 
-/** Google is the only sign-in method. Returns to the current page via /auth/callback. */
+/** sessionStorage key for the page to return to after the OAuth round trip. */
+export const AUTH_RETURN_KEY = "fanhao:auth-return"
+
+/**
+ * Google is the only sign-in method. The return path is kept in sessionStorage rather than a
+ * ?next= query, so redirectTo is exactly /auth/callback and matches Supabase's allow-list as-is.
+ */
 export async function signInWithGoogle() {
   const supabase = getSupabase()
   if (!supabase) return
-  const next = window.location.pathname + window.location.search
+  try {
+    sessionStorage.setItem(AUTH_RETURN_KEY, window.location.pathname + window.location.search)
+  } catch {
+    // Storage blocked: the callback falls back to /dashboard
+  }
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}` },
+    options: { redirectTo: `${window.location.origin}/auth/callback` },
   })
   if (error) throw error
 }

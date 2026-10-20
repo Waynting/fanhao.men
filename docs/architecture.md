@@ -71,7 +71,7 @@ app/
 │   ├── settings/             # 帳號與同步、個人資料、自訂來源、JSON 備份／匯入、清除資料
 │   └── about/                # 唯一會被索引的內頁
 │   （layout.tsx 也掛載 OnboardingDialog）
-├── auth/callback/page.tsx    # OAuth 回呼：用 ?code= 換 session，再導向 ?next=
+├── auth/callback/page.tsx    # OAuth 回呼：用 ?code= 換 session，再導回登入前的頁面
 ├── manifest.ts / icon.tsx / apple-icon.tsx / pwa-icon/[size]/route.ts
 ├── robots.ts / sitemap.ts / opengraph-image.tsx
 └── not-found.tsx / loading.tsx
@@ -218,8 +218,8 @@ sequenceDiagram
 - Client 設定 `detectSessionInUrl: false`：不讓 supabase-js 自動解析網址，而是由 `/auth/callback` 明確呼叫 `exchangeCodeForSession(code)`。
 - 登入流程：
 
-  1. `signInWithGoogle()`（`lib/supabase.ts`）呼叫 `signInWithOAuth({ provider: "google", options: { redirectTo: "<origin>/auth/callback?next=<目前路徑>" } })`。
-  2. Google → Supabase（`https://<project-ref>.supabase.co/auth/v1/callback`）→ 回到 `/auth/callback?code=...&next=...`。
+  1. `signInWithGoogle()`（`lib/supabase.ts`）先把目前路徑存進 `sessionStorage`（key `AUTH_RETURN_KEY`），再呼叫 `signInWithOAuth({ provider: "google", options: { redirectTo: "<origin>/auth/callback" } })`。`redirectTo` 不帶 query，才能和 Supabase Redirect URLs 完全比對。
+  2. Google → Supabase（`https://<project-ref>.supabase.co/auth/v1/callback`）→ 回到 `/auth/callback?code=...`，讀取並清除 `sessionStorage` 裡的路徑後導回（舊連結的 `?next=` 仍相容）。
   3. Callback 頁換取 session 後 `router.replace(next)`。`next` 經過 `safeNext()` 過濾，只接受 `/` 開頭、非 `//` 開頭的站內路徑，防止 open redirect。
   4. 網址帶 `error` 時顯示 `error_description`；換 code 失敗顯示「登入連結已失效」。
 

@@ -137,7 +137,7 @@ flowchart TD
 |---|---|---|
 | 登入方式 | **只有 Google**（Supabase Auth，OAuth PKCE）；移除 email 驗證碼 | 一鍵完成、不用切去收信；拿到頭像與顯示名稱可直接預填 onboarding |
 | 入口 | Navbar「登入」、設定 → 帳號與同步「使用 Google 登入」 | 點了**直接跳 Google**，不經過中間對話框，少一步 |
-| 回程 | `/auth/callback` 交換 code → 導回 `?next=`（只接受同站路徑，`/` 開頭且非 `//`），預設 `/dashboard` | 回到使用者原本所在頁；防 open redirect |
+| 回程 | `/auth/callback` 交換 code → 導回登入前存在 `sessionStorage` 的路徑（只接受同站路徑，`/` 開頭且非 `//`），預設 `/dashboard` | 回到使用者原本所在頁；防 open redirect |
 | 是否必要 | 可選。不登入 = 一切照常，資料只在這台裝置 | 核心原則：登入是加值 |
 | 首次登入的本機資料 | 合併進帳號：**逐筆比 `updatedAt`，新的贏**；不會整包覆蓋 | 使用者登入前的成果不能消失 |
 | 同步時機 | 登入時、App 取得焦點、恢復連線（`online`）、編輯後約 2 秒 | 使用者不需要記得按同步 |
@@ -154,7 +154,7 @@ sequenceDiagram
     U->>App: 點「登入」/「使用 Google 登入」
     App->>G: 直接導向 Google OAuth (PKCE, next=目前頁)
     G-->>U: 選擇帳號 / 同意
-    G->>App: 回到 /auth/callback?code=...&next=...
+    G->>App: 回到 /auth/callback?code=...（返回路徑在 sessionStorage）
     App->>SB: exchangeCodeForSession(code)
     alt 失敗 / 取消
         App-->>U: 「登入失敗」+ 原因 +「返回我的清單」
@@ -216,7 +216,7 @@ sequenceDiagram
 |---|---|
 | 在 Google 頁按取消 | callback 收到 `error` → 「登入失敗」+ 原因（預設「登入已取消」） |
 | code 過期 / 重複使用（例如重新整理 callback） | 「登入連結已失效，請重新登入」 |
-| `?next=` 被竄改成外部網址 | 忽略，導回 `/dashboard` |
+| 返回路徑（`sessionStorage` 或舊連結的 `?next=`）被竄改成外部網址 | 忽略，導回 `/dashboard` |
 | 未設定 Supabase 環境變數 | 帳號 UI 隱藏，App 純本機運作 |
 | 本機與雲端都有同一份清單 | 整份清單以 `updatedAt` 較新的為準（非逐項目合併） |
 | 換另一個帳號登入 | 重置同步游標並重新推送全部本機資料 → 本機資料會進入新帳號（需注意共用裝置） |

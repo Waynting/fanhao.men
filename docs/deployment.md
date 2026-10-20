@@ -74,7 +74,7 @@
   - Redirect URLs：
     - `https://fanhao.men/auth/callback`
     - `http://localhost:3000/auth/callback`
-  - App 送出的 `redirectTo` 是 `<origin>/auth/callback?next=<原路徑>`。若 Supabase 判定不在名單內，會改導回 Site URL（症狀見下方疑難排解）；遇到時可改用萬用字元，例如 `https://fanhao.men/auth/callback**`。
+  - App 送出的 `redirectTo` 固定是 `<origin>/auth/callback`，不帶 query（登入前的頁面存在 `sessionStorage`），所以上面兩個網址完全比對即可，不需要萬用字元。
 
 ### 4. Secret 放哪裡
 

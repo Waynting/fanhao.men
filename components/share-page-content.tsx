@@ -7,6 +7,7 @@ import { AddItemsToPlaylistDialog } from "@/components/add-items-to-playlist-dia
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { trackEvent } from "@/lib/analytics"
+import { copyText } from "@/lib/clipboard"
 import type { SourceTemplate } from "@/lib/local-store"
 
 interface SharedItem {
@@ -60,8 +61,11 @@ export function SharePageContent({ items, playlistName, templates }: SharePageCo
     )
   }
 
-  const handleCopyCode = (code: string) => {
-    navigator.clipboard.writeText(code)
+  const handleCopyCode = async (code: string) => {
+    if (!(await copyText(code))) {
+      toast.error("無法自動複製，請手動選取", { description: code, duration: 10000 })
+      return
+    }
     setCopiedCode(code)
     toast.success(`已複製 ${code}`)
 
@@ -73,8 +77,11 @@ export function SharePageContent({ items, playlistName, templates }: SharePageCo
     setTimeout(() => setCopiedCode(null), 2000)
   }
 
-  const handleCopyUrl = (url: string, sourceName: string) => {
-    navigator.clipboard.writeText(url)
+  const handleCopyUrl = async (url: string, sourceName: string) => {
+    if (!(await copyText(url))) {
+      toast.error("無法自動複製，請手動選取", { description: url, duration: 10000 })
+      return
+    }
     setCopiedUrl(url)
     toast.success(`已複製 ${sourceName} 連結`)
 

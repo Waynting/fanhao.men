@@ -27,6 +27,7 @@ import {
   resetLocalData,
 } from "@/lib/local-store"
 import { PageLoading } from "@/components/page-loading"
+import { SITE_NAME } from "@/lib/site"
 import { AccountSection } from "@/components/account-section"
 import { useSession } from "@/lib/supabase"
 
@@ -61,7 +62,7 @@ export default function SettingsPage() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = `av-collector-backup-${new Date().toISOString().slice(0, 10)}.json`
+    a.download = `${SITE_NAME}-backup-${new Date().toISOString().slice(0, 10)}.json`
     a.click()
     URL.revokeObjectURL(url)
   }

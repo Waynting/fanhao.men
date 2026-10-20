@@ -5,11 +5,23 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { PageLoading } from "@/components/page-loading"
-import { getSupabase } from "@/lib/supabase"
+import { AUTH_RETURN_KEY, getSupabase } from "@/lib/supabase"
 
-/** Only same-origin paths, so ?next= can't redirect off-site. */
+/** Only same-origin paths, so a tampered value can't redirect off-site. */
 function safeNext(next: string | null) {
-  return next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard"
+  return next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/auth/") ? next : "/dashboard"
+}
+
+/** Return path saved by signInWithGoogle(); ?next= is still honored for older links. */
+function takeReturnPath(params: URLSearchParams) {
+  let saved: string | null = null
+  try {
+    saved = sessionStorage.getItem(AUTH_RETURN_KEY)
+    sessionStorage.removeItem(AUTH_RETURN_KEY)
+  } catch {
+    // Storage blocked
+  }
+  return safeNext(saved ?? params.get("next"))
 }
 
 export default function AuthCallbackPage() {
@@ -19,7 +31,7 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const code = params.get("code")
-    const next = safeNext(params.get("next"))
+    const next = takeReturnPath(params)
     const supabase = getSupabase()
 
     if (params.get("error")) {
