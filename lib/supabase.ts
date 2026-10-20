@@ -25,6 +25,18 @@ export function getSupabase(): SupabaseClient | null {
   return client
 }
 
+/** Google is the only sign-in method. Returns to the current page via /auth/callback. */
+export async function signInWithGoogle() {
+  const supabase = getSupabase()
+  if (!supabase) return
+  const next = window.location.pathname + window.location.search
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}` },
+  })
+  if (error) throw error
+}
+
 // ---------- Session hook ----------
 
 type SessionState = { ready: boolean; session: Session | null }
